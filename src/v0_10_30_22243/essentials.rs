@@ -8,6 +8,7 @@ pub mod item_logic {
     /// enum for manufacturing facilities
     #[derive(Debug)]
     pub enum ManFac {
+        Origin,
         Assembler,
         Furnace,
         Lab,
@@ -17,6 +18,7 @@ pub mod item_logic {
     }
 
     /// struct for combining an item and an amount of said item
+    #[derive(Debug)]
     pub struct ItemAmount<'a, T> {
         amount: u8,
         item: &'a T,
@@ -33,25 +35,35 @@ pub mod item_logic {
 
     /// enum for differentiation between items and not an item (nai)
     /// which is relevant for crafting recepies for items which cannot be
-    /// crafted and only be obtained (ores, critical photons, etc.)
+    /// crafted and only be obtained/mined (ores, critical photons, etc.)
     #[derive(Debug)]
-    pub enum IsItem<T> {
-        Item(T),
+    pub enum IsItem<'a, T> {
+        Item(ItemAmount<'a, T>),
         // NotAnItem
         NAI,
     }
 
-    /// struct for recipes
-    #[derive(Debug)]
-    pub struct Recipe<T> {
-        // crafting time (in seconds)
-        crafting_time: u8,
-        ingredients: Vec<IsItem<T>>,
-        products: Vec<IsItem<T>>,
+    impl <'a, T> IsItem <'a, T> {
+        pub fn new(item_amount: ItemAmount<'a, T>) -> IsItem<T> {
+            IsItem::Item(item_amount)
+        }
+        
+        pub fn new_nai() -> IsItem<'a, T>{
+            IsItem::NAI
+        }
     }
 
-    impl<T> Recipe<T> {
-        pub fn new(crafting_time: u8, ingredients: Vec<IsItem<T>>, products: Vec<IsItem<T>>) -> Recipe<T> {
+    /// struct for recipes
+    #[derive(Debug)]
+    pub struct Recipe<'a, T> {
+        // crafting time (in seconds)
+        crafting_time: u8,
+        ingredients: Vec<IsItem<'a, T>>,
+        products: Vec<IsItem<'a, T>>,
+    }
+
+    impl<'a, T> Recipe<'a, T> {
+        pub fn new(crafting_time: u8, ingredients: Vec<IsItem<'a, T>>, products: Vec<IsItem<'a, T>>) -> Recipe<'a, T> {
             Recipe {
                 crafting_time,
                 ingredients,
@@ -62,14 +74,14 @@ pub mod item_logic {
 
     /// struct for representing an item
     #[derive(Debug)]
-    pub struct Item <T> {
+    pub struct Item <'a, T> {
         name: String,
         creation_facility: ManFac,
-        recipes: Vec<Recipe<T>>,
+        recipes: Vec<Recipe<'a, T>>,
     }
 
-    impl<T> Item<T> {
-        pub fn new(name: String, creation_facility: ManFac, recipes: Vec<Recipe<T>>) -> Item<T> {
+    impl<'a, T> Item<'a, T> {
+        pub fn new(name: String, creation_facility: ManFac, recipes: Vec<Recipe<'a, T>>) -> Item<T> {
             Item {
                 name,
                 creation_facility,

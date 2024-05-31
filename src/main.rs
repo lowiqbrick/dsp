@@ -1,3 +1,5 @@
+// adjustments
+// imports
 // read the terminal input
 use std::env;
 
