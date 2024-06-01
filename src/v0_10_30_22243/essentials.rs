@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 pub mod item_logic {
     /// enum for manufacturing facilities
-    #[derive(Debug)]
+    #[derive(Debug, Clone, Copy)]
     pub enum ManFac {
         Origin,
         Assembler,
@@ -18,14 +18,14 @@ pub mod item_logic {
     }
 
     /// struct for combining an item and an amount of said item
-    #[derive(Debug)]
-    pub struct ItemAmount<'a, T> {
+    #[derive(Debug, Clone, Copy)]
+    pub struct ItemAmount<'a> {
         amount: u8,
-        item: &'a T,
+        item: &'a Item<'a>,
     }
 
-    impl<'a, T> ItemAmount<'a, T> {
-        pub fn new(amount: u8, item: &'a T) -> ItemAmount<T> {
+    impl<'a> ItemAmount<'a> {
+        pub fn new(amount: u8, item: &'a Item) -> ItemAmount<'a> {
             ItemAmount{
                 amount,
                 item,
@@ -36,34 +36,34 @@ pub mod item_logic {
     /// enum for differentiation between items and not an item (nai)
     /// which is relevant for crafting recepies for items which cannot be
     /// crafted and only be obtained/mined (ores, critical photons, etc.)
-    #[derive(Debug)]
-    pub enum IsItem<'a, T> {
-        Item(ItemAmount<'a, T>),
+    #[derive(Debug, Clone, Copy)]
+    pub enum IsItem<'a> {
+        Item(ItemAmount<'a>),
         // NotAnItem
         NAI,
     }
 
-    impl <'a, T> IsItem <'a, T> {
-        pub fn new(item_amount: ItemAmount<'a, T>) -> IsItem<T> {
+    impl <'a> IsItem <'a> {
+        pub fn new(item_amount: ItemAmount<'a>) -> IsItem {
             IsItem::Item(item_amount)
         }
         
-        pub fn new_nai() -> IsItem<'a, T>{
+        pub fn new_nai() -> IsItem<'a>{
             IsItem::NAI
         }
     }
 
     /// struct for recipes
-    #[derive(Debug)]
-    pub struct Recipe<'a, T> {
+    #[derive(Debug, Clone)]
+    pub struct Recipe<'a> {
         // crafting time (in seconds)
         crafting_time: u8,
-        ingredients: Vec<IsItem<'a, T>>,
-        products: Vec<IsItem<'a, T>>,
+        ingredients: Vec<IsItem<'a>>,
+        products: Vec<IsItem<'a>>,
     }
 
-    impl<'a, T> Recipe<'a, T> {
-        pub fn new(crafting_time: u8, ingredients: Vec<IsItem<'a, T>>, products: Vec<IsItem<'a, T>>) -> Recipe<'a, T> {
+    impl<'a> Recipe<'a> {
+        pub fn new(crafting_time: u8, ingredients: Vec<IsItem<'a>>, products: Vec<IsItem<'a>>) -> Recipe<'a> {
             Recipe {
                 crafting_time,
                 ingredients,
@@ -73,15 +73,15 @@ pub mod item_logic {
     }
 
     /// struct for representing an item
-    #[derive(Debug)]
-    pub struct Item <'a, T> {
-        name: String,
+    #[derive(Debug, Clone)]
+    pub struct Item <'a> {
+        name: &'a str,
         creation_facility: ManFac,
-        recipes: Vec<Recipe<'a, T>>,
+        recipes: Vec<Recipe<'a>>,
     }
 
-    impl<'a, T> Item<'a, T> {
-        pub fn new(name: String, creation_facility: ManFac, recipes: Vec<Recipe<'a, T>>) -> Item<T> {
+    impl<'a> Item<'a> {
+        pub fn new(name: &'a str, creation_facility: ManFac, recipes: Vec<Recipe<'a>>) -> Item<'a> {
             Item {
                 name,
                 creation_facility,
