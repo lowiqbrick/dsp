@@ -3,7 +3,8 @@
 // read the terminal input
 use std::env;
 
-use v0_10_30_22243::items::hello_combined;
+use v0_10_30_22243::items::{hello_combined, print_items};
+use std::collections::HashMap;
 mod v0_10_30_22243;
 
 fn main() {
@@ -17,4 +18,5 @@ fn main() {
      */
     dbg!(args);
     hello_combined();
+    print_items();
 }
