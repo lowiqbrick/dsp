@@ -56,13 +56,13 @@ pub mod item_logic {
     #[derive(Debug, Clone)]
     pub struct Recipe {
         // crafting time (in seconds)
-        crafting_time: u8,
+        crafting_time: f32,
         ingredients: Vec<IsItem>,
         products: Vec<IsItem>,
     }
 
     impl Recipe {
-        pub fn new(crafting_time: u8, ingredients: Vec<IsItem>, products: Vec<IsItem>) -> Recipe {
+        pub fn new(crafting_time: f32, ingredients: Vec<IsItem>, products: Vec<IsItem>) -> Recipe {
             Recipe {
                 crafting_time,
                 ingredients,
