@@ -3,7 +3,7 @@
 // read the terminal input
 use std::env;
 
-use v0_10_30_22243::items::{hello_combined, print_items};
+use v0_10_30_22243::items::{get_items, hello_combined, print_items};
 use std::collections::HashMap;
 mod v0_10_30_22243;
 
