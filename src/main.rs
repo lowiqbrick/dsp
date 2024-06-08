@@ -18,5 +18,7 @@ fn main() {
      */
     dbg!(args);
     hello_combined();
-    print_items();
+    print_items(); 
+    let len_has = get_items(HashMap::new()).len();
+    println!("the HashMap has a length of {}", len_has);
 }

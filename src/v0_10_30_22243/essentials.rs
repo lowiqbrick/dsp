@@ -101,8 +101,32 @@ pub fn hello_essentials () {
     println!("hello from essentials");
 }
 
-// a mountain of macros for the names of all items
-// macro_rules!  {""}
+// macro for creating items in a more convienent manner
+#[macro_export]
+macro_rules! recipe {
+    ($crafting_time: expr, ($($ingredients: tt)*), ($($products: tt)*)) => {
+        Recipe::new($crafting_time, vec![$($ingredients)*], vec![$($products)*])
+    };
+}
+#[macro_export]
+macro_rules! recitem {
+    ($amount: literal, $itemname: literal) => {
+        IsItem::new(ItemAmount::new($amount, String::from($itemname)))
+    };
+}
+#[macro_export]
+macro_rules! item {
+    ($name: literal, ($($item_vec: tt)*), ($($rec_vec: tt)*)) => {
+        Item::new($name, vec![$($item_vec)*], vec![$($rec_vec)*])
+    };
+}
+#[macro_export]
+macro_rules! tohash {
+    ($hashmap: ident, $item_name: ident, $item_str: literal, $item: expr) => {
+        let $item_name: Item = $item;
+        $hashmap.insert(String::from($item_str), $item_name);
+    };
+}
 //#[macro_export]
 //macro_rules! iron_ore {"Iron Ore";}
 //#[macro_export]

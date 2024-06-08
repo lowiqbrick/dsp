@@ -6,7 +6,9 @@ use crate::v0_10_30_22243::essentials::hello_essentials;
 pub mod items {
     use std::{collections::HashMap, vec};
 
-    use super::{essentials::item_logic::{IsItem, Item, ItemAmount, ManFac, Recipe}, hello_essentials};
+    use crate::{item, recipe, recitem, tohash};
+
+    use super::{essentials::item_logic::{IsItem, Item, ItemAmount, ManFac, ManFac::{Origin, Assembler, Furnace, Lab, OilRefinery, ChemicalPlant, MiniatureParticleCollider}, Recipe}, hello_essentials};
 
 
     /// testing only
@@ -541,6 +543,19 @@ pub mod items {
                         IsItem::new(ItemAmount::new(1, String::from("Magnetic Coil")))],
                     vec![IsItem::new(ItemAmount::new(1, String::from("Engine")))])]);
         res_hash.insert(String::from("Engine"), engine);
+        let thruster: Item = 
+            item!("Thruster",
+                (Assembler),
+                (recipe!(4.0, (recitem!(3, "Copper Ingot")), (recitem!(2, "Steel")))));
+        res_hash.insert(String::from("Thruster"), thruster);
+        tohash!(res_hash,
+            reinforced_thruster,
+            "Reinforced Thruster",
+            item!("Reinforced Thruster",
+                (Assembler),
+                (recipe!(6.0,
+                    (recitem!(5, "Electromagnetic Turbine"), recitem!(5, "Titanium Alloy")),
+                    (recitem!(4, "Reinforced Thruster"))))));
         // return the hashmap with all the items
         res_hash
     }
