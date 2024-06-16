@@ -1,9 +1,15 @@
+use item_logic::ItemAmount;
+
 // file for all structs functions etc.
 // imports
 // HashMaps
 #[allow(dead_code)]
 
 pub mod item_logic {
+    use std::collections::HashMap;
+
+    use super::ProgamInfo;
+
     /// enum for manufacturing facilities
     #[derive(Debug, Clone, Copy)]
     pub enum ManFac {
@@ -25,10 +31,7 @@ pub mod item_logic {
 
     impl ItemAmount {
         pub fn new(amount: u8, item: String) -> ItemAmount {
-            ItemAmount{
-                amount,
-                item,
-            }
+            ItemAmount { amount, item }
         }
     }
 
@@ -46,8 +49,8 @@ pub mod item_logic {
         pub fn new(item_amount: ItemAmount) -> IsItem {
             IsItem::Item(item_amount)
         }
-        
-        pub fn new_nai() -> IsItem{
+
+        pub fn new_nai() -> IsItem {
             IsItem::NAI
         }
     }
@@ -73,10 +76,10 @@ pub mod item_logic {
 
     /// struct for representing an item
     #[derive(Debug, Clone)]
-    pub struct Item <'a> {
-        name: &'a str,
-        creation_facility: Vec<ManFac>,
-        recipes: Vec<Recipe>,
+    pub struct Item<'a> {
+        pub name: &'a str,
+        pub creation_facility: Vec<ManFac>,
+        pub recipes: Vec<Recipe>,
     }
 
     impl<'a> Item<'a> {
@@ -87,18 +90,18 @@ pub mod item_logic {
                 recipes,
             }
         }
-    // /// the central method on which everything in the program is build
-    //pub fn generate_crafting_cain(&self, prev_path: HashMap, item_rate: f32) -> HashMap {
-    //    let _placeholder = prev_path;
-    //    let _placeholder2 = item_rate;
-    //    prev_path
-    //}
+        /// the central method on which everything in the program is build
+        pub fn crafting_chain(
+            _item_name: String,
+            _item_per_sec: f32,
+            _settings: ProgamInfo,
+            _result: HashMap<String, Item>,
+            _prev_path: String,
+            _is_proliferated: bool) -> HashMap<String, Item> {
+            let placeholder_hash_map: HashMap<String, Item> = HashMap::new();
+            placeholder_hash_map
+        }
     }
-}
-
-/// testing only
-pub fn hello_essentials () {
-    println!("hello from essentials");
 }
 
 // macro for creating items in a more convienent manner
@@ -127,20 +130,116 @@ macro_rules! tohash {
         $hashmap.insert(String::from($item_str), $item_name);
     };
 }
-//#[macro_export]
-//macro_rules! iron_ore {"Iron Ore";}
-//#[macro_export]
-//macro_rules! copper_ore {"Copper Ore"}
-//macro_rules! Stone {"Stone"}
-//macro_rules! coal {"Coal"}
-//macro_rules! silicon_ore {"Silicon Ore"}
-//macro_rules! titanium_ore {"Titanium Ore"}
-//macro_rules! water {"Water"}
-//macro_rules! crude_oil {"Crude Oil"}
-//macro_rules! hydrogen {"Hydrogen"}
-//macro_rules! deuterium {"Deuterium"}
-//macro_rules! anitmatter {"Anitmatter"}
-//macro_rules! core_element {"Core Element"}
-//macro_rules! critical_photon {"Critical Photon"}
-//macro_rules! kimberlite_ore {"Kimberlite Ore"}
-//macro_rules! iron_ingot {"Iron Ingot"}
+
+// enums and structs for the execution of the main function
+/// enum for saving the type of lab used
+#[derive(Debug)]
+pub enum ChemLabMK {
+    // Chemical Plant
+    Lab,
+    // Quantum Chemical Plant
+    QuantumLab,
+}
+
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum SmelterMK {
+    ArcSmelter,
+    PlaneSmelter,
+    NegentropySmelter,
+}
+
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum AssemblerMK {
+    MKone,
+    MKtwo,
+    MKthree,
+    MKfour,
+}
+
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum LabMK {
+    MatrixLab,
+    SelfEvolutionLab,
+}
+
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum Proliferator {
+    MKone,
+    MKtwo,
+    MKthree,
+    None,
+}
+
+/// struct for containing all information for the main function
+#[derive(Debug)]
+pub struct ProgamInfo {
+    // enums to save the facilities used
+    pub proliferators: Proliferator,
+    pub chemlab: ChemLabMK,
+    pub smelter: SmelterMK,
+    pub assembler: AssemblerMK,
+    pub lab: LabMK,
+    pub no_proliferation: Vec<String>,
+    pub additional_items: Vec<ItemAmount>,
+    pub item_recipe: Vec<ItemAmount>,
+    pub squash: bool,
+    pub assume_basics: bool,
+    pub produced_item: ItemAmount,
+}
+impl ProgamInfo {
+    pub fn new(
+        proliferators: Proliferator,
+        chemlab: ChemLabMK,
+        smelter: SmelterMK,
+        assembler: AssemblerMK,
+        lab: LabMK,
+        no_proliferation: Vec<String>,
+        additional_items: Vec<ItemAmount>,
+        item_recipe: Vec<ItemAmount>,
+        squash: bool,
+        assume_basics: bool,
+        produced_item: ItemAmount,
+    ) -> ProgamInfo {
+        ProgamInfo {
+            proliferators,
+            chemlab,
+            smelter,
+            assembler,
+            lab,
+            no_proliferation,
+            additional_items,
+            item_recipe,
+            squash,
+            assume_basics,
+            produced_item,
+        }
+    }
+}
+
+/// enum for containing the current state of the processing
+/// of the arguments
+#[derive(PartialEq)]
+pub enum ArgState {
+    // the default; only an item name and an amount
+    Default,
+    // items not to be proliferated
+    NoProliferation,
+    // additional items
+    AdditionalItems,
+    // specify proliferation
+    ProlifLevel,
+    // specify chemical labs
+    ChemLabLevel,
+    // specify furnace
+    FurnaceLevel,
+    // specify assembler
+    AssemblerLevel,
+    // specify laboratory
+    LabLevel,
+    // specify the recipe use for an item
+    ItemRecipe,
+}
