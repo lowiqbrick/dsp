@@ -97,7 +97,8 @@ pub mod item_logic {
             _settings: ProgamInfo,
             _result: HashMap<String, Item>,
             _prev_path: String,
-            _is_proliferated: bool) -> HashMap<String, Item> {
+            _is_proliferated: bool,
+        ) -> HashMap<String, Item> {
             let placeholder_hash_map: HashMap<String, Item> = HashMap::new();
             placeholder_hash_map
         }
@@ -186,7 +187,7 @@ pub struct ProgamInfo {
     pub no_proliferation: Vec<String>,
     pub additional_items: Vec<ItemAmount>,
     pub item_recipe: Vec<ItemAmount>,
-    pub squash: bool,
+    pub merge: bool,
     pub assume_basics: bool,
     pub produced_item: ItemAmount,
 }
@@ -200,7 +201,7 @@ impl ProgamInfo {
         no_proliferation: Vec<String>,
         additional_items: Vec<ItemAmount>,
         item_recipe: Vec<ItemAmount>,
-        squash: bool,
+        merge: bool,
         assume_basics: bool,
         produced_item: ItemAmount,
     ) -> ProgamInfo {
@@ -213,7 +214,7 @@ impl ProgamInfo {
             no_proliferation,
             additional_items,
             item_recipe,
-            squash,
+            merge,
             assume_basics,
             produced_item,
         }
