@@ -4,14 +4,9 @@ mod essentials;
 mod items_get;
 
 pub mod items {
-    use crate::v0_10_30_22243::essentials::item_logic::Item;
+    use crate::v0_10_30_22243::essentials::item_logic::*;
     use crate::v0_10_30_22243::items_get::itemsmod::get_items;
     use std::collections::HashMap;
-
-    use super::essentials::{
-        item_logic::ItemAmount, ArgState, AssemblerMK, ChemLabMK, LabMK, ProgamInfo, Proliferator,
-        SmelterMK,
-    };
 
     /// function for outputting all items
     fn print_items() {
