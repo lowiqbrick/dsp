@@ -9,11 +9,11 @@ pub mod items {
     use std::collections::HashMap;
 
     /// function for outputting all items
-    fn print_items() {
-        let mut map: HashMap<String, Item> = HashMap::new();
-        map = get_items(map);
-        println!("{:?}", map);
-    }
+    // fn print_items() {
+    //     let mut map: HashMap<String, Item> = HashMap::new();
+    //     map = get_items(map);
+    //     println!("{:?}", map);
+    // }
 
     /// the main function of version v0_10_30_22243
     pub fn v0_10_30_22243(args: Vec<String>) {
@@ -254,5 +254,40 @@ pub mod items {
             }
         }
         println!("{:?}", settings);
+        // call method on item
+        let mut result_order: Vec<String> = vec![];
+        let mut result: HashMap<String, ItemResult> = HashMap::new();
+        let prev_path = String::from("");
+        let mut is_proliferated: bool = true;
+        if settings.no_proliferation.contains(&settings.produced_item.item) {
+            is_proliferated = false;
+        }
+        match item_hashmap.get(&settings.produced_item.item) {
+            // set of creation of the crafting chain
+            Some(item) => {
+                item.crafting_chain(
+                    settings.produced_item.item.clone(), 
+                    settings.produced_item.amount as f32,
+                    &settings,
+                    &mut result_order, 
+                    &mut result,
+                    prev_path,
+                    is_proliferated,
+                true)
+            }
+            None => {
+                panic!("requested item not in crafting recipes");
+            }
+        }
+        for result_string in result_order.clone().iter() {
+            match result.get(result_string) {
+                Some(result_match) => {
+                    println!("{}", result_match);
+                }
+                None => {
+                    panic!("{} wasn't found in the item list", result_string);
+                }
+            }
+        }
     }
 }
