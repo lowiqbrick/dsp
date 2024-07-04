@@ -253,36 +253,43 @@ pub mod items {
                 keep_looping = false;
             }
         }
-        println!("{:?}", settings);
+        // Debugging only
+        // println!("{:?}", settings);
         // call method on item
         let mut result_order: Vec<String> = vec![];
         let mut result: HashMap<String, ItemResult> = HashMap::new();
         let prev_path = String::from("");
         let mut is_proliferated: bool = true;
-        if settings.no_proliferation.contains(&settings.produced_item.item) {
+        if settings
+            .no_proliferation
+            .contains(&settings.produced_item.item)
+        {
             is_proliferated = false;
         }
         match item_hashmap.get(&settings.produced_item.item) {
             // set off creation of the crafting chain
-            Some(item) => {
-                item.crafting_chain(
-                    settings.produced_item.item.clone(), 
-                    settings.produced_item.amount as f32,
-                    &settings,
-                    &mut result_order, 
-                    &mut result,
-                    prev_path,
-                    is_proliferated,
-                true)
-            }
+            Some(item) => item.crafting_chain(
+                settings.produced_item.item.clone(),
+                settings.produced_item.amount as f32,
+                &settings,
+                &mut result_order,
+                &mut result,
+                prev_path,
+                is_proliferated,
+                true,
+            ),
             None => {
                 panic!("requested item not in crafting recipes");
             }
         }
-        for result_string in result_order.clone().iter() {
+        let vector_len: usize = result_order.len();
+        for (index, result_string) in result_order.clone().iter().enumerate() {
             match result.get(result_string) {
                 Some(result_match) => {
                     println!("{}", result_match);
+                    if index + 1 < vector_len {
+                        println!("----------------------------------------");
+                    }
                 }
                 None => {
                     panic!("{} wasn't found in the item list", result_string);

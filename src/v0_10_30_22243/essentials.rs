@@ -107,13 +107,19 @@ pub mod item_logic {
             write!(f, "target rate: {}\n", self.num_station)?;
             write!(
                 f,
-                "requires: {} {:?}",
+                "requires: {} {:?}\n",
                 self.num_station.round(),
                 self.station
             )?;
-            // write vector
-            for amount in self.requirements.clone() {
-                write!(f, "    {} {}", amount.amount, amount.item)?;
+            if self.station != vec![ManFac::Origin] {
+                // write vector
+                for (index, amount) in self.requirements.clone().iter().enumerate() {
+                    // tab
+                    if index == 0 {
+                        print!("   ");
+                    }
+                    write!(f, "    {} {}", amount.amount, amount.item)?;
+                }
             }
             // hand over the results
             write!(f, "")
@@ -151,25 +157,30 @@ pub mod item_logic {
             settings: &ProgamInfo,
             result_order: &mut Vec<String>,
             result: &mut HashMap<String, ItemResult>,
-            prev_path: String,
+            mut prev_path: String,
             mut is_proliferated: bool,
             is_first_item: bool,
         ) {
+            // get rid of warning
+            if !is_first_item {
+                let _prev_path_warn: &str = &prev_path[0..1];
+            }
             // get all items
             let mut items_map: HashMap<String, Item> = HashMap::new();
             items_map = get_items(items_map);
             // create result variable
-            let mut new_path: String = prev_path.clone();
+            let mut new_path: String = String::from(&item_name);
             if !is_first_item {
-                new_path.insert_str(0, "  -> ");
+                new_path.extend([" -> "]);
             }
-            new_path.insert_str(0, &item_name);
+            new_path.extend([prev_path.clone()]);
+            prev_path = new_path.clone();
             // initialise result with default values
             let mut result_var: ItemResult = ItemResult::new(
                 new_path.clone(),
                 item_name.clone(),
                 -1.0,
-                vec!(ManFac::Origin),
+                vec![ManFac::Origin],
                 vec![],
             );
             // write item information in result if the output
@@ -363,10 +374,10 @@ pub mod item_logic {
             for isitem in current_recipe.ingredients.clone().iter() {
                 match isitem {
                     IsItem::Item(ingredient) => {
-                        output_machine_ingredients.push(
-                            ItemAmount::new(
-                                ingredient.amount * manvac_count as u8, 
-                                ingredient.item.clone()));
+                        output_machine_ingredients.push(ItemAmount::new(
+                            ingredient.amount * manvac_count as u8,
+                            ingredient.item.clone(),
+                        ));
                     }
                     IsItem::NAI => {
                         // do nothing
@@ -376,7 +387,7 @@ pub mod item_logic {
             }
             result_var.num_station = manvac_count;
             result_var.requirements = output_machine_ingredients;
-            if result_var.station == vec!(ManFac::Origin) {
+            if result_var.station == vec![ManFac::Origin] {
                 result_var.station = current_item.creation_facility.clone();
             }
             // sanity checks on result_var
@@ -384,7 +395,11 @@ pub mod item_logic {
             let help_assert: String = String::from(current_item.name);
             // only assert if the item doesn't have vec!(ManFac::Origin) naturally
             if !settings.basics.contains(&help_assert) {
-                assert_ne!(result_var.station, vec!(ManFac::Origin), "result doesn't have a crafting station");
+                assert_ne!(
+                    result_var.station,
+                    vec!(ManFac::Origin),
+                    "result doesn't have a crafting station"
+                );
                 assert_ne!(result_var.requirements, vec![]);
             }
             // write results into hashmap
@@ -402,14 +417,18 @@ pub mod item_logic {
                             // increase required prodiction rate
                             found_item.num_station += result_var.num_station;
                             // increase the required ingrediences
-                            for (index, _found_ingredient) in found_item.requirements.clone().iter().enumerate() {
-                                found_item.requirements[index].amount += result_var.requirements[index].amount;
+                            for (index, _found_ingredient) in
+                                found_item.requirements.clone().iter().enumerate()
+                            {
+                                found_item.requirements[index].amount +=
+                                    result_var.requirements[index].amount;
                             }
                         }
                         None => {
                             panic!(
                                 "tried to write into the key '{}', which wasn't found",
-                                result_var.name.clone());
+                                result_var.name.clone()
+                            );
                         }
                     }
                 } else {
@@ -420,26 +439,31 @@ pub mod item_logic {
             }
             // finally make the function recursive by calling the function on the
             // ingredient items
-            for ingredient in current_item.recipes[current_recipe_index].ingredients.iter() {
+            for ingredient in current_item.recipes[current_recipe_index]
+                .ingredients
+                .iter()
+            {
                 match ingredient {
-                    IsItem::Item(real_ingredient) => {
-                        match items_map.get(&real_ingredient.item) {
-                            Some(call_item) => {
-                                call_item.crafting_chain(
-                                    String::from(call_item.name),
-                                    real_ingredient.amount as f32 * manvac_count,
-                                    &settings,
-                                    result_order,
-                                    result,
-                                    prev_path.clone(),
-                                    is_proliferated,
-                                false);
-                            }
-                            None => {
-                                panic!("failed to call 'fn crafting_chain' on key {}", &real_ingredient.item);
-                            }
+                    IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item) {
+                        Some(call_item) => {
+                            call_item.crafting_chain(
+                                String::from(call_item.name),
+                                real_ingredient.amount as f32 * manvac_count,
+                                &settings,
+                                result_order,
+                                result,
+                                prev_path.clone(),
+                                is_proliferated,
+                                false,
+                            );
                         }
-                    }
+                        None => {
+                            panic!(
+                                "failed to call 'fn crafting_chain' on key {}",
+                                &real_ingredient.item
+                            );
+                        }
+                    },
                     IsItem::NAI => {
                         // if item is origin do nothing
                         print!("");
@@ -549,7 +573,8 @@ pub mod item_logic {
                 String::from("Energy Shard"),
                 String::from("Silicon-based Neuron"),
                 String::from("Negentropy Singularity"),
-                String::from("Matter Recombinator")];
+                String::from("Matter Recombinator"),
+            ];
             ProgamInfo {
                 proliferators,
                 chemlab,
