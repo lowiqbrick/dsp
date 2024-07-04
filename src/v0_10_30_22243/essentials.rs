@@ -24,12 +24,12 @@ pub mod item_logic {
     /// struct for combining an item and an amount of said item
     #[derive(Debug, Clone, PartialEq)]
     pub struct ItemAmount {
-        pub amount: u8,
+        pub amount: f32,
         pub item: String,
     }
 
     impl ItemAmount {
-        pub fn new(amount: u8, item: String) -> ItemAmount {
+        pub fn new(amount: f32, item: String) -> ItemAmount {
             ItemAmount { amount, item }
         }
     }
@@ -104,21 +104,23 @@ pub mod item_logic {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             // write all things with static values
             write!(f, "{}\n", self.describer)?;
-            write!(f, "target rate: {}\n", self.num_station)?;
+            write!(f, "item target rate: {:.1}\n", self.num_station)?;
             write!(
                 f,
-                "requires: {} {:?}\n",
-                self.num_station.round(),
-                self.station
+                "buildings to build: {} {:?} ({:.1})",
+                self.num_station.ceil(),
+                self.station,
+                self.num_station
             )?;
             if self.station != vec![ManFac::Origin] {
+                write!(f, "\n")?;
                 // write vector
                 for (index, amount) in self.requirements.clone().iter().enumerate() {
                     // tab
                     if index == 0 {
                         print!("   ");
                     }
-                    write!(f, "    {} {}", amount.amount, amount.item)?;
+                    write!(f, "    {:.1} {}", amount.amount, amount.item)?;
                 }
             }
             // hand over the results
@@ -234,8 +236,8 @@ pub mod item_logic {
             }
             // get amount of the item as output (and as an ingredient, if thats the case)
             // and calculate the production rate, with crafting speed, proliferation, etc.
-            let mut output_amount: u8 = 0;
-            let mut input_amount: u8 = 0;
+            let mut output_amount: f32 = 0.0;
+            let mut input_amount: f32 = 0.0;
             let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
             for item_amount in current_recipe.products.clone().iter() {
                 match item_amount {
@@ -250,7 +252,7 @@ pub mod item_logic {
                     }
                 }
             }
-            if output_amount == 0 {
+            if output_amount == 0.0 {
                 panic!(
                     "the output of recipe (index {}) from item '{}' doesn't contain the item",
                     current_recipe_index, result_var.name
@@ -270,8 +272,8 @@ pub mod item_logic {
                 }
             }
             // calculate the net output of the recipe
-            let net_output: u8 = output_amount - input_amount;
-            if net_output <= 0 {
+            let net_output: f32 = output_amount - input_amount;
+            if net_output <= 0.0 {
                 panic!(
                     "recipe has net output of {} which doesn't make sense",
                     net_output
@@ -375,7 +377,7 @@ pub mod item_logic {
                 match isitem {
                     IsItem::Item(ingredient) => {
                         output_machine_ingredients.push(ItemAmount::new(
-                            ingredient.amount * manvac_count as u8,
+                            ingredient.amount * manvac_count,
                             ingredient.item.clone(),
                         ));
                     }

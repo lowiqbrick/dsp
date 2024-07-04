@@ -11,6 +11,7 @@ fn main() {
     let mut args: Vec<String> = env::args().collect();
     // remove the path
     args.remove(0);
-    println!("{:?}", args);
+    // debugging only
+    // println!("{:?}", args);
     v0_10_30_22243(args);
 }

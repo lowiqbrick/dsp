@@ -35,7 +35,7 @@ pub mod items {
             vec![],
             false,
             false,
-            ItemAmount::new(0, String::from("Default")),
+            ItemAmount::new(0.0, String::from("Default")),
         );
         // sanity check
         if args_len < 2 {
@@ -51,7 +51,7 @@ pub mod items {
                     // println!("produced item set at index {}", index);
                     settings.produced_item = ItemAmount::new(
                         args[index + 1]
-                            .parse::<u8>()
+                            .parse::<f32>()
                             .expect("provided invalid number"),
                         String::from(args[index].clone()),
                     );
@@ -203,7 +203,7 @@ pub mod items {
                     if item_hashmap.contains_key(&args[index]) {
                         settings.additional_items.push(ItemAmount::new(
                             args[index + 1]
-                                .parse::<u8>()
+                                .parse::<f32>()
                                 .expect("provided invalid number"),
                             args[index].clone(),
                         ));
@@ -233,7 +233,8 @@ pub mod items {
                                 if recipe_tot_num - 1 >= recipe_num as usize {
                                     settings
                                         .item_recipe
-                                        .push(ItemAmount::new(recipe_num, args[index].clone()));
+                                        .push(ItemAmount::new(recipe_num as f32, 
+                                            args[index].clone()));
                                 }
                             }
                             None => eprintln!("item not in hashmap"),

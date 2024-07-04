@@ -17,7 +17,7 @@ pub mod itemsmod {
         let iron_ore_rec: Recipe = Recipe::new(
             0.0,
             vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1, String::from("Iron Ore")))],
+            vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
         );
         iron_ore = Item::new("Iron Ore", vec![ManFac::Origin], vec![iron_ore_rec]);
         res_hash.insert(String::from("Iron Ore"), iron_ore);
@@ -27,7 +27,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Copper Ore")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Copper Ore")))],
             )],
         );
         res_hash.insert(String::from("Copper Ore"), copper_ore);
@@ -37,7 +37,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Stone")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Stone")))],
             )],
         );
         res_hash.insert(String::from("Stone"), stone);
@@ -47,7 +47,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Coal")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Coal")))],
             )],
         );
         res_hash.insert(String::from("Coal"), coal);
@@ -57,8 +57,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace, ManFac::Origin],
             vec![Recipe::new(
                 10.0,
-                vec![IsItem::new(ItemAmount::new(10, String::from("Stone")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Silicon Ore")))],
+                vec![IsItem::new(ItemAmount::new(10.0, String::from("Stone")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Silicon Ore")))],
             )],
         );
         res_hash.insert(String::from("Silicon Ore"), silicon_ore);
@@ -69,7 +69,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Titanium Ore"),
                 ))],
             )],
@@ -81,7 +81,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Water")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Water")))],
             )],
         );
         res_hash.insert(String::from("Water"), water);
@@ -91,7 +91,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Crude Oil")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Crude Oil")))],
             )],
         );
         res_hash.insert(String::from("Crude Oil"), crude_oil);
@@ -109,40 +109,40 @@ pub mod itemsmod {
             vec![
                 Recipe::new(
                     4.0,
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Crude Oil")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Crude Oil")))],
                     vec![
-                        IsItem::new(ItemAmount::new(2, String::from("Refined Oil"))),
-                        IsItem::new(ItemAmount::new(1, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
                     ],
                 ),
                 Recipe::new(
                     2.0,
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Fire Ice")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Fire Ice")))],
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(2, String::from("Graphene"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Graphene"))),
                     ],
                 ),
                 Recipe::new(
                     4.0,
                     vec![
-                        IsItem::new(ItemAmount::new(2, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(1, String::from("Refined Oil"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Refined Oil"))),
                     ],
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Energetic Graphite"))),
-                        IsItem::new(ItemAmount::new(3, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Energetic Graphite"))),
+                        IsItem::new(ItemAmount::new(3.0, String::from("Hydrogen"))),
                     ],
                 ),
                 Recipe::new(
                     2.0,
                     vec![IsItem::new(ItemAmount::new(
-                        2,
+                        2.0,
                         String::from("Critical Photon"),
                     ))],
                     vec![
-                        IsItem::new(ItemAmount::new(2, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(2, String::from("Anitmatter"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Anitmatter"))),
                     ],
                 ),
             ],
@@ -153,8 +153,8 @@ pub mod itemsmod {
             vec![ManFac::Origin, ManFac::MiniatureParticleCollider],
             vec![Recipe::new(
                 2.5,
-                vec![IsItem::new(ItemAmount::new(10, String::from("Hydrogen")))],
-                vec![IsItem::new(ItemAmount::new(5, String::from("Deuterium")))],
+                vec![IsItem::new(ItemAmount::new(10.0, String::from("Hydrogen")))],
+                vec![IsItem::new(ItemAmount::new(5.0, String::from("Deuterium")))],
             )],
         );
         res_hash.insert(String::from("Deuterium"), deuterium);
@@ -164,12 +164,12 @@ pub mod itemsmod {
             vec![Recipe::new(
                 2.0,
                 vec![IsItem::new(ItemAmount::new(
-                    2,
+                    2.0,
                     String::from("Critical Photon"),
                 ))],
                 vec![
-                    IsItem::new(ItemAmount::new(2, String::from("Hydrogen"))),
-                    IsItem::new(ItemAmount::new(2, String::from("Antimatter"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Antimatter"))),
                 ],
             )],
         );
@@ -181,7 +181,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Core Element"),
                 ))],
             )],
@@ -194,7 +194,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Critical Photon"),
                 ))],
             )],
@@ -207,7 +207,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Kimberlite Ore"),
                 ))],
             )],
@@ -220,7 +220,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Fractal Silicon"),
                 ))],
             )],
@@ -233,7 +233,7 @@ pub mod itemsmod {
                 1.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Grating Crystal"),
                 ))],
             )],
@@ -246,7 +246,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Stalagmite Crystal"),
                 ))],
             )],
@@ -259,7 +259,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Unipolar Magnet"),
                 ))],
             )],
@@ -271,7 +271,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Fire Ice")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Fire Ice")))],
             )],
         );
         res_hash.insert(String::from("Fire Ice"), fire_ice);
@@ -281,7 +281,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Log")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Log")))],
             )],
         );
         res_hash.insert(String::from("Log"), log);
@@ -291,7 +291,7 @@ pub mod itemsmod {
             vec![Recipe::new(
                 0.0,
                 vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Plant Fuel")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Plant Fuel")))],
             )],
         );
         res_hash.insert(String::from("Plant Fuel"), plant_fuel);
@@ -302,7 +302,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Dark Fog Matrix"),
                 ))],
             )],
@@ -315,7 +315,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Energy Shard"),
                 ))],
             )],
@@ -328,7 +328,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Silicon-based Neuron"),
                 ))],
             )],
@@ -341,7 +341,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Negentropy Singularity"),
                 ))],
             )],
@@ -357,7 +357,7 @@ pub mod itemsmod {
                 0.0,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Matter Recombinator"),
                 ))],
             )],
@@ -369,8 +369,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.0,
-                vec![IsItem::new(ItemAmount::new(1, String::from("Iron Ore")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Iron Ingot")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ingot")))],
             )],
         );
         res_hash.insert(String::from("Iron Ingot"), iron_ingot);
@@ -379,9 +379,9 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.0,
-                vec![IsItem::new(ItemAmount::new(1, String::from("Copper Ore")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Copper Ore")))],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Copper Ingot"),
                 ))],
             )],
@@ -392,8 +392,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.0,
-                vec![IsItem::new(ItemAmount::new(1, String::from("Stone")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Stone Brick")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Stone")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Stone Brick")))],
             )],
         );
         res_hash.insert(String::from("Stone Brick"), stone_brick);
@@ -403,21 +403,21 @@ pub mod itemsmod {
             vec![
                 Recipe::new(
                     2.0,
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Coal")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Coal")))],
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Energetic Graphite"),
                     ))],
                 ),
                 Recipe::new(
                     4.0,
                     vec![
-                        IsItem::new(ItemAmount::new(2, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(1, String::from("Refined Oil"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Refined Oil"))),
                     ],
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Energetic Graphite"))),
-                        IsItem::new(ItemAmount::new(3, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Energetic Graphite"))),
+                        IsItem::new(ItemAmount::new(3.0, String::from("Hydrogen"))),
                     ],
                 ),
             ],
@@ -428,9 +428,9 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
-                vec![IsItem::new(ItemAmount::new(2, String::from("Silicon Ore")))],
+                vec![IsItem::new(ItemAmount::new(2.0, String::from("Silicon Ore")))],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("High-purity Silicon"),
                 ))],
             )],
@@ -442,11 +442,11 @@ pub mod itemsmod {
             vec![Recipe::new(
                 2.0,
                 vec![IsItem::new(ItemAmount::new(
-                    2,
+                    2.0,
                     String::from("Titanium Ore"),
                 ))],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Titanium Ingot"),
                 ))],
             )],
@@ -458,12 +458,12 @@ pub mod itemsmod {
             vec![Recipe::new(
                 6.0,
                 vec![
-                    IsItem::new(ItemAmount::new(4, String::from("Water"))),
-                    IsItem::new(ItemAmount::new(8, String::from("Stone"))),
-                    IsItem::new(ItemAmount::new(6, String::from("Refined Oil"))),
+                    IsItem::new(ItemAmount::new(4.0, String::from("Water"))),
+                    IsItem::new(ItemAmount::new(8.0, String::from("Stone"))),
+                    IsItem::new(ItemAmount::new(6.0, String::from("Refined Oil"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    4,
+                    4.0,
                     String::from("Sulfuric Acid"),
                 ))],
             )],
@@ -475,20 +475,20 @@ pub mod itemsmod {
             vec![
                 Recipe::new(
                     4.0,
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Crude Oil")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Crude Oil")))],
                     vec![
-                        IsItem::new(ItemAmount::new(2, String::from("Refined Oil"))),
-                        IsItem::new(ItemAmount::new(1, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
                     ],
                 ),
                 Recipe::new(
                     4.0,
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Coal"))),
-                        IsItem::new(ItemAmount::new(1, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(2, String::from("Refined Oil"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Coal"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
                     ],
-                    vec![IsItem::new(ItemAmount::new(3, String::from("Refined Oil")))],
+                    vec![IsItem::new(ItemAmount::new(3.0, String::from("Refined Oil")))],
                 ),
             ],
         );
@@ -498,8 +498,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.5,
-                vec![IsItem::new(ItemAmount::new(1, String::from("Iron Ore")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Magnet")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Magnet")))],
             )],
         );
         res_hash.insert(String::from("Magnet"), magnet);
@@ -509,11 +509,11 @@ pub mod itemsmod {
             vec![Recipe::new(
                 1.0,
                 vec![
-                    IsItem::new(ItemAmount::new(1, String::from("Copper Ingot"))),
-                    IsItem::new(ItemAmount::new(2, String::from("Magnet"))),
+                    IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Magnet"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    2,
+                    2.0,
                     String::from("Magnetic Coil"),
                 ))],
             )],
@@ -524,8 +524,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
-                vec![IsItem::new(ItemAmount::new(2, String::from("Stone")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Glass")))],
+                vec![IsItem::new(ItemAmount::new(2.0, String::from("Stone")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Glass")))],
             )],
         );
         res_hash.insert(String::from("Glass"), glass);
@@ -536,18 +536,18 @@ pub mod itemsmod {
                 Recipe::new(
                     2.0,
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Energetic Graphite"),
                     ))],
-                    vec![IsItem::new(ItemAmount::new(1, String::from("Diamond")))],
+                    vec![IsItem::new(ItemAmount::new(1.0, String::from("Diamond")))],
                 ),
                 Recipe::new(
                     1.5,
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Kimberlite Ore"),
                     ))],
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Diamond")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Diamond")))],
                 ),
             ],
         );
@@ -559,22 +559,22 @@ pub mod itemsmod {
                 Recipe::new(
                     2.0,
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("High-purity Silicon"),
                     ))],
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Crystal Silicon"),
                     ))],
                 ),
                 Recipe::new(
                     1.5,
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Fractal Silicon"),
                     ))],
                     vec![IsItem::new(ItemAmount::new(
-                        2,
+                        2.0,
                         String::from("Crystal Silicon"),
                     ))],
                 ),
@@ -586,8 +586,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 3.0,
-                vec![IsItem::new(ItemAmount::new(3, String::from("Iron Ingot")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Steel")))],
+                vec![IsItem::new(ItemAmount::new(3.0, String::from("Iron Ingot")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Steel")))],
             )],
         );
         res_hash.insert(String::from("Steel"), steel);
@@ -601,11 +601,11 @@ pub mod itemsmod {
                 (recipe!(
                     12.0,
                     (
-                        recitem!(8, "Sulfuric Acid"),
-                        recitem!(4, "Steel"),
-                        recitem!(4, "Titanium Ingot")
+                        recitem!(8.0, "Sulfuric Acid"),
+                        recitem!(4.0, "Steel"),
+                        recitem!(4.0, "Titanium Ingot")
                     ),
-                    (recitem!(4, "Titanium Alloy"))
+                    (recitem!(4.0, "Titanium Alloy"))
                 ))
             )
         );
@@ -615,11 +615,11 @@ pub mod itemsmod {
             vec![Recipe::new(
                 1.0,
                 vec![
-                    IsItem::new(ItemAmount::new(1, String::from("Copper Ingot"))),
-                    IsItem::new(ItemAmount::new(2, String::from("Iron Ingot"))),
+                    IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Iron Ingot"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    2,
+                    2.0,
                     String::from("Circuit Board"),
                 ))],
             )],
@@ -630,8 +630,8 @@ pub mod itemsmod {
             vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
-                vec![IsItem::new(ItemAmount::new(3, String::from("Glass")))],
-                vec![IsItem::new(ItemAmount::new(2, String::from("Prism")))],
+                vec![IsItem::new(ItemAmount::new(3.0, String::from("Glass")))],
+                vec![IsItem::new(ItemAmount::new(2.0, String::from("Prism")))],
             )],
         );
         res_hash.insert(String::from("Prism"), prism);
@@ -641,12 +641,12 @@ pub mod itemsmod {
             vec![Recipe::new(
                 2.0,
                 vec![
-                    IsItem::new(ItemAmount::new(1, String::from("Magnetic Coil"))),
-                    IsItem::new(ItemAmount::new(1, String::from("Gear"))),
-                    IsItem::new(ItemAmount::new(2, String::from("Iron Ingot"))),
+                    IsItem::new(ItemAmount::new(1.0, String::from("Magnetic Coil"))),
+                    IsItem::new(ItemAmount::new(1.0, String::from("Gear"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Iron Ingot"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Electric Motor"),
                 ))],
             )],
@@ -658,11 +658,11 @@ pub mod itemsmod {
             vec![Recipe::new(
                 2.0,
                 vec![
-                    IsItem::new(ItemAmount::new(1, String::from("Copper Ingot"))),
-                    IsItem::new(ItemAmount::new(2, String::from("High-purity Silicon"))),
+                    IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("High-purity Silicon"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Microcrystalline Component"),
                 ))],
             )],
@@ -676,8 +676,8 @@ pub mod itemsmod {
             vec![ManFac::Assembler],
             vec![Recipe::new(
                 1.0,
-                vec![IsItem::new(ItemAmount::new(1, String::from("Iron Ingot")))],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Gear")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ingot")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Gear")))],
             )],
         );
         res_hash.insert(String::from("Gear"), gear);
@@ -687,11 +687,11 @@ pub mod itemsmod {
             vec![Recipe::new(
                 2.0,
                 vec![
-                    IsItem::new(ItemAmount::new(2, String::from("Prism"))),
-                    IsItem::new(ItemAmount::new(4, String::from("Magnetic Coil"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Prism"))),
+                    IsItem::new(ItemAmount::new(4.0, String::from("Magnetic Coil"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Plasma Exciter"),
                 ))],
             )],
@@ -704,22 +704,22 @@ pub mod itemsmod {
                 Recipe::new(
                     3.0,
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Circuit Board"))),
-                        IsItem::new(ItemAmount::new(2, String::from("Prism"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Prism"))),
                     ],
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Photon Combiner"),
                     ))],
                 ),
                 Recipe::new(
                     3.0,
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Circuit Board"))),
-                        IsItem::new(ItemAmount::new(2, String::from("Grating Crystal"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Grating Crystal"))),
                     ],
                     vec![IsItem::new(ItemAmount::new(
-                        1,
+                        1.0,
                         String::from("Photon Combiner"),
                     ))],
                 ),
@@ -732,11 +732,11 @@ pub mod itemsmod {
             vec![Recipe::new(
                 2.0,
                 vec![
-                    IsItem::new(ItemAmount::new(2, String::from("Magnetic Coil"))),
-                    IsItem::new(ItemAmount::new(2, String::from("Electric Motor"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Magnetic Coil"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Electric Motor"))),
                 ],
                 vec![IsItem::new(ItemAmount::new(
-                    1,
+                    1.0,
                     String::from("Electromagnetic Turbine"),
                 ))],
             )],
@@ -752,12 +752,12 @@ pub mod itemsmod {
                 3.0,
                 vec![
                     IsItem::new(ItemAmount::new(
-                        2,
+                        2.0,
                         String::from("Microcrystalline Component"),
                     )),
-                    IsItem::new(ItemAmount::new(2, String::from("Circuit Board"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Circuit Board"))),
                 ],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Processor")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Processor")))],
             )],
         );
         res_hash.insert(String::from("Processor"), processor);
@@ -767,17 +767,17 @@ pub mod itemsmod {
             vec![Recipe::new(
                 3.0,
                 vec![
-                    IsItem::new(ItemAmount::new(2, String::from("Copper Ingot"))),
-                    IsItem::new(ItemAmount::new(1, String::from("Magnetic Coil"))),
+                    IsItem::new(ItemAmount::new(2.0, String::from("Copper Ingot"))),
+                    IsItem::new(ItemAmount::new(1.0, String::from("Magnetic Coil"))),
                 ],
-                vec![IsItem::new(ItemAmount::new(1, String::from("Engine")))],
+                vec![IsItem::new(ItemAmount::new(1.0, String::from("Engine")))],
             )],
         );
         res_hash.insert(String::from("Engine"), engine);
         let thruster: Item = item!(
             "Thruster",
             (Assembler),
-            (recipe!(4.0, (recitem!(3, "Copper Ingot")), (recitem!(2, "Steel"))))
+            (recipe!(4.0, (recitem!(3.0, "Copper Ingot")), (recitem!(2.0, "Steel"))))
         );
         res_hash.insert(String::from("Thruster"), thruster);
         /*
@@ -801,10 +801,10 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(5, "Electromagnetic Turbine"),
-                        recitem!(5, "Titanium Alloy")
+                        recitem!(5.0, "Electromagnetic Turbine"),
+                        recitem!(5.0, "Titanium Alloy")
                     ),
-                    (recitem!(4, "Reinforced Thruster"))
+                    (recitem!(4.0, "Reinforced Thruster"))
                 ))
             )
         );
@@ -818,11 +818,11 @@ pub mod itemsmod {
                 (recipe!(
                     3.0,
                     (
-                        recitem!(1, "Energetic Graphite"),
-                        recitem!(3, "Magnet"),
-                        recitem!(2, "Electromagnetic Turbine")
+                        recitem!(1.0, "Energetic Graphite"),
+                        recitem!(3.0, "Magnet"),
+                        recitem!(2.0, "Electromagnetic Turbine")
                     ),
-                    (recitem!(1, "Super-magnetic Ring"))
+                    (recitem!(1.0, "Super-magnetic Ring"))
                 ))
             )
         );
@@ -837,16 +837,16 @@ pub mod itemsmod {
                     recipe!(
                         4.0,
                         (
-                            recitem!(2, "Graphene"),
-                            recitem!(2, "Copper Ingot"),
-                            recitem!(2, "Electromagnetic Turbine")
+                            recitem!(2.0, "Graphene"),
+                            recitem!(2.0, "Copper Ingot"),
+                            recitem!(2.0, "Electromagnetic Turbine")
                         ),
-                        (recitem!(1, "Particle Container"))
+                        (recitem!(1.0, "Particle Container"))
                     ),
                     recipe!(
                         4.0,
-                        (recitem!(2, "Copper Ingot")),
-                        (recitem!(10, "Unipolar Magnet"))
+                        (recitem!(2.0, "Copper Ingot")),
+                        (recitem!(10.0, "Unipolar Magnet"))
                     )
                 )
             )
@@ -861,10 +861,10 @@ pub mod itemsmod {
                 (recipe!(
                     3.0,
                     (
-                        recitem!(1, "Energetic Graphite"),
-                        recitem!(2, "Refined Oil")
+                        recitem!(1.0, "Energetic Graphite"),
+                        recitem!(2.0, "Refined Oil")
                     ),
-                    (recitem!(1, "Plastic"))
+                    (recitem!(1.0, "Plastic"))
                 ))
             )
         );
@@ -879,20 +879,20 @@ pub mod itemsmod {
                     recipe!(
                         6.0,
                         (
-                            recitem!(1, "Water"),
-                            recitem!(1, "Refined Oil"),
-                            recitem!(2, "Plastic")
+                            recitem!(1.0, "Water"),
+                            recitem!(1.0, "Refined Oil"),
+                            recitem!(2.0, "Plastic")
                         ),
-                        (recitem!(1, "Organic Crystal"))
+                        (recitem!(1.0, "Organic Crystal"))
                     ),
                     recipe!(
                         6.0,
                         (
-                            recitem!(10, "Water"),
-                            recitem!(30, "Plant Fuel"),
-                            recitem!(20, "Log"),
+                            recitem!(10.0, "Water"),
+                            recitem!(30.0, "Plant Fuel"),
+                            recitem!(20.0, "Log"),
                         ),
-                        (recitem!(1, "Organic Crystal"))
+                        (recitem!(1.0, "Organic Crystal"))
                     )
                 )
             )
@@ -905,17 +905,17 @@ pub mod itemsmod {
                 Recipe::new(
                     3.0,
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Sulfuric Acid"))),
-                        IsItem::new(ItemAmount::new(3, String::from("Energetic Graphite"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Sulfuric Acid"))),
+                        IsItem::new(ItemAmount::new(3.0, String::from("Energetic Graphite"))),
                     ],
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Graphene")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Graphene")))],
                 ),
                 Recipe::new(
                     2.0,
-                    vec![IsItem::new(ItemAmount::new(2, String::from("Fire Ice")))],
+                    vec![IsItem::new(ItemAmount::new(2.0, String::from("Fire Ice")))],
                     vec![
-                        IsItem::new(ItemAmount::new(1, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(2, String::from("Graphene"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Graphene"))),
                     ],
                 ),
             ],
@@ -930,8 +930,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     20.0,
-                    (recitem!(1, "Processor"), recitem!(1, "Particle Container")),
-                    (recitem!(1, "Annihilation Constraint Sphere"))
+                    (recitem!(1.0, "Processor"), recitem!(1.0, "Particle Container")),
+                    (recitem!(1.0, "Annihilation Constraint Sphere"))
                 ))
             )
         );
@@ -945,11 +945,11 @@ pub mod itemsmod {
                 (recipe!(
                     8.0,
                     (
-                        recitem!(10, "Deuterium"),
-                        recitem!(2, "Iron Ingot"),
-                        recitem!(1, "Particle Container")
+                        recitem!(10.0, "Deuterium"),
+                        recitem!(2.0, "Iron Ingot"),
+                        recitem!(1.0, "Particle Container")
                     ),
-                    (recitem!(1, "Strange Matter"))
+                    (recitem!(1.0, "Strange Matter"))
                 ))
             )
         );
@@ -963,10 +963,10 @@ pub mod itemsmod {
                 (recipe!(
                     4.0,
                     (
-                        recitem!(3, "Titanium Ingot"),
-                        recitem!(1, "Organic Crystal")
+                        recitem!(3.0, "Titanium Ingot"),
+                        recitem!(1.0, "Organic Crystal")
                     ),
-                    (recitem!(1, "Titanium Crystal"))
+                    (recitem!(1.0, "Titanium Crystal"))
                 ))
             )
         );
@@ -980,13 +980,13 @@ pub mod itemsmod {
                 (
                     recipe!(
                         4.0,
-                        (recitem!(1, "Titanium Ingot"), recitem!(3, "Graphene")),
-                        (recitem!(2, "Carbon Nanotube"))
+                        (recitem!(1.0, "Titanium Ingot"), recitem!(3.0, "Graphene")),
+                        (recitem!(2.0, "Carbon Nanotube"))
                     ),
                     recipe!(
                         4.0,
-                        (recitem!(6, "Stalagmite Crystal")),
-                        (recitem!(2, "Carbon Nanotube"))
+                        (recitem!(6.0, "Stalagmite Crystal")),
+                        (recitem!(2.0, "Carbon Nanotube"))
                     )
                 )
             )
@@ -1001,11 +1001,11 @@ pub mod itemsmod {
                 (recipe!(
                     8.0,
                     (
-                        recitem!(1, "Plastic"),
-                        recitem!(2, "Crystal Silicon"),
-                        recitem!(2, "Carbon Nanotube")
+                        recitem!(1.0, "Plastic"),
+                        recitem!(2.0, "Crystal Silicon"),
+                        recitem!(2.0, "Carbon Nanotube")
                     ),
-                    (recitem!(1, "Particle Broadband"))
+                    (recitem!(1.0, "Particle Broadband"))
                 ))
             )
         );
@@ -1020,20 +1020,20 @@ pub mod itemsmod {
                     recipe!(
                         4.0,
                         (
-                            recitem!(12, "Hydrogen"),
-                            recitem!(2, "Graphene"),
-                            recitem!(1, "Titanium Crystal")
+                            recitem!(12.0, "Hydrogen"),
+                            recitem!(2.0, "Graphene"),
+                            recitem!(1.0, "Titanium Crystal")
                         ),
-                        (recitem!(1, "Casimir Crystal"))
+                        (recitem!(1.0, "Casimir Crystal"))
                     ),
                     recipe!(
                         4.0,
                         (
-                            recitem!(12, "Hydrogen"),
-                            recitem!(2, "Graphene"),
-                            recitem!(8, "Grating Crystal")
+                            recitem!(12.0, "Hydrogen"),
+                            recitem!(2.0, "Graphene"),
+                            recitem!(8.0, "Grating Crystal")
                         ),
-                        (recitem!(1, "Casimir Crystal"))
+                        (recitem!(1.0, "Casimir Crystal"))
                     )
                 )
             )
@@ -1048,11 +1048,11 @@ pub mod itemsmod {
                 (recipe!(
                     5.0,
                     (
-                        recitem!(2, "Water"),
-                        recitem!(2, "Titanium Ingot"),
-                        recitem!(2, "Glass")
+                        recitem!(2.0, "Water"),
+                        recitem!(2.0, "Titanium Ingot"),
+                        recitem!(2.0, "Glass")
                     ),
-                    (recitem!(2, "Titanium Glass"))
+                    (recitem!(2.0, "Titanium Glass"))
                 ))
             )
         );
@@ -1066,10 +1066,10 @@ pub mod itemsmod {
                 (recipe!(
                     12.0,
                     (
-                        recitem!(2, "Titanium Glass"),
-                        recitem!(1, "Casimir Crystal")
+                        recitem!(2.0, "Titanium Glass"),
+                        recitem!(1.0, "Casimir Crystal")
                     ),
-                    (recitem!(1, "Plane Filter"))
+                    (recitem!(1.0, "Plane Filter"))
                 ))
             )
         );
@@ -1082,8 +1082,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     6.0,
-                    (recitem!(2, "Plane Filter"), recitem!(2, "Processor")),
-                    (recitem!(1, "Quantum Chip"))
+                    (recitem!(2.0, "Plane Filter"), recitem!(2.0, "Processor")),
+                    (recitem!(1.0, "Quantum Chip"))
                 ))
             )
         );
@@ -1097,8 +1097,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     3.0,
-                    (recitem!(3, "Coal")),
-                    (recitem!(1, "Combustible Unit"))
+                    (recitem!(3.0, "Coal")),
+                    (recitem!(1.0, "Combustible Unit"))
                 ))
             )
         );
@@ -1113,11 +1113,11 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(1, "Processor"),
-                        recitem!(1, "Engine"),
-                        recitem!(2, "Iron Ingot")
+                        recitem!(1.0, "Processor"),
+                        recitem!(1.0, "Engine"),
+                        recitem!(2.0, "Iron Ingot")
                     ),
-                    (recitem!(1, "Logistics Bot"))
+                    (recitem!(1.0, "Logistics Bot"))
                 ))
             )
         );
@@ -1131,11 +1131,11 @@ pub mod itemsmod {
                 (recipe!(
                     4.0,
                     (
-                        recitem!(2, "Thruster"),
-                        recitem!(2, "Processor"),
-                        recitem!(5, "Iron Ingot")
+                        recitem!(2.0, "Thruster"),
+                        recitem!(2.0, "Processor"),
+                        recitem!(5.0, "Iron Ingot")
                     ),
-                    (recitem!(1, "Logistics Drone"))
+                    (recitem!(1.0, "Logistics Drone"))
                 ))
             )
         );
@@ -1149,11 +1149,11 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(2, "Reinforced Thruster"),
-                        recitem!(10, "Processor"),
-                        recitem!(10, "Titanium Alloy")
+                        recitem!(2.0, "Reinforced Thruster"),
+                        recitem!(10.0, "Processor"),
+                        recitem!(10.0, "Titanium Alloy")
                     ),
-                    (recitem!(1, "Interstellar Logistics Vessel"))
+                    (recitem!(1.0, "Interstellar Logistics Vessel"))
                 ))
             )
         );
@@ -1166,8 +1166,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     6.0,
-                    (recitem!(1, "Strange Matter"), recitem!(4, "Diamond")),
-                    (recitem!(1, "Graviton Lens"))
+                    (recitem!(1.0, "Strange Matter"), recitem!(4.0, "Diamond")),
+                    (recitem!(1.0, "Graviton Lens"))
                 ))
             )
         );
@@ -1181,13 +1181,13 @@ pub mod itemsmod {
                 (
                     recipe!(
                         10.0,
-                        (recitem!(1, "Graviton Lens")),
-                        (recitem!(1, "Space Warper"))
+                        (recitem!(1.0, "Graviton Lens")),
+                        (recitem!(1.0, "Space Warper"))
                     ),
                     recipe!(
                         10.0,
-                        (recitem!(1, "Gravity Matrix")),
-                        (recitem!(8, "Space Warper"))
+                        (recitem!(1.0, "Gravity Matrix")),
+                        (recitem!(8.0, "Space Warper"))
                     )
                 )
             )
@@ -1201,8 +1201,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     1.0,
-                    (recitem!(1, "Steel"), recitem!(3, "Stone Brick")),
-                    (recitem!(1, "Foundation"))
+                    (recitem!(1.0, "Steel"), recitem!(3.0, "Stone Brick")),
+                    (recitem!(1.0, "Foundation"))
                 ))
             )
         );
@@ -1216,8 +1216,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     0.5,
-                    (recitem!(1, "Coal")),
-                    (recitem!(1, "Proliferator Mk.I"))
+                    (recitem!(1.0, "Coal")),
+                    (recitem!(1.0, "Proliferator Mk.I"))
                 ))
             )
         );
@@ -1230,8 +1230,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     1.0,
-                    (recitem!(1, "Diamond"), recitem!(2, "Proliferator Mk.I")),
-                    (recitem!(1, "Proliferator Mk.II"))
+                    (recitem!(1.0, "Diamond"), recitem!(2.0, "Proliferator Mk.I")),
+                    (recitem!(1.0, "Proliferator Mk.II"))
                 ))
             )
         );
@@ -1244,8 +1244,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     1.0,
-                    (recitem!(1, "Diamond"), recitem!(2, "Proliferator Mk.II")),
-                    (recitem!(1, "Proliferator Mk.III"))
+                    (recitem!(1.0, "Diamond"), recitem!(2.0, "Proliferator Mk.II")),
+                    (recitem!(1.0, "Proliferator Mk.III"))
                 ))
             )
         );
@@ -1259,8 +1259,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     6.0,
-                    (recitem!(10, "Hydrogen"), recitem!(1, "Titanium Ingot")),
-                    (recitem!(2, "Hydrogen Fuel Rod"))
+                    (recitem!(10.0, "Hydrogen"), recitem!(1.0, "Titanium Ingot")),
+                    (recitem!(2.0, "Hydrogen Fuel Rod"))
                 ))
             )
         );
@@ -1274,11 +1274,11 @@ pub mod itemsmod {
                 (recipe!(
                     12.0,
                     (
-                        recitem!(1, "Super-magnetic Ring"),
-                        recitem!(20, "Deuterium"),
-                        recitem!(1, "Titanium Alloy")
+                        recitem!(1.0, "Super-magnetic Ring"),
+                        recitem!(20.0, "Deuterium"),
+                        recitem!(1.0, "Titanium Alloy")
                     ),
-                    (recitem!(2, "Deuterium Fuel Rod"))
+                    (recitem!(2.0, "Deuterium Fuel Rod"))
                 ))
             )
         );
@@ -1292,12 +1292,12 @@ pub mod itemsmod {
                 (recipe!(
                     24.0,
                     (
-                        recitem!(1, "Titanium Alloy"),
-                        recitem!(1, "Annihilation Constraint Sphere"),
-                        recitem!(12, "Hydrogen"),
-                        recitem!(12, "Antimatter")
+                        recitem!(1.0, "Titanium Alloy"),
+                        recitem!(1.0, "Annihilation Constraint Sphere"),
+                        recitem!(12.0, "Hydrogen"),
+                        recitem!(12.0, "Antimatter")
                     ),
-                    (recitem!(2, "Antimatter Fuel Rod"))
+                    (recitem!(2.0, "Antimatter Fuel Rod"))
                 ))
             )
         );
@@ -1311,12 +1311,12 @@ pub mod itemsmod {
                 (recipe!(
                     32.0,
                     (
-                        recitem!(1, "Frame Material"),
-                        recitem!(2, "Strange Matter"),
-                        recitem!(1, "Core Element"),
-                        recitem!(8, "Antimatter Fuel Rod")
+                        recitem!(1.0, "Frame Material"),
+                        recitem!(2.0, "Strange Matter"),
+                        recitem!(1.0, "Core Element"),
+                        recitem!(8.0, "Antimatter Fuel Rod")
                     ),
-                    (recitem!(1, "Strange Annihilation Fuel Rod"))
+                    (recitem!(1.0, "Strange Annihilation Fuel Rod"))
                 ))
             )
         );
@@ -1330,8 +1330,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     4.0,
-                    (recitem!(1, "Photon Combiner"), recitem!(1, "Graphene")),
-                    (recitem!(2, "Solar Sail"))
+                    (recitem!(1.0, "Photon Combiner"), recitem!(1.0, "Graphene")),
+                    (recitem!(2.0, "Solar Sail"))
                 ))
             )
         );
@@ -1345,11 +1345,11 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(1, "High-purity Silicon"),
-                        recitem!(1, "Titanium Alloy"),
-                        recitem!(4, "Carbon Nanotube")
+                        recitem!(1.0, "High-purity Silicon"),
+                        recitem!(1.0, "Titanium Alloy"),
+                        recitem!(4.0, "Carbon Nanotube")
                     ),
-                    (recitem!(1, "Frame Material"))
+                    (recitem!(1.0, "Frame Material"))
                 ))
             )
         );
@@ -1363,11 +1363,11 @@ pub mod itemsmod {
                 (recipe!(
                     8.0,
                     (
-                        recitem!(3, "Processor"),
-                        recitem!(3, "Solar Sail"),
-                        recitem!(3, "Frame Material")
+                        recitem!(3.0, "Processor"),
+                        recitem!(3.0, "Solar Sail"),
+                        recitem!(3.0, "Frame Material")
                     ),
-                    (recitem!(1, "Dyson Sphere Component"))
+                    (recitem!(1.0, "Dyson Sphere Component"))
                 ))
             )
         );
@@ -1381,11 +1381,11 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(2, "Quantum Chip"),
-                        recitem!(4, "Deuterium Fuel Rod"),
-                        recitem!(2, "Dyson Sphere Component")
+                        recitem!(2.0, "Quantum Chip"),
+                        recitem!(4.0, "Deuterium Fuel Rod"),
+                        recitem!(2.0, "Dyson Sphere Component")
                     ),
-                    (recitem!(1, "Small Carrier Rocket"))
+                    (recitem!(1.0, "Small Carrier Rocket"))
                 ))
             )
         );
@@ -1399,8 +1399,8 @@ pub mod itemsmod {
                 (Lab),
                 (recipe!(
                     3.0,
-                    (recitem!(1, "Circuit Board"), recitem!(1, "Magnetic Coil")),
-                    (recitem!(1, "Electromagnetic Matrix"))
+                    (recitem!(1.0, "Circuit Board"), recitem!(1.0, "Magnetic Coil")),
+                    (recitem!(1.0, "Electromagnetic Matrix"))
                 ))
             )
         );
@@ -1413,8 +1413,8 @@ pub mod itemsmod {
                 (Lab),
                 (recipe!(
                     6.0,
-                    (recitem!(2, "Hydrogen"), recitem!(2, "Energetic Graphite")),
-                    (recitem!(1, "Energy Matrix"))
+                    (recitem!(2.0, "Hydrogen"), recitem!(2.0, "Energetic Graphite")),
+                    (recitem!(1.0, "Energy Matrix"))
                 ))
             )
         );
@@ -1427,8 +1427,8 @@ pub mod itemsmod {
                 (Lab),
                 (recipe!(
                     8.0,
-                    (recitem!(1, "Titanium Crystal"), recitem!(1, "Diamond")),
-                    (recitem!(1, "Structure Matrix"))
+                    (recitem!(1.0, "Titanium Crystal"), recitem!(1.0, "Diamond")),
+                    (recitem!(1.0, "Structure Matrix"))
                 ))
             )
         );
@@ -1441,8 +1441,8 @@ pub mod itemsmod {
                 (Lab),
                 (recipe!(
                     10.0,
-                    (recitem!(1, "Particle Broadband"), recitem!(2, "Processor")),
-                    (recitem!(1, "Information Matrix"))
+                    (recitem!(1.0, "Particle Broadband"), recitem!(2.0, "Processor")),
+                    (recitem!(1.0, "Information Matrix"))
                 ))
             )
         );
@@ -1455,8 +1455,8 @@ pub mod itemsmod {
                 (Lab),
                 (recipe!(
                     24.0,
-                    (recitem!(1, "Quantum Chip"), recitem!(1, "Graviton Lens")),
-                    (recitem!(2, "Gravity Matrix"))
+                    (recitem!(1.0, "Quantum Chip"), recitem!(1.0, "Graviton Lens")),
+                    (recitem!(2.0, "Gravity Matrix"))
                 ))
             )
         );
@@ -1470,14 +1470,14 @@ pub mod itemsmod {
                 (recipe!(
                     15.0,
                     (
-                        recitem!(1, "Electromagnetic Matrix"),
-                        recitem!(1, "Energy Matrix"),
-                        recitem!(1, "Structure Matrix"),
-                        recitem!(1, "Information Matrix"),
-                        recitem!(1, "Gravity Matrix"),
-                        recitem!(1, "Antimatter")
+                        recitem!(1.0, "Electromagnetic Matrix"),
+                        recitem!(1.0, "Energy Matrix"),
+                        recitem!(1.0, "Structure Matrix"),
+                        recitem!(1.0, "Information Matrix"),
+                        recitem!(1.0, "Gravity Matrix"),
+                        recitem!(1.0, "Antimatter")
                     ),
-                    (recitem!(1, "Universe Matrix"))
+                    (recitem!(1.0, "Universe Matrix"))
                 ))
             )
         );
@@ -1491,8 +1491,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     1.0,
-                    (recitem!(1, "Copper Ingot")),
-                    (recitem!(1, "Magnum Ammo Box"))
+                    (recitem!(1.0, "Copper Ingot")),
+                    (recitem!(1.0, "Magnum Ammo Box"))
                 ))
             )
         );
@@ -1506,10 +1506,10 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(2, "Titanium Ingot"),
-                        recitem!(1, "Magnum Ammo Box")
+                        recitem!(2.0, "Titanium Ingot"),
+                        recitem!(1.0, "Magnum Ammo Box")
                     ),
-                    (recitem!(1, "Titanium Ammo Box"))
+                    (recitem!(1.0, "Titanium Ammo Box"))
                 ))
             )
         );
@@ -1523,10 +1523,10 @@ pub mod itemsmod {
                 (recipe!(
                     3.0,
                     (
-                        recitem!(1, "Titanium Alloy"),
-                        recitem!(1, "Titanium Ammo Box")
+                        recitem!(1.0, "Titanium Alloy"),
+                        recitem!(1.0, "Titanium Ammo Box")
                     ),
-                    (recitem!(1, "Superalloy Ammo Box"))
+                    (recitem!(1.0, "Superalloy Ammo Box"))
                 ))
             )
         );
@@ -1540,11 +1540,11 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(1, "Sulfuric Acid"),
-                        recitem!(2, "Plastic"),
-                        recitem!(2, "Combustible Unit")
+                        recitem!(1.0, "Sulfuric Acid"),
+                        recitem!(2.0, "Plastic"),
+                        recitem!(2.0, "Combustible Unit")
                     ),
-                    (recitem!(2, "Explosive Unit"))
+                    (recitem!(2.0, "Explosive Unit"))
                 ))
             )
         );
@@ -1558,11 +1558,11 @@ pub mod itemsmod {
                 (recipe!(
                     24.0,
                     (
-                        recitem!(8, "Crystal Silicon"),
-                        recitem!(1, "Casimir Crystal"),
-                        recitem!(8, "Explosive Unit")
+                        recitem!(8.0, "Crystal Silicon"),
+                        recitem!(1.0, "Casimir Crystal"),
+                        recitem!(8.0, "Explosive Unit")
                     ),
-                    (recitem!(8, "Crystal Explosive Unit"))
+                    (recitem!(8.0, "Crystal Explosive Unit"))
                 ))
             )
         );
@@ -1576,12 +1576,12 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(1, "Engine"),
-                        recitem!(2, "Combustible Unit"),
-                        recitem!(3, "Circuit Board"),
-                        recitem!(6, "Copper Ingot")
+                        recitem!(1.0, "Engine"),
+                        recitem!(2.0, "Combustible Unit"),
+                        recitem!(3.0, "Circuit Board"),
+                        recitem!(6.0, "Copper Ingot")
                     ),
-                    (recitem!(1, "Missile Set"))
+                    (recitem!(1.0, "Missile Set"))
                 ))
             )
         );
@@ -1595,12 +1595,12 @@ pub mod itemsmod {
                 (recipe!(
                     4.0,
                     (
-                        recitem!(2, "Thruster"),
-                        recitem!(4, "Explosive Unit"),
-                        recitem!(4, "Processor"),
-                        recitem!(2, "Missile Set")
+                        recitem!(2.0, "Thruster"),
+                        recitem!(4.0, "Explosive Unit"),
+                        recitem!(4.0, "Processor"),
+                        recitem!(2.0, "Missile Set")
                     ),
-                    (recitem!(2, "Supersonic Missile Set"))
+                    (recitem!(2.0, "Supersonic Missile Set"))
                 ))
             )
         );
@@ -1614,11 +1614,11 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(3, "Strange Matter"),
-                        recitem!(6, "Crystal Explosive Unit"),
-                        recitem!(3, "Supersonic Missile Set")
+                        recitem!(3.0, "Strange Matter"),
+                        recitem!(6.0, "Crystal Explosive Unit"),
+                        recitem!(3.0, "Supersonic Missile Set")
                     ),
-                    (recitem!(3, "Gravity Missile Set"))
+                    (recitem!(3.0, "Gravity Missile Set"))
                 ))
             )
         );
@@ -1631,8 +1631,8 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     1.5,
-                    (recitem!(2, "Explosive Unit"), recitem!(9, "Copper Ingot")),
-                    (recitem!(1, "Shell Set"))
+                    (recitem!(2.0, "Explosive Unit"), recitem!(9.0, "Copper Ingot")),
+                    (recitem!(1.0, "Shell Set"))
                 ))
             )
         );
@@ -1646,11 +1646,11 @@ pub mod itemsmod {
                 (recipe!(
                     3.0,
                     (
-                        recitem!(2, "Explosive Unit"),
-                        recitem!(6, "Titanium Ingot"),
-                        recitem!(1, "Shell Set")
+                        recitem!(2.0, "Explosive Unit"),
+                        recitem!(6.0, "Titanium Ingot"),
+                        recitem!(1.0, "Shell Set")
                     ),
-                    (recitem!(1, "High-Explosive Shell Set"))
+                    (recitem!(1.0, "High-Explosive Shell Set"))
                 ))
             )
         );
@@ -1664,11 +1664,11 @@ pub mod itemsmod {
                 (recipe!(
                     6.0,
                     (
-                        recitem!(2, "Crystal Explosive Unit"),
-                        recitem!(3, "Titanium Ingot"),
-                        recitem!(1, "High-Explosive Shell Set")
+                        recitem!(2.0, "Crystal Explosive Unit"),
+                        recitem!(3.0, "Titanium Ingot"),
+                        recitem!(1.0, "High-Explosive Shell Set")
                     ),
-                    (recitem!(1, "Crystal Shell Set"))
+                    (recitem!(1.0, "Crystal Shell Set"))
                 ))
             )
         );
@@ -1682,11 +1682,11 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(10, "Deuterium"),
-                        recitem!(2, "Magnet"),
-                        recitem!(1, "Graphene")
+                        recitem!(10.0, "Deuterium"),
+                        recitem!(2.0, "Magnet"),
+                        recitem!(1.0, "Graphene")
                     ),
-                    (recitem!(1, "Plasma Capsule"))
+                    (recitem!(1.0, "Plasma Capsule"))
                 ))
             )
         );
@@ -1700,12 +1700,12 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(10, "Antimatter"),
-                        recitem!(10, "Hydrogen"),
-                        recitem!(1, "Particle Container"),
-                        recitem!(1, "Plasma Capsule")
+                        recitem!(10.0, "Antimatter"),
+                        recitem!(10.0, "Hydrogen"),
+                        recitem!(1.0, "Particle Container"),
+                        recitem!(1.0, "Plasma Capsule")
                     ),
-                    (recitem!(1, "Antimatter Capsule"))
+                    (recitem!(1.0, "Antimatter Capsule"))
                 ))
             )
         );
@@ -1719,11 +1719,11 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(3, "Hydrogen"),
-                        recitem!(1, "Plasma Exciter"),
-                        recitem!(1, "Electromagnetic Turbine")
+                        recitem!(3.0, "Hydrogen"),
+                        recitem!(1.0, "Plasma Exciter"),
+                        recitem!(1.0, "Electromagnetic Turbine")
                     ),
-                    (recitem!(1, "Jamming Capsule"))
+                    (recitem!(1.0, "Jamming Capsule"))
                 ))
             )
         );
@@ -1737,11 +1737,11 @@ pub mod itemsmod {
                 (recipe!(
                     8.0,
                     (
-                        recitem!(2, "Glass"),
-                        recitem!(1, "Super-magnetic Ring"),
-                        recitem!(2, "Jamming Capsule")
+                        recitem!(2.0, "Glass"),
+                        recitem!(1.0, "Super-magnetic Ring"),
+                        recitem!(2.0, "Jamming Capsule")
                     ),
-                    (recitem!(2, "Suppressing Capsule"))
+                    (recitem!(2.0, "Suppressing Capsule"))
                 ))
             )
         );
@@ -1756,12 +1756,12 @@ pub mod itemsmod {
                 (recipe!(
                     2.0,
                     (
-                        recitem!(1, "Plasma Exciter"),
-                        recitem!(2, "Circuit Board"),
-                        recitem!(1, "Engine"),
-                        recitem!(3, "Iron Ingot")
+                        recitem!(1.0, "Plasma Exciter"),
+                        recitem!(2.0, "Circuit Board"),
+                        recitem!(1.0, "Engine"),
+                        recitem!(3.0, "Iron Ingot")
                     ),
-                    (recitem!(1, "Prototype"))
+                    (recitem!(1.0, "Prototype"))
                 ))
             )
         );
@@ -1775,12 +1775,12 @@ pub mod itemsmod {
                 (recipe!(
                     4.0,
                     (
-                        recitem!(2, "Photon Combiner"),
-                        recitem!(2, "Circuit Board"),
-                        recitem!(1, "Electromagnetic Turbine"),
-                        recitem!(1, "Prototype")
+                        recitem!(2.0, "Photon Combiner"),
+                        recitem!(2.0, "Circuit Board"),
+                        recitem!(1.0, "Electromagnetic Turbine"),
+                        recitem!(1.0, "Prototype")
                     ),
-                    (recitem!(1, "Precision Drone"))
+                    (recitem!(1.0, "Precision Drone"))
                 ))
             )
         );
@@ -1794,12 +1794,12 @@ pub mod itemsmod {
                 (recipe!(
                     4.0,
                     (
-                        recitem!(1, "Particle Container"),
-                        recitem!(1, "Processor"),
-                        recitem!(1, "Electromagnetic Turbine"),
-                        recitem!(1, "Prototype")
+                        recitem!(1.0, "Particle Container"),
+                        recitem!(1.0, "Processor"),
+                        recitem!(1.0, "Electromagnetic Turbine"),
+                        recitem!(1.0, "Prototype")
                     ),
-                    (recitem!(1, "Attack Drone"))
+                    (recitem!(1.0, "Attack Drone"))
                 ))
             )
         );
@@ -1813,12 +1813,12 @@ pub mod itemsmod {
                 (recipe!(
                     5.0,
                     (
-                        recitem!(3, "Particle Container"),
-                        recitem!(2, "Processor"),
-                        recitem!(1, "Reinforced Thruster"),
-                        recitem!(5, "Titanium Alloy")
+                        recitem!(3.0, "Particle Container"),
+                        recitem!(2.0, "Processor"),
+                        recitem!(1.0, "Reinforced Thruster"),
+                        recitem!(5.0, "Titanium Alloy")
                     ),
-                    (recitem!(1, "Corvette"))
+                    (recitem!(1.0, "Corvette"))
                 ))
             )
         );
@@ -1832,12 +1832,12 @@ pub mod itemsmod {
                 (recipe!(
                     8.0,
                     (
-                        recitem!(1, "Strange Matter"),
-                        recitem!(4, "Processor"),
-                        recitem!(4, "Reinforced Thruster"),
-                        recitem!(20, "Frame Material")
+                        recitem!(1.0, "Strange Matter"),
+                        recitem!(4.0, "Processor"),
+                        recitem!(4.0, "Reinforced Thruster"),
+                        recitem!(20.0, "Frame Material")
                     ),
-                    (recitem!(1, "Destroyer"))
+                    (recitem!(1.0, "Destroyer"))
                 ))
             )
         );
