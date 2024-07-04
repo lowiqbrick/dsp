@@ -77,6 +77,7 @@ pub mod item_logic {
     pub struct ItemResult {
         pub describer: String,
         pub name: String,
+        pub target_rate: f32,
         pub num_station: f32,
         pub station: Vec<ManFac>,
         pub requirements: Vec<ItemAmount>,
@@ -86,6 +87,7 @@ pub mod item_logic {
         fn new(
             describer: String,
             name: String,
+            target_rate: f32,
             num_station: f32,
             station: Vec<ManFac>,
             requirements: Vec<ItemAmount>,
@@ -93,6 +95,7 @@ pub mod item_logic {
             ItemResult {
                 describer,
                 name,
+                target_rate,
                 num_station,
                 station,
                 requirements,
@@ -104,7 +107,7 @@ pub mod item_logic {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             // write all things with static values
             write!(f, "{}\n", self.describer)?;
-            write!(f, "item target rate: {:.1}\n", self.num_station)?;
+            write!(f, "item target rate: {:.1}\n", self.target_rate)?;
             write!(
                 f,
                 "buildings to build: {} {:?} ({:.1})",
@@ -182,9 +185,11 @@ pub mod item_logic {
                 new_path.clone(),
                 item_name.clone(),
                 -1.0,
+                -1.0,
                 vec![ManFac::Origin],
                 vec![],
             );
+            result_var.target_rate = item_per_sec;
             // write item information in result if the output
             // is supposed to be merged
             let mut is_adding_new_item: bool = false;
@@ -195,6 +200,7 @@ pub mod item_logic {
                     Some(existing_result) => {
                         result_var.name = existing_result.name.clone();
                         result_var.describer = existing_result.describer.clone();
+                        result_var.target_rate = existing_result.target_rate;
                         result_var.num_station = existing_result.num_station;
                         result_var.station = existing_result.station.clone();
                         result_var.requirements = existing_result.requirements.clone();
