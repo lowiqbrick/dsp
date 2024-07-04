@@ -263,7 +263,7 @@ pub mod items {
             is_proliferated = false;
         }
         match item_hashmap.get(&settings.produced_item.item) {
-            // set of creation of the crafting chain
+            // set off creation of the crafting chain
             Some(item) => {
                 item.crafting_chain(
                     settings.produced_item.item.clone(), 

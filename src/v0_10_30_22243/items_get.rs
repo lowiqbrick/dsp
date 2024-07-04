@@ -54,7 +54,7 @@ pub mod itemsmod {
         let silicon_ore: Item = Item::new(
             "Silicon Ore",
             // also minable
-            vec![ManFac::Furnace],
+            vec![ManFac::Furnace, ManFac::Origin],
             vec![Recipe::new(
                 10.0,
                 vec![IsItem::new(ItemAmount::new(10, String::from("Stone")))],
@@ -105,7 +105,7 @@ pub mod itemsmod {
         let gear: Item;
         let hydrogen: Item = Item::new(
             "Hydrogen",
-            vec![ManFac::ChemicalPlant, ManFac::OilRefinery],
+            vec![ManFac::ChemicalPlant, ManFac::OilRefinery, ManFac::Origin],
             vec![
                 Recipe::new(
                     4.0,

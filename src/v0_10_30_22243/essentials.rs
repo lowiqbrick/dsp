@@ -193,6 +193,7 @@ pub mod item_logic {
                 result_order.push(result_var.describer.clone());
             } else {
                 result_order.push(new_path.clone());
+                is_adding_new_item = true;
             }
             // get a copy of the requested item from the item hashmap
             // after this match item_name can be assumed to be a valid key
@@ -368,7 +369,8 @@ pub mod item_logic {
                                 ingredient.item.clone()));
                     }
                     IsItem::NAI => {
-                        panic!("function 'crafting_chain' was called on something with no ingredient");
+                        // do nothing
+                        print!("");
                     }
                 }
             }
@@ -379,8 +381,12 @@ pub mod item_logic {
             }
             // sanity checks on result_var
             assert_ne!(result_var.num_station, -1.0);
-            assert_ne!(result_var.station, vec!(ManFac::Origin));
-            assert_ne!(result_var.requirements, vec![]);
+            let help_assert: String = String::from(current_item.name);
+            // only assert if the item doesn't have vec!(ManFac::Origin) naturally
+            if !settings.basics.contains(&help_assert) {
+                assert_ne!(result_var.station, vec!(ManFac::Origin), "result doesn't have a crafting station");
+                assert_ne!(result_var.requirements, vec![]);
+            }
             // write results into hashmap
             if is_adding_new_item {
                 if settings.merge {
@@ -503,6 +509,7 @@ pub mod item_logic {
         pub item_recipe: Vec<ItemAmount>,
         pub merge: bool,
         pub assume_basics: bool,
+        pub basics: Vec<String>,
         pub produced_item: ItemAmount,
     }
     impl ProgamInfo {
@@ -519,6 +526,30 @@ pub mod item_logic {
             assume_basics: bool,
             produced_item: ItemAmount,
         ) -> ProgamInfo {
+            let basics = vec![
+                String::from("Iron Ore"),
+                String::from("Copper Ore"),
+                String::from("Stone"),
+                String::from("Coal"),
+                String::from("Silicon Ore"),
+                String::from("Titanium Ore"),
+                String::from("Water"),
+                String::from("Crude Oil"),
+                String::from("Core Element"),
+                String::from("Critical Photon"),
+                String::from("Kimberlite Ore"),
+                String::from("Fractal Silicon"),
+                String::from("Grating Crystal"),
+                String::from("Stalagmite Crystal"),
+                String::from("Unipolar Magnet"),
+                String::from("Fire Ice"),
+                String::from("Log"),
+                String::from("Plant Fuel"),
+                String::from("Dark Fog Matrix"),
+                String::from("Energy Shard"),
+                String::from("Silicon-based Neuron"),
+                String::from("Negentropy Singularity"),
+                String::from("Matter Recombinator")];
             ProgamInfo {
                 proliferators,
                 chemlab,
@@ -530,6 +561,7 @@ pub mod item_logic {
                 item_recipe,
                 merge,
                 assume_basics,
+                basics: basics.clone(),
                 produced_item,
             }
         }
