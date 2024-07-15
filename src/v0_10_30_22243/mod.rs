@@ -231,10 +231,10 @@ pub mod items {
                                 let recipe_tot_num = item_clone.recipes.len();
                                 // add item to vector if recipe number is a valid index for the vector
                                 if recipe_tot_num - 1 >= recipe_num as usize {
-                                    settings
-                                        .item_recipe
-                                        .push(ItemAmount::new(recipe_num as f32, 
-                                            args[index].clone()));
+                                    settings.item_recipe.push(ItemAmount::new(
+                                        recipe_num as f32,
+                                        args[index].clone(),
+                                    ));
                                 }
                             }
                             None => eprintln!("item not in hashmap"),
@@ -255,7 +255,7 @@ pub mod items {
             }
         }
         // Debugging only
-        // println!("{:?}", settings);
+        println!("{:?}", settings);
         // call method on item
         let mut result_order: Vec<String> = vec![];
         let mut result: HashMap<String, ItemResult> = HashMap::new();
@@ -283,6 +283,9 @@ pub mod items {
                 panic!("requested item not in crafting recipes");
             }
         }
+        // Debugging only
+        println!("\nresult order vector: {:?}\n", result_order);
+        println!("result vector: {:?}\n", result);
         let vector_len: usize = result_order.len();
         for (index, result_string) in result_order.clone().iter().enumerate() {
             match result.get(result_string) {

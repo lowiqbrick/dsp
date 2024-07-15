@@ -108,15 +108,16 @@ pub mod item_logic {
             // write all things with static values
             write!(f, "{}\n", self.describer)?;
             write!(f, "item target rate: {:.1}\n", self.target_rate)?;
-            write!(
-                f,
-                "buildings to build: {} {:?} ({:.1})",
-                self.num_station.ceil(),
-                self.station,
-                self.num_station
-            )?;
             if self.station != vec![ManFac::Origin] {
+                write!(
+                    f,
+                    "buildings to build: {} {:?} ({:.1})",
+                    self.num_station.ceil(),
+                    self.station,
+                    self.num_station
+                )?;
                 write!(f, "\n")?;
+                write!(f, "this requires the following (per second):\n")?;
                 // write vector
                 for (index, amount) in self.requirements.clone().iter().enumerate() {
                     // tab
@@ -173,22 +174,37 @@ pub mod item_logic {
             // get all items
             let mut items_map: HashMap<String, Item> = HashMap::new();
             items_map = get_items(items_map);
-            // create result variable
             let mut new_path: String = String::from(&item_name);
             if !is_first_item {
                 new_path.extend([" -> "]);
             }
             new_path.extend([prev_path.clone()]);
             prev_path = new_path.clone();
+            // create result variable
+            let mut result_var: ItemResult;
             // initialise result with default values
-            let mut result_var: ItemResult = ItemResult::new(
-                new_path.clone(),
-                item_name.clone(),
-                -1.0,
-                -1.0,
-                vec![ManFac::Origin],
-                vec![],
-            );
+            if settings.merge {
+                result_var = ItemResult::new(
+                    // if results ar to be merged no ellaborate paths
+                    // just the items name
+                    item_name.clone(),
+                    item_name.clone(),
+                    -1.0,
+                    -1.0,
+                    vec![ManFac::Origin],
+                    vec![],
+                );
+            } else {
+                result_var = ItemResult::new(
+                    new_path.clone(),
+                    item_name.clone(),
+                    -1.0,
+                    -1.0,
+                    vec![ManFac::Origin],
+                    vec![],
+                );
+            }
+            // save desired target rate for item
             result_var.target_rate = item_per_sec;
             // write item information in result if the output
             // is supposed to be merged
@@ -200,7 +216,8 @@ pub mod item_logic {
                     Some(existing_result) => {
                         result_var.name = existing_result.name.clone();
                         result_var.describer = existing_result.describer.clone();
-                        result_var.target_rate = existing_result.target_rate;
+                        result_var.target_rate =
+                            existing_result.target_rate + result_var.target_rate;
                         result_var.num_station = existing_result.num_station;
                         result_var.station = existing_result.station.clone();
                         result_var.requirements = existing_result.requirements.clone();
@@ -209,7 +226,10 @@ pub mod item_logic {
                         is_adding_new_item = true;
                     }
                 }
-                result_order.push(result_var.describer.clone());
+                // only add String if not yet present
+                if !result_order.contains(&item_name) {
+                    result_order.push(item_name.clone());
+                }
             } else {
                 result_order.push(new_path.clone());
                 is_adding_new_item = true;
@@ -232,7 +252,7 @@ pub mod item_logic {
                     // sanity check; is the given recipe index valid?
                     if current_recipe_index + 1 > current_item.recipes.len() {
                         panic!(
-                            "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot -1?",
+                            "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
                             item_name,
                             current_recipe_index,
                             current_item.recipes.len()
@@ -375,7 +395,7 @@ pub mod item_logic {
                 panic!("item rate was modified multiple times ({})", manfac_counter);
             }
             // calculate how many crafting machines are required for matching troughput
-            let manvac_count: f32 = item_per_sec / net_output_machine;
+            let manvac_count: f32 = result_var.target_rate / net_output_machine;
             // putting everything together
             let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
             // apply modifier
@@ -383,7 +403,8 @@ pub mod item_logic {
                 match isitem {
                     IsItem::Item(ingredient) => {
                         output_machine_ingredients.push(ItemAmount::new(
-                            ingredient.amount * manvac_count,
+                            (ingredient.amount * manvac_count)
+                                / current_item.recipes[current_recipe_index].crafting_time,
                             ingredient.item.clone(),
                         ));
                     }
@@ -456,7 +477,8 @@ pub mod item_logic {
                         Some(call_item) => {
                             call_item.crafting_chain(
                                 String::from(call_item.name),
-                                real_ingredient.amount as f32 * manvac_count,
+                                (real_ingredient.amount as f32 * manvac_count)
+                                    / current_item.recipes[current_recipe_index].crafting_time,
                                 &settings,
                                 result_order,
                                 result,
