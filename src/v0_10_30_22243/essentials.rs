@@ -400,7 +400,7 @@ pub mod item_logic {
                 panic!("item rate was modified multiple times ({})", manfac_counter);
             }
             // calculate how many crafting machines are required for matching troughput
-            let manvac_count: f32 = result_var.target_rate / net_output_machine;
+            let manvac_count: f32 = item_per_sec / net_output_machine;
             // calculate the multiplier for the amount of ingredients required
             let current_proliferator_factor: f32;
             if is_proliferated {
@@ -411,7 +411,6 @@ pub mod item_logic {
             let ingredient_multiplicator: f32 = ((item_per_sec / current_recipe.crafting_time)
                 / net_output_per_second)
                 / current_proliferator_factor;
-                println!("({})({})({})({})", item_per_sec, current_recipe.crafting_time, net_output_per_second, current_proliferator_factor);
             // putting everything together
             let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
             // apply modifier
@@ -429,7 +428,18 @@ pub mod item_logic {
                     }
                 }
             }
-            result_var.num_station = manvac_count;
+            if settings.merge {
+                if is_adding_new_item {
+                    result_var.num_station = manvac_count;
+                    println!("new item {} requires {} stations", current_item.name, manvac_count);
+                } else {
+                    print!("item {} went with {} addiionsal stations from {} station to", current_item.name, manvac_count, result_var.num_station);
+                    result_var.num_station += manvac_count;
+                    println!(" {} stations", result_var.num_station);
+                }
+            } else {
+                result_var.num_station = manvac_count;
+            }
             result_var.requirements = output_machine_ingredients;
             if result_var.station == vec![ManFac::Origin] {
                 result_var.station = current_item.creation_facility.clone();
@@ -458,8 +468,10 @@ pub mod item_logic {
                     // increase the values already present
                     match result.get_mut(&result_var.name) {
                         Some(found_item) => {
-                            // increase required prodiction rate
-                            found_item.num_station += result_var.num_station;
+                            // increase amount of required items per minute
+                            found_item.target_rate += item_per_sec;
+                            // increase required prodiction buildings
+                            found_item.num_station = result_var.num_station;
                             // increase the required ingrediences
                             for (index, _found_ingredient) in
                                 found_item.requirements.clone().iter().enumerate()
