@@ -146,6 +146,25 @@ pub mod item_logic {
         };
     }
 
+    /// an function to return the current proliferation factor based on curent settings
+    fn prolif_factor(settings: &ProgamInfo) -> f32 {
+        let factor = match settings.proliferators {
+            Proliferator::MKone => {
+                1.125
+            }
+            Proliferator::MKtwo => {
+                1.2
+            }
+            Proliferator::MKthree => {
+                1.25
+            }
+            Proliferator::None => {
+                1.0
+            }
+        };
+        factor
+    }
+
     impl<'a> Item<'a> {
         pub fn new(name: &'a str, creation_facility: Vec<ManFac>, recipes: Vec<Recipe>) -> Item {
             Item {
@@ -214,8 +233,6 @@ pub mod item_logic {
                 // if not remember that a new one needs to be created
                 match result.get(&item_name) {
                     Some(existing_result) => {
-                        result_var.name = existing_result.name.clone();
-                        result_var.describer = existing_result.describer.clone();
                         result_var.target_rate =
                             existing_result.target_rate + result_var.target_rate;
                         result_var.num_station = existing_result.num_station;
@@ -318,20 +335,8 @@ pub mod item_logic {
                     }
                 }
                 if !no_proliferation_vector {
-                    match settings.proliferators {
-                        Proliferator::MKone => {
-                            net_output_proliferated = net_output_proliferated * 1.125;
-                        }
-                        Proliferator::MKtwo => {
-                            net_output_proliferated = net_output_proliferated * 1.2;
-                        }
-                        Proliferator::MKthree => {
-                            net_output_proliferated = net_output_proliferated * 1.25;
-                        }
-                        Proliferator::None => {
-                            print!("");
-                        }
-                    }
+                    let prolif_factor: f32 = prolif_factor(settings);
+                    net_output_proliferated = net_output_proliferated * prolif_factor;
                 }
             }
             // handle the different crafting stations
@@ -396,6 +401,17 @@ pub mod item_logic {
             }
             // calculate how many crafting machines are required for matching troughput
             let manvac_count: f32 = result_var.target_rate / net_output_machine;
+            // calculate the multiplier for the amount of ingredients required
+            let current_proliferator_factor: f32;
+            if is_proliferated {
+                current_proliferator_factor = prolif_factor(settings);
+            } else {
+                current_proliferator_factor = 1.0;
+            }
+            let ingredient_multiplicator: f32 = ((item_per_sec / current_recipe.crafting_time)
+                / net_output_per_second)
+                / current_proliferator_factor;
+                println!("({})({})({})({})", item_per_sec, current_recipe.crafting_time, net_output_per_second, current_proliferator_factor);
             // putting everything together
             let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
             // apply modifier
@@ -403,8 +419,7 @@ pub mod item_logic {
                 match isitem {
                     IsItem::Item(ingredient) => {
                         output_machine_ingredients.push(ItemAmount::new(
-                            (ingredient.amount * manvac_count)
-                                / current_item.recipes[current_recipe_index].crafting_time,
+                            ingredient.amount * ingredient_multiplicator,
                             ingredient.item.clone(),
                         ));
                     }
@@ -477,8 +492,7 @@ pub mod item_logic {
                         Some(call_item) => {
                             call_item.crafting_chain(
                                 String::from(call_item.name),
-                                (real_ingredient.amount as f32 * manvac_count)
-                                    / current_item.recipes[current_recipe_index].crafting_time,
+                                real_ingredient.amount * ingredient_multiplicator,
                                 &settings,
                                 result_order,
                                 result,
