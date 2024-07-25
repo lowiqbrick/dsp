@@ -1,7 +1,4 @@
 // file for all structs functions etc.
-// imports
-// HashMaps
-#[allow(dead_code)]
 
 pub mod item_logic {
     use std::collections::HashMap;
