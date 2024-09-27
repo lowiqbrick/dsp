@@ -146,18 +146,10 @@ pub mod item_logic {
     /// an function to return the current proliferation factor based on curent settings
     fn prolif_factor(settings: &ProgamInfo) -> f32 {
         let factor = match settings.proliferators {
-            Proliferator::MKone => {
-                1.125
-            }
-            Proliferator::MKtwo => {
-                1.2
-            }
-            Proliferator::MKthree => {
-                1.25
-            }
-            Proliferator::None => {
-                1.0
-            }
+            Proliferator::MKone => 1.125,
+            Proliferator::MKtwo => 1.2,
+            Proliferator::MKthree => 1.25,
+            Proliferator::None => 1.0,
         };
         factor
     }
@@ -428,9 +420,15 @@ pub mod item_logic {
             if settings.merge {
                 if is_adding_new_item {
                     result_var.num_station = manvac_count;
-                    println!("new item {} requires {} stations", current_item.name, manvac_count);
+                    println!(
+                        "new item {} requires {} stations",
+                        current_item.name, manvac_count
+                    );
                 } else {
-                    print!("item {} went with {} addiionsal stations from {} station to", current_item.name, manvac_count, result_var.num_station);
+                    print!(
+                        "item {} went with {} addiionsal stations from {} station to",
+                        current_item.name, manvac_count, result_var.num_station
+                    );
                     result_var.num_station += manvac_count;
                     println!(" {} stations", result_var.num_station);
                 }
