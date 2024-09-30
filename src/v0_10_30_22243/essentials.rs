@@ -228,7 +228,7 @@ pub mod item_logic {
                         result_var.station = existing_result.station.clone();
                         result_var.requirements = existing_result.requirements.clone();
                     }
-                    None => {
+                    _ => {
                         is_adding_new_item = true;
                     }
                 }
@@ -244,7 +244,7 @@ pub mod item_logic {
             // after this match item_name can be assumed to be a valid key
             let current_item: &Item = match items_map.get(&item_name) {
                 Some(item) => item,
-                None => {
+                _ => {
                     panic!("requested item '{}' doesn't exist in hashmap", item_name)
                 }
             };
@@ -475,7 +475,7 @@ pub mod item_logic {
                                     result_var.requirements[index].amount;
                             }
                         }
-                        None => {
+                        _ => {
                             panic!(
                                 "tried to write into the key '{}', which wasn't found",
                                 result_var.name.clone()

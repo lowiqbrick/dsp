@@ -237,7 +237,7 @@ pub mod items {
                                     ));
                                 }
                             }
-                            None => eprintln!("item not in hashmap"),
+                            _ => eprintln!("item not in hashmap"),
                         }
                     } else {
                         eprintln!("{} isn't a valid item", args[index]);
@@ -279,7 +279,7 @@ pub mod items {
                 is_proliferated,
                 true,
             ),
-            None => {
+            _ => {
                 panic!("requested item not in crafting recipes");
             }
         }
