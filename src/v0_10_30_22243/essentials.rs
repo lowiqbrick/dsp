@@ -56,8 +56,8 @@ pub mod item_logic {
     pub struct Recipe {
         // crafting time (in seconds)
         crafting_time: f32,
-        ingredients: Vec<IsItem>,
-        products: Vec<IsItem>,
+        pub ingredients: Vec<IsItem>,
+        pub products: Vec<IsItem>,
     }
 
     impl Recipe {
@@ -145,7 +145,7 @@ pub mod item_logic {
 
     /// an function to return the current proliferation factor based on curent settings
     fn prolif_factor(settings: &ProgamInfo) -> f32 {
-        let factor = match settings.proliferators {
+        let factor: f32 = match settings.proliferators {
             Proliferator::MKone => 1.125,
             Proliferator::MKtwo => 1.2,
             Proliferator::MKthree => 1.25,

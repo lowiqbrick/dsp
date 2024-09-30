@@ -148,7 +148,7 @@ pub mod itemsmod {
                     ))],
                     vec![
                         IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
-                        IsItem::new(ItemAmount::new(2.0, String::from("Anitmatter"))),
+                        IsItem::new(ItemAmount::new(2.0, String::from("Antimatter"))),
                     ],
                 ),
             ],
@@ -1261,7 +1261,7 @@ pub mod itemsmod {
         tohash!(
             res_hash,
             proliferator_mkii,
-            "Proliferator MK.II",
+            "Proliferator Mk.II",
             item!(
                 "Proliferator MK.II",
                 (Assembler),
@@ -1898,5 +1898,81 @@ pub mod itemsmod {
         );
         // return the hashmap with all the items
         res_hash
+    }
+}
+
+#[cfg(test)]
+mod test_items {
+    // import HashMaps
+    use crate::v0_10_30_22243::essentials::item_logic::*;
+    use std::collections::HashMap;
+
+    use super::itemsmod::get_items;
+    #[test]
+    fn test_hashmap() {
+        // get list of all items
+        let mut item_map: HashMap<String, Item> = HashMap::new();
+        item_map = get_items(item_map);
+        // get all keys
+        let keys = item_map.keys();
+        // access all items in HashMap
+        for key in keys {
+            // save current item from HashMap
+            let current_item = match item_map.get_key_value(key) {
+                Some(value_key) => value_key.1,
+                None => panic!(),
+            };
+            let all_recipes: Vec<Recipe> = current_item.recipes.clone();
+            // go through all recipes
+            for recipe in all_recipes.iter() {
+                // ingredients
+                let ingredients: Vec<IsItem> = recipe.ingredients.clone();
+                for ingredient in ingredients {
+                    let is_item: IsItem = ingredient;
+                    let item: String = match is_item {
+                        IsItem::Item(item_amount) => item_amount.item,
+                        IsItem::NAI => continue,
+                    };
+                    // check whether or not the string can be found as key in the
+                    // item hashmap
+                    let item_result = item_map.get_key_value(&item);
+                    // process the result
+                    match item_result {
+                        // Item exists String was typed correctly
+                        Some(_result) => continue,
+                        // string doesn't exist in hashmap
+                        None => panic!(
+                            "ingredient '{}' of item '{:?}' doesn't exist in HashMap",
+                            item, recipe
+                        ),
+                    }
+                }
+                // results
+                let products: Vec<IsItem> = recipe.products.clone();
+                for product in products {
+                    let is_item: IsItem = product;
+                    let item: String = match is_item {
+                        IsItem::Item(item_amount) => {
+                            print!("{:?}\n", item_amount);
+                            item_amount.item
+                        }
+                        IsItem::NAI => continue,
+                    };
+                    // check whether or not the string can be found as key in the
+                    // item hashmap
+                    let item_result = item_map.get_key_value(&item);
+                    // process the result
+                    match item_result {
+                        // Item exists String was typed correctly
+                        Some(_result) => continue,
+                        // string doesn't exist in hashmap
+                        None => panic!(
+                            "product '{}' of item '{:?}' doesn't exist in HashMap",
+                            item, recipe
+                        ),
+                    }
+                }
+            }
+        }
     }
 }

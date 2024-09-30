@@ -1,4 +1,4 @@
-pub mod item_enum_support{
+pub mod item_enum_support {
     // fmt for the Display Trait
     use std::fmt;
 
