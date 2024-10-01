@@ -22,9 +22,9 @@ pub mod items {
         // println!("args len: {}", args_len);
         let mut item_hashmap: HashMap<String, Item> = HashMap::new();
         item_hashmap = get_items(item_hashmap);
-        let mut status = ArgState::Default;
+        let mut status: ArgState = ArgState::Default;
         // Defualt settings of the program
-        let mut settings = ProgamInfo::new(
+        let mut settings: ProgamInfo = ProgamInfo::new(
             Proliferator::None,
             ChemLabMK::Lab,
             SmelterMK::ArcSmelter,
@@ -42,8 +42,8 @@ pub mod items {
             panic!("no arguments were given to the function");
         }
         // loop for processing the arguments
-        let mut keep_looping = true;
-        let mut index = 0;
+        let mut keep_looping: bool = true;
+        let mut index: usize = 0;
         while keep_looping {
             // get the item to be produced
             if index == 0 {
@@ -237,7 +237,7 @@ pub mod items {
                                     ));
                                 }
                             }
-                            None => eprintln!("item not in hashmap"),
+                            _ => eprintln!("item not in hashmap"),
                         }
                     } else {
                         eprintln!("{} isn't a valid item", args[index]);
@@ -279,7 +279,7 @@ pub mod items {
                 is_proliferated,
                 true,
             ),
-            None => {
+            _ => {
                 panic!("requested item not in crafting recipes");
             }
         }

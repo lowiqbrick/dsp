@@ -56,8 +56,8 @@ pub mod item_logic {
     pub struct Recipe {
         // crafting time (in seconds)
         crafting_time: f32,
-        ingredients: Vec<IsItem>,
-        products: Vec<IsItem>,
+        pub ingredients: Vec<IsItem>,
+        pub products: Vec<IsItem>,
     }
 
     impl Recipe {
@@ -145,7 +145,7 @@ pub mod item_logic {
 
     /// an function to return the current proliferation factor based on curent settings
     fn prolif_factor(settings: &ProgamInfo) -> f32 {
-        let factor = match settings.proliferators {
+        let factor: f32 = match settings.proliferators {
             Proliferator::MKone => 1.125,
             Proliferator::MKtwo => 1.2,
             Proliferator::MKthree => 1.25,
@@ -228,7 +228,7 @@ pub mod item_logic {
                         result_var.station = existing_result.station.clone();
                         result_var.requirements = existing_result.requirements.clone();
                     }
-                    None => {
+                    _ => {
                         is_adding_new_item = true;
                     }
                 }
@@ -244,7 +244,7 @@ pub mod item_logic {
             // after this match item_name can be assumed to be a valid key
             let current_item: &Item = match items_map.get(&item_name) {
                 Some(item) => item,
-                None => {
+                _ => {
                     panic!("requested item '{}' doesn't exist in hashmap", item_name)
                 }
             };
@@ -475,7 +475,7 @@ pub mod item_logic {
                                     result_var.requirements[index].amount;
                             }
                         }
-                        None => {
+                        _ => {
                             panic!(
                                 "tried to write into the key '{}', which wasn't found",
                                 result_var.name.clone()
