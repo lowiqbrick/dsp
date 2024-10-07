@@ -32,7 +32,7 @@ pub mod item_logic {
     }
 
     /// enum for differentiation between items and not an item (nai)
-    /// which is relevant for crafting recepies for items which cannot be
+    /// which is relevant for crafting recipes for items which cannot be
     /// crafted and only be obtained/mined (ores, critical photons, etc.)
     #[derive(Debug, Clone, PartialEq)]
     pub enum IsItem {
@@ -420,17 +420,23 @@ pub mod item_logic {
             if settings.merge {
                 if is_adding_new_item {
                     result_var.num_station = manvac_count;
+                    // Debugging
+                    /*
                     println!(
                         "new item {} requires {} stations",
                         current_item.name, manvac_count
-                    );
+                    );*/
                 } else {
+                    // Debugging
+                    /*
                     print!(
                         "item {} went with {} addiionsal stations from {} station to",
                         current_item.name, manvac_count, result_var.num_station
-                    );
+                    );*/
                     result_var.num_station += manvac_count;
-                    println!(" {} stations", result_var.num_station);
+                    // Debugging
+                    /*
+                    println!(" {} stations", result_var.num_station);*/
                 }
             } else {
                 result_var.num_station = manvac_count;
