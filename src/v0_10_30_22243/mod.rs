@@ -160,7 +160,7 @@ pub mod items {
                         let item_name = argument.clone();
                         let quantity = match iterator.next() {
                             Some(success) => success,
-                            _none => {
+                            None => {
                                 eprint!("no number specified after {}", item_name);
                                 break;
                             }
@@ -181,16 +181,15 @@ pub mod items {
                         let item_name = argument.clone();
                         let quantity = match iterator.next() {
                             Some(success) => success,
-                            _none => {
+                            None => {
                                 eprint!("no number specified after {}", item_name);
                                 break;
                             }
                         };
                         if item_hashmap.contains_key(&item_name) {
                             // check if recipe number given makes sense
-                            let recipe_num: u8 = quantity
-                                .parse::<u8>()
-                                .expect("provided invalid number");
+                            let recipe_num: u8 =
+                                quantity.parse::<u8>().expect("provided invalid number");
                             let item_rec_num_opt: Option<&Item> = item_hashmap.get(&item_name);
                             match item_rec_num_opt {
                                 Some(t) => {
