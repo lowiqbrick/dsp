@@ -4,8 +4,8 @@ mod essentials;
 mod items_get;
 
 pub mod items {
-    use crate::v0_10_30_22243::essentials::item_logic::*;
-    use crate::v0_10_30_22243::items_get::itemsmod::get_items;
+    use crate::beta::essentials::item_logic::*;
+    use crate::beta::items_get::itemsmod::get_items;
     use std::collections::HashMap;
 
     /// function for outputting all items
@@ -15,10 +15,10 @@ pub mod items {
     //     println!("{:?}", map);
     // }
 
-    /// the main function of version v0_10_30_22243
-    pub fn v0_10_30_22243(mut args: Vec<String>) {
+    /// the main function of the beta of the game
+    pub fn beta(mut args: Vec<String>) {
         // declare the variables required for processing the inputs
-        let args_len = args.len();
+        let args_len: usize = args.len();
         // println!("args len: {}", args_len);
         let mut item_hashmap: HashMap<String, Item> = HashMap::new();
         item_hashmap = get_items(item_hashmap);
@@ -51,12 +51,13 @@ pub mod items {
             );
         } else {
             eprintln!("given item name {} isn't valid", args[0]);
+            return;
         }
         // remove the first two arguments
         args.remove(0);
         args.remove(0);
         // process the arguments
-        let mut iterator = args.iter();
+        let mut iterator: std::slice::Iter<'_, String> = args.iter();
         while let Some(argument) = iterator.next() {
             match argument.as_str() {
                 // squash the output
@@ -157,8 +158,8 @@ pub mod items {
                     // needs next element in for loop
                     if status == ArgState::AdditionalItems {
                         // save current and next arguments for processing later
-                        let item_name = argument.clone();
-                        let quantity = match iterator.next() {
+                        let item_name: String = argument.clone();
+                        let quantity: &String = match iterator.next() {
                             Some(success) => success,
                             None => {
                                 eprint!("no number specified after {}", item_name);
@@ -178,8 +179,8 @@ pub mod items {
                     // needs next element in for loop
                     if status == ArgState::ItemRecipe {
                         // save current and next arguments for processing later
-                        let item_name = argument.clone();
-                        let quantity = match iterator.next() {
+                        let item_name: String = argument.clone();
+                        let quantity: &String = match iterator.next() {
                             Some(success) => success,
                             None => {
                                 eprint!("no number specified after {}", item_name);
@@ -214,11 +215,11 @@ pub mod items {
             }
         }
         // Debugging only
-        println!("{:?}", settings);
+        // println!("{:?}", settings);
         // call method on item
         let mut result_order: Vec<String> = vec![];
         let mut result: HashMap<String, ItemResult> = HashMap::new();
-        let prev_path = String::from("");
+        let prev_path: String = String::from("");
         let mut is_proliferated: bool = true;
         if settings
             .no_proliferation

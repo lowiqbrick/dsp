@@ -3,8 +3,8 @@
 // read the terminal input
 use std::env;
 
-use v0_10_30_22243::items::v0_10_30_22243;
-mod v0_10_30_22243;
+use beta::items::beta;
+mod beta;
 
 fn main() {
     //get the terminal arguments
@@ -13,5 +13,5 @@ fn main() {
     args.remove(0);
     // debugging only
     // println!("{:?}", args);
-    v0_10_30_22243(args);
+    beta(args);
 }

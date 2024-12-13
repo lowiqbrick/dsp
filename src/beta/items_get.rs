@@ -1,15 +1,16 @@
+// all crafting recipe numbers are from the [wiki](https://dsp-wiki.com/Items) are
+
 pub mod itemsmod {
     // import hasmaps
     use std::collections::HashMap;
     // import the structs, emuns, etc.
-    use crate::v0_10_30_22243::essentials::item_logic::{IsItem, Item, ItemAmount, ManFac, Recipe};
-    use crate::v0_10_30_22243::essentials::item_logic::{
+    use crate::beta::essentials::item_logic::{IsItem, Item, ItemAmount, ManFac, Recipe};
+    use crate::beta::essentials::item_logic::{
         ManFac::Assembler, ManFac::ChemicalPlant, ManFac::Furnace, ManFac::Lab,
         ManFac::MiniatureParticleCollider,
     };
     // import all macros
     use crate::{item, recipe, recitem, tohash};
-    //use crate::v0_10_30_22243::essentials::{};
     /// creates a big HashMap with all the items and buildings in the game
     pub fn get_items<'a>(mut res_hash: HashMap<String, Item>) -> HashMap<String, Item> {
         // all ores/origin items
@@ -1800,7 +1801,7 @@ pub mod itemsmod {
                 (recipe!(
                     8.0,
                     (
-                        recitem!(2.0, "Glass"),
+                        recitem!(2.0, "Titanium Glass"),
                         recitem!(1.0, "Super-magnetic Ring"),
                         recitem!(2.0, "Jamming Capsule")
                     ),
@@ -1817,7 +1818,7 @@ pub mod itemsmod {
                 "Prototype",
                 (Assembler),
                 (recipe!(
-                    2.0,
+                    3.0,
                     (
                         recitem!(1.0, "Plasma Exciter"),
                         recitem!(2.0, "Circuit Board"),
@@ -1912,7 +1913,7 @@ pub mod itemsmod {
 #[cfg(test)]
 mod test_items {
     // import HashMaps
-    use crate::v0_10_30_22243::essentials::item_logic::*;
+    use crate::beta::essentials::item_logic::*;
     use std::collections::HashMap;
 
     use super::itemsmod::get_items;

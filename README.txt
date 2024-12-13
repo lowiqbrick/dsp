@@ -1,4 +1,5 @@
 This repository is for a tool that helps you to play the video game Dyson Sphere Program.
 It is a Factorio-ish game in which you mine resources and process those into other items.
 This requires to take recipes and the ratios between these into account. I don't think that that aspect of the game is particularly intriguing. As a result i want a binary that gets the name and production rate of an item and generates me a list of things to produce and tells me how many assemblers, smelters, etc. are required to manufacture at the rate i desire. Also some options are included to make it more convenient to read/use.
-This programm isn't yet finished. Maybe i'll finish it in the future.
+Buildings such as furnaces, assemblers, etc. are assumed to be produced in a central mall in sufficient quantities and thus don't require the calculation of their crafting chanins.
+It should be complete now, but i haven't tested it yet. If you find mistakes or errors feel free to tell me.

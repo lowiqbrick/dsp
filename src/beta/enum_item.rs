@@ -1,3 +1,6 @@
+// currently not implemented, becuase that would require me to go through the
+// hasmap creation function, which for now just uses a test function to verify the strings
+
 pub mod item_enum_support {
     // fmt for the Display Trait
     use std::fmt;

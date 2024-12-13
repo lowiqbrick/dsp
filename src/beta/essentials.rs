@@ -4,7 +4,7 @@ pub mod item_logic {
     use std::collections::HashMap;
     use std::fmt::{self, Display};
 
-    use crate::v0_10_30_22243::items_get::itemsmod::get_items;
+    use crate::beta::items_get::itemsmod::get_items;
 
     /// enum for manufacturing facilities
     #[derive(Debug, Clone, Copy, PartialEq)]
