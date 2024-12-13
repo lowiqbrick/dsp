@@ -1,9 +1,11 @@
 // file for defining all items and recipes
 // import everything from essentials.rs
+mod doc;
 mod essentials;
 mod items_get;
 
 pub mod items {
+    use super::doc::print_help;
     use crate::beta::essentials::item_logic::*;
     use crate::beta::items_get::itemsmod::get_items;
     use std::collections::HashMap;
@@ -37,9 +39,17 @@ pub mod items {
             false,
             ItemAmount::new(0.0, String::from("Default")),
         );
+        // check for displaying the help text
+        for argument in args.iter_mut() {
+            if argument.as_str() == "-h" || argument.as_mut_str() == "--help" {
+                print_help();
+                return;
+            }
+        }
         // sanity check
         if args_len < 2 {
-            panic!("no arguments were given to the function");
+            eprintln!("no arguments were given to the function");
+            return;
         }
         // loop for processing the arguments
         // get the item to be produced
@@ -89,11 +99,13 @@ pub mod items {
                 "lab=1" => settings.lab = LabMK::MatrixLab,
                 "lab=2" => settings.lab = LabMK::SelfEvolutionLab,
                 // no proliferation
-                "-n" | "--nopriliferation" => status = ArgState::NoProliferation,
+                "-n" | "--noproliferation" => status = ArgState::NoProliferation,
                 // additional items
                 "-i" | "--items" => status = ArgState::AdditionalItems,
                 // set the recipe
                 "-r" | "-recipe" => status = ArgState::ItemRecipe,
+                // display the documentation
+                "-h" | "--help" => print_help(),
                 // process the options nemanding more elaborate processing
                 // catch all
                 _ => {
