@@ -111,7 +111,12 @@ pub mod itemsmod {
         let gear: Item;
         let hydrogen: Item = Item::new(
             "Hydrogen",
-            vec![ManFac::ChemicalPlant, ManFac::OilRefinery, ManFac::Origin],
+            vec![
+                ManFac::MiniatureParticleCollider,
+                ManFac::ChemicalPlant,
+                ManFac::OilRefinery,
+                ManFac::Origin,
+            ],
             vec![
                 Recipe::new(
                     4.0,
@@ -746,7 +751,7 @@ pub mod itemsmod {
                     3.0,
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
-                        IsItem::new(ItemAmount::new(2.0, String::from("Grating Crystal"))),
+                        IsItem::new(ItemAmount::new(1.0, String::from("Grating Crystal"))),
                     ],
                     vec![IsItem::new(ItemAmount::new(
                         1.0,
@@ -838,7 +843,7 @@ pub mod itemsmod {
                         recitem!(5.0, "Electromagnetic Turbine"),
                         recitem!(5.0, "Titanium Alloy")
                     ),
-                    (recitem!(4.0, "Reinforced Thruster"))
+                    (recitem!(1.0, "Reinforced Thruster"))
                 ))
             )
         );
@@ -879,8 +884,11 @@ pub mod itemsmod {
                     ),
                     recipe!(
                         4.0,
-                        (recitem!(2.0, "Copper Ingot")),
-                        (recitem!(10.0, "Unipolar Magnet"))
+                        (
+                            recitem!(2.0, "Copper Ingot"),
+                            recitem!(10.0, "Unipolar Magnet")
+                        ),
+                        (recitem!(1.0, "Particle Container"))
                     )
                 )
             )
@@ -984,7 +992,7 @@ pub mod itemsmod {
                     (
                         recitem!(10.0, "Deuterium"),
                         recitem!(2.0, "Iron Ingot"),
-                        recitem!(1.0, "Particle Container")
+                        recitem!(2.0, "Particle Container")
                     ),
                     (recitem!(1.0, "Strange Matter"))
                 ))
@@ -1280,9 +1288,9 @@ pub mod itemsmod {
                 "Proliferator Mk.III",
                 (Assembler),
                 (recipe!(
-                    1.0,
+                    2.0,
                     (
-                        recitem!(1.0, "Diamond"),
+                        recitem!(1.0, "Carbon Nanotube"),
                         recitem!(2.0, "Proliferator Mk.II")
                     ),
                     (recitem!(1.0, "Proliferator Mk.III"))
@@ -1543,7 +1551,7 @@ pub mod itemsmod {
                 (Assembler),
                 (recipe!(
                     1.0,
-                    (recitem!(1.0, "Copper Ingot")),
+                    (recitem!(3.0, "Copper Ingot")),
                     (recitem!(1.0, "Magnum Ammo Box"))
                 ))
             )
@@ -1648,7 +1656,7 @@ pub mod itemsmod {
                     4.0,
                     (
                         recitem!(2.0, "Thruster"),
-                        recitem!(4.0, "Explosive Unit"),
+                        recitem!(2.0, "Explosive Unit"),
                         recitem!(4.0, "Processor"),
                         recitem!(2.0, "Missile Set")
                     ),
