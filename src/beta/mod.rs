@@ -106,11 +106,14 @@ pub mod items {
                 "-r" | "-recipe" => status = ArgState::ItemRecipe,
                 // display the documentation
                 "-h" | "--help" => print_help(),
-                // process the options nemanding more elaborate processing
+                // only show the item requested and not the entire chain
+                "-t" | "--this-item" => settings.this_item_only = true,
                 // catch all
                 _ => {
+                    // process the options demanding more elaborate processing
+                    match status {
                     // proliferation
-                    if status == ArgState::ProlifLevel {
+                    ArgState::ProlifLevel=> {
                         match argument.as_str() {
                             "1" => settings.proliferators = Proliferator::MKone,
                             "2" => settings.proliferators = Proliferator::MKtwo,
@@ -120,7 +123,7 @@ pub mod items {
                         }
                     }
                     // chemlab level
-                    if status == ArgState::ChemLabLevel {
+                   ArgState::ChemLabLevel=> {
                         match argument.as_str() {
                             "1" => settings.chemlab = ChemLabMK::Lab,
                             "2" => settings.chemlab = ChemLabMK::QuantumLab,
@@ -129,7 +132,7 @@ pub mod items {
                         }
                     }
                     // smelter level
-                    if status == ArgState::FurnaceLevel {
+                    ArgState::FurnaceLevel =>{
                         match argument.as_str() {
                             "1" => settings.smelter = SmelterMK::ArcSmelter,
                             "2" => settings.smelter = SmelterMK::PlaneSmelter,
@@ -139,7 +142,7 @@ pub mod items {
                         }
                     }
                     // assembler level
-                    if status == ArgState::AssemblerLevel {
+                     ArgState::AssemblerLevel=> {
                         match argument.as_str() {
                             "1" => settings.assembler = AssemblerMK::MKone,
                             "2" => settings.assembler = AssemblerMK::MKtwo,
@@ -150,7 +153,7 @@ pub mod items {
                         }
                     }
                     // reserchlab level
-                    if status == ArgState::LabLevel {
+                    ArgState::LabLevel=> {
                         match argument.as_str() {
                             "1" => settings.lab = LabMK::MatrixLab,
                             "2" => settings.lab = LabMK::SelfEvolutionLab,
@@ -159,7 +162,7 @@ pub mod items {
                         }
                     }
                     // disable proliferation for specific items and downward
-                    if status == ArgState::NoProliferation {
+                     ArgState::NoProliferation =>{
                         if item_hashmap.contains_key(argument) {
                             settings.no_proliferation.push(argument.clone());
                         } else {
@@ -168,7 +171,7 @@ pub mod items {
                     }
                     // add additional production for specific items in a crafting chain
                     // needs next element in for loop
-                    if status == ArgState::AdditionalItems {
+                  ArgState::AdditionalItems=> {
                         // save current and next arguments for processing later
                         let item_name: String = argument.clone();
                         let quantity: &String = match iterator.next() {
@@ -189,7 +192,7 @@ pub mod items {
                     }
                     // set the recepie for a given item
                     // needs next element in for loop
-                    if status == ArgState::ItemRecipe {
+                    ArgState::ItemRecipe=> {
                         // save current and next arguments for processing later
                         let item_name: String = argument.clone();
                         let quantity: &String = match iterator.next() {
@@ -223,6 +226,10 @@ pub mod items {
                             eprintln!("{} isn't a valid item", item_name);
                         }
                     }
+                    ArgState::Default=> {
+                        eprintln!("invalid argument {} won't be used", argument);
+                    }
+                }
                 }
             }
         }
@@ -263,6 +270,10 @@ pub mod items {
             match result.get(result_string) {
                 Some(result_match) => {
                     println!("{}", result_match);
+                    // abandon loop after the first item is printed, if only the first item is requested
+                    if settings.this_item_only {
+                        break;
+                    }
                     if index + 1 < vector_len {
                         println!("----------------------------------------");
                     }

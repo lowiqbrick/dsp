@@ -44,6 +44,8 @@ pub fn print_help() {
         -r --recipe                 specify the recipe used, in case there is more than one way of producing something
                                         -r 2
 
+        -t --this-item              print only the item that is at the top of the chain
+
         -h --help                   display instructions for this command"#
     );
 }

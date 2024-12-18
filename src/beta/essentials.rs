@@ -592,6 +592,8 @@ pub mod item_logic {
         pub assume_basics: bool,
         pub basics: Vec<String>,
         pub produced_item: ItemAmount,
+        /// only show the item requested and not the entire chain
+        pub this_item_only: bool,
     }
     impl ProgamInfo {
         pub fn new(
@@ -645,6 +647,7 @@ pub mod item_logic {
                 assume_basics,
                 basics: basics.clone(),
                 produced_item,
+                this_item_only: false,
             }
         }
     }
