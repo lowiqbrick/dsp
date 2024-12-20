@@ -386,7 +386,10 @@ pub mod item_logic {
                 }
             }
             if manfac_counter > 1 {
-                panic!("item rate was modified multiple times ({})", manfac_counter);
+                panic!(
+                    "item rate was modified multiple times ({}) for {}",
+                    manfac_counter, item_name
+                );
             }
             // calculate how many crafting machines are required for matching troughput
             let manvac_count: f32 = item_per_sec / net_output_machine;
