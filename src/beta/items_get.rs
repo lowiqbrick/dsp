@@ -5,10 +5,6 @@ pub mod itemsmod {
     use std::collections::HashMap;
     // import the structs, emuns, etc.
     use crate::beta::essentials::item_logic::{IsItem, Item, ItemAmount, ManFac, Recipe};
-    use crate::beta::essentials::item_logic::{
-        ManFac::Assembler, ManFac::ChemicalPlant, ManFac::Furnace, ManFac::Lab,
-        ManFac::MiniatureParticleCollider,
-    };
     // import all macros
     use crate::{item, recipe, recitem, tohash};
     /// creates a big HashMap with all the items and buildings in the game
@@ -17,16 +13,17 @@ pub mod itemsmod {
         let iron_ore: Item;
         let iron_ore_rec: Recipe = Recipe::new(
             0.0,
+            ManFac::Origin,
             vec![IsItem::new_nai()],
             vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
         );
-        iron_ore = Item::new("Iron Ore", vec![ManFac::Origin], vec![iron_ore_rec]);
+        iron_ore = Item::new("Iron Ore", vec![iron_ore_rec]);
         res_hash.insert(String::from("Iron Ore"), iron_ore);
         let copper_ore: Item = Item::new(
             "Copper Ore",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -37,9 +34,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Copper Ore"), copper_ore);
         let stone: Item = Item::new(
             "Stone",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Stone")))],
             )],
@@ -47,9 +44,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Stone"), stone);
         let coal: Item = Item::new(
             "Coal",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Coal")))],
             )],
@@ -57,23 +54,33 @@ pub mod itemsmod {
         res_hash.insert(String::from("Coal"), coal);
         let silicon_ore: Item = Item::new(
             "Silicon Ore",
-            // also minable
-            vec![ManFac::Furnace, ManFac::Origin],
-            vec![Recipe::new(
-                10.0,
-                vec![IsItem::new(ItemAmount::new(10.0, String::from("Stone")))],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Silicon Ore"),
-                ))],
-            )],
+            vec![
+                Recipe::new(
+                    0.0,
+                    ManFac::Origin,
+                    vec![IsItem::new_nai()],
+                    vec![IsItem::new(ItemAmount::new(
+                        1.0,
+                        String::from("Silicon Ore"),
+                    ))],
+                ),
+                Recipe::new(
+                    10.0,
+                    ManFac::Furnace,
+                    vec![IsItem::new(ItemAmount::new(10.0, String::from("Stone")))],
+                    vec![IsItem::new(ItemAmount::new(
+                        1.0,
+                        String::from("Silicon Ore"),
+                    ))],
+                ),
+            ],
         );
         res_hash.insert(String::from("Silicon Ore"), silicon_ore);
         let titanium_ore: Item = Item::new(
             "Titanium Ore",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -84,9 +91,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Titanium Ore"), titanium_ore);
         let water: Item = Item::new(
             "Water",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Water")))],
             )],
@@ -94,9 +101,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Water"), water);
         let crude_oil: Item = Item::new(
             "Crude Oil",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Crude Oil")))],
             )],
@@ -113,14 +120,9 @@ pub mod itemsmod {
         let hydrogen: Item = Item::new(
             "Hydrogen",
             vec![
-                ManFac::MiniatureParticleCollider,
-                ManFac::ChemicalPlant,
-                ManFac::OilRefinery,
-                ManFac::Origin,
-            ],
-            vec![
                 Recipe::new(
                     4.0,
+                    ManFac::OilRefinery,
                     vec![IsItem::new(ItemAmount::new(2.0, String::from("Crude Oil")))],
                     vec![
                         IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
@@ -129,6 +131,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     2.0,
+                    ManFac::ChemicalPlant,
                     vec![IsItem::new(ItemAmount::new(2.0, String::from("Fire Ice")))],
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
@@ -137,6 +140,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     4.0,
+                    ManFac::OilRefinery,
                     vec![
                         IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
                         IsItem::new(ItemAmount::new(1.0, String::from("Refined Oil"))),
@@ -148,6 +152,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     2.0,
+                    ManFac::MiniatureParticleCollider,
                     vec![IsItem::new(ItemAmount::new(
                         2.0,
                         String::from("Critical Photon"),
@@ -162,19 +167,27 @@ pub mod itemsmod {
         res_hash.insert(String::from("Hydrogen"), hydrogen);
         let deuterium: Item = Item::new(
             "Deuterium",
-            vec![ManFac::Origin, ManFac::MiniatureParticleCollider],
-            vec![Recipe::new(
-                2.5,
-                vec![IsItem::new(ItemAmount::new(10.0, String::from("Hydrogen")))],
-                vec![IsItem::new(ItemAmount::new(5.0, String::from("Deuterium")))],
-            )],
+            vec![
+                Recipe::new(
+                    0.0,
+                    ManFac::Origin,
+                    vec![IsItem::new_nai()],
+                    vec![IsItem::new(ItemAmount::new(1.0, String::from("Deuterium")))],
+                ),
+                Recipe::new(
+                    2.5,
+                    ManFac::MiniatureParticleCollider,
+                    vec![IsItem::new(ItemAmount::new(10.0, String::from("Hydrogen")))],
+                    vec![IsItem::new(ItemAmount::new(5.0, String::from("Deuterium")))],
+                ),
+            ],
         );
         res_hash.insert(String::from("Deuterium"), deuterium);
         antimatter = Item::new(
             "Antimatter",
-            vec![ManFac::MiniatureParticleCollider],
             vec![Recipe::new(
                 2.0,
+                ManFac::MiniatureParticleCollider,
                 vec![IsItem::new(ItemAmount::new(
                     2.0,
                     String::from("Critical Photon"),
@@ -188,9 +201,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Antimatter"), antimatter);
         let core_element: Item = Item::new(
             "Core Element",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -201,9 +214,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Core Element"), core_element);
         critical_photon = Item::new(
             "Critical Photon",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -214,9 +227,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Critical Photon"), critical_photon);
         let kimberlite_ore: Item = Item::new(
             "Kimberlite Ore",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -227,9 +240,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Kimberlite Ore"), kimberlite_ore);
         let fractal_silicon: Item = Item::new(
             "Fractal Silicon",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -240,9 +253,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Fractal Silicon"), fractal_silicon);
         let grating_crystal: Item = Item::new(
             "Grating Crystal",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 1.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -253,9 +266,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Grating Crystal"), grating_crystal);
         let stalagmite_crystal: Item = Item::new(
             "Stalagmite Crystal",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -266,9 +279,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Stalagmite Crystal"), stalagmite_crystal);
         let unipolar_magnet: Item = Item::new(
             "Unipolar Magnet",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -279,9 +292,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Unipolar Magnet"), unipolar_magnet);
         fire_ice = Item::new(
             "Fire Ice",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Fire Ice")))],
             )],
@@ -289,9 +302,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Fire Ice"), fire_ice);
         let log: Item = Item::new(
             "Log",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Log")))],
             )],
@@ -299,9 +312,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Log"), log);
         let plant_fuel: Item = Item::new(
             "Plant Fuel",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -312,9 +325,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Plant Fuel"), plant_fuel);
         let dark_fog_matix: Item = Item::new(
             "Dark Fog Matrix",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -325,9 +338,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Dark Fog Matrix"), dark_fog_matix);
         let energy_shard: Item = Item::new(
             "Energy Shard",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -338,9 +351,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Energy Shard"), energy_shard);
         let silicon_based_neuron: Item = Item::new(
             "Silicon-based Neuron",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -351,9 +364,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Silicon-based Neuron"), silicon_based_neuron);
         let negentropy_singularity: Item = Item::new(
             "Negentropy Singularity",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -367,9 +380,9 @@ pub mod itemsmod {
         );
         let matter_recombinator: Item = Item::new(
             "Matter Recombinator",
-            vec![ManFac::Origin],
             vec![Recipe::new(
                 0.0,
+                ManFac::Origin,
                 vec![IsItem::new_nai()],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -381,9 +394,9 @@ pub mod itemsmod {
         // processed items
         let iron_ingot = Item::new(
             "Iron Ingot",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -394,9 +407,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Iron Ingot"), iron_ingot);
         let copper_ingot: Item = Item::new(
             "Copper Ingot",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
                     String::from("Copper Ore"),
@@ -410,9 +423,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Copper Ingot"), copper_ingot);
         let stone_brick: Item = Item::new(
             "Stone Brick",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Stone")))],
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
@@ -423,10 +436,10 @@ pub mod itemsmod {
         res_hash.insert(String::from("Stone Brick"), stone_brick);
         energetic_graphite = Item::new(
             "Energetic Graphite",
-            vec![ManFac::Furnace],
             vec![
                 Recipe::new(
                     2.0,
+                    ManFac::Furnace,
                     vec![IsItem::new(ItemAmount::new(2.0, String::from("Coal")))],
                     vec![IsItem::new(ItemAmount::new(
                         1.0,
@@ -435,6 +448,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     4.0,
+                    ManFac::Furnace,
                     vec![
                         IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
                         IsItem::new(ItemAmount::new(1.0, String::from("Refined Oil"))),
@@ -449,9 +463,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Energetic Graphite"), energetic_graphite);
         let high_purity_silicon: Item = Item::new(
             "High-purity Silicon",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(
                     2.0,
                     String::from("Silicon Ore"),
@@ -465,9 +479,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("High-purity Silicon"), high_purity_silicon);
         let titanium_ingot: Item = Item::new(
             "Titanium Ingot",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(
                     2.0,
                     String::from("Titanium Ore"),
@@ -481,27 +495,38 @@ pub mod itemsmod {
         res_hash.insert(String::from("Titanium Ingot"), titanium_ingot);
         let sulfuric_acid: Item = Item::new(
             "Sulfuric Acid",
-            vec![ManFac::ChemicalPlant, ManFac::Origin],
-            vec![Recipe::new(
-                6.0,
-                vec![
-                    IsItem::new(ItemAmount::new(4.0, String::from("Water"))),
-                    IsItem::new(ItemAmount::new(8.0, String::from("Stone"))),
-                    IsItem::new(ItemAmount::new(6.0, String::from("Refined Oil"))),
-                ],
-                vec![IsItem::new(ItemAmount::new(
-                    4.0,
-                    String::from("Sulfuric Acid"),
-                ))],
-            )],
+            vec![
+                Recipe::new(
+                    6.0,
+                    ManFac::ChemicalPlant,
+                    vec![
+                        IsItem::new(ItemAmount::new(4.0, String::from("Water"))),
+                        IsItem::new(ItemAmount::new(8.0, String::from("Stone"))),
+                        IsItem::new(ItemAmount::new(6.0, String::from("Refined Oil"))),
+                    ],
+                    vec![IsItem::new(ItemAmount::new(
+                        4.0,
+                        String::from("Sulfuric Acid"),
+                    ))],
+                ),
+                Recipe::new(
+                    1.2,
+                    ManFac::Origin,
+                    vec![IsItem::new_nai()],
+                    vec![IsItem::new(ItemAmount::new(
+                        1.0,
+                        String::from("Sulfuric Acid"),
+                    ))],
+                ),
+            ],
         );
         res_hash.insert(String::from("Sulfuric Acid"), sulfuric_acid);
         refined_oil = Item::new(
             "Refined Oil",
-            vec![ManFac::OilRefinery],
             vec![
                 Recipe::new(
                     4.0,
+                    ManFac::OilRefinery,
                     vec![IsItem::new(ItemAmount::new(2.0, String::from("Crude Oil")))],
                     vec![
                         IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
@@ -510,6 +535,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     4.0,
+                    ManFac::OilRefinery,
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Coal"))),
                         IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
@@ -525,9 +551,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Refined Oil"), refined_oil);
         let magnet: Item = Item::new(
             "Magnet",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 1.5,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Magnet")))],
             )],
@@ -535,9 +561,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Magnet"), magnet);
         let magentic_coil: Item = Item::new(
             "Magnetic Coil",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 1.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
                     IsItem::new(ItemAmount::new(2.0, String::from("Magnet"))),
@@ -551,9 +577,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Magnetic Coil"), magentic_coil);
         let glass: Item = Item::new(
             "Glass",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(2.0, String::from("Stone")))],
                 vec![IsItem::new(ItemAmount::new(1.0, String::from("Glass")))],
             )],
@@ -561,10 +587,10 @@ pub mod itemsmod {
         res_hash.insert(String::from("Glass"), glass);
         let diamond: Item = Item::new(
             "Diamond",
-            vec![ManFac::Furnace],
             vec![
                 Recipe::new(
                     2.0,
+                    ManFac::Furnace,
                     vec![IsItem::new(ItemAmount::new(
                         1.0,
                         String::from("Energetic Graphite"),
@@ -573,6 +599,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     1.5,
+                    ManFac::Furnace,
                     vec![IsItem::new(ItemAmount::new(
                         1.0,
                         String::from("Kimberlite Ore"),
@@ -584,10 +611,10 @@ pub mod itemsmod {
         res_hash.insert(String::from("Diamond"), diamond);
         let crystal_silicon: Item = Item::new(
             "Crystal Silicon",
-            vec![ManFac::Furnace],
             vec![
                 Recipe::new(
                     2.0,
+                    ManFac::Furnace,
                     vec![IsItem::new(ItemAmount::new(
                         1.0,
                         String::from("High-purity Silicon"),
@@ -599,6 +626,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     1.5,
+                    ManFac::Furnace,
                     vec![IsItem::new(ItemAmount::new(
                         1.0,
                         String::from("Fractal Silicon"),
@@ -613,9 +641,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Crystal Silicon"), crystal_silicon);
         let steel: Item = Item::new(
             "Steel",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 3.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(
                     3.0,
                     String::from("Iron Ingot"),
@@ -630,9 +658,9 @@ pub mod itemsmod {
             "Titanium Alloy",
             item!(
                 "Titanium Alloy",
-                (Furnace),
                 (recipe!(
                     12.0,
+                    ManFac::Furnace,
                     (
                         recitem!(8.0, "Sulfuric Acid"),
                         recitem!(4.0, "Steel"),
@@ -644,9 +672,9 @@ pub mod itemsmod {
         );
         let circuit_board: Item = Item::new(
             "Circuit Board",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 1.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
                     IsItem::new(ItemAmount::new(2.0, String::from("Iron Ingot"))),
@@ -660,9 +688,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Circuit Board"), circuit_board);
         let prism: Item = Item::new(
             "Prism",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
+                ManFac::Furnace,
                 vec![IsItem::new(ItemAmount::new(3.0, String::from("Glass")))],
                 vec![IsItem::new(ItemAmount::new(2.0, String::from("Prism")))],
             )],
@@ -670,9 +698,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Prism"), prism);
         let electric_motor: Item = Item::new(
             "Electric Motor",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 2.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(1.0, String::from("Magnetic Coil"))),
                     IsItem::new(ItemAmount::new(1.0, String::from("Gear"))),
@@ -687,9 +715,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Electric Motor"), electric_motor);
         let microcrystalline_component: Item = Item::new(
             "Microcrystalline Component",
-            vec![ManFac::Furnace],
             vec![Recipe::new(
                 2.0,
+                ManFac::Furnace,
                 vec![
                     IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
                     IsItem::new(ItemAmount::new(2.0, String::from("High-purity Silicon"))),
@@ -706,9 +734,9 @@ pub mod itemsmod {
         );
         gear = Item::new(
             "Gear",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 1.0,
+                ManFac::Assembler,
                 vec![IsItem::new(ItemAmount::new(
                     1.0,
                     String::from("Iron Ingot"),
@@ -719,9 +747,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Gear"), gear);
         let plasma_exciter: Item = Item::new(
             "Plasma Exciter",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 2.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(2.0, String::from("Prism"))),
                     IsItem::new(ItemAmount::new(4.0, String::from("Magnetic Coil"))),
@@ -735,10 +763,10 @@ pub mod itemsmod {
         res_hash.insert(String::from("Plasma Exciter"), plasma_exciter);
         let photon_combiner: Item = Item::new(
             "Photon Combiner",
-            vec![ManFac::Assembler],
             vec![
                 Recipe::new(
                     3.0,
+                    ManFac::Assembler,
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
                         IsItem::new(ItemAmount::new(2.0, String::from("Prism"))),
@@ -750,6 +778,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     3.0,
+                    ManFac::Assembler,
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
                         IsItem::new(ItemAmount::new(1.0, String::from("Grating Crystal"))),
@@ -764,9 +793,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Photon Combiner"), photon_combiner);
         let electromagentic_turbine: Item = Item::new(
             "Electromagnetic Turbine",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 2.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(2.0, String::from("Magnetic Coil"))),
                     IsItem::new(ItemAmount::new(2.0, String::from("Electric Motor"))),
@@ -783,9 +812,9 @@ pub mod itemsmod {
         );
         let processor: Item = Item::new(
             "Processor",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 3.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(
                         2.0,
@@ -799,9 +828,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Processor"), processor);
         let engine: Item = Item::new(
             "Engine",
-            vec![ManFac::Assembler],
             vec![Recipe::new(
                 3.0,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(2.0, String::from("Copper Ingot"))),
                     IsItem::new(ItemAmount::new(1.0, String::from("Magnetic Coil"))),
@@ -812,9 +841,9 @@ pub mod itemsmod {
         res_hash.insert(String::from("Engine"), engine);
         let thruster: Item = item!(
             "Thruster",
-            (Assembler),
             (recipe!(
                 4.0,
+                ManFac::Assembler,
                 (recitem!(3.0, "Copper Ingot")),
                 (recitem!(2.0, "Steel"))
             ))
@@ -837,9 +866,9 @@ pub mod itemsmod {
             "Reinforced Thruster",
             item!(
                 "Reinforced Thruster",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (
                         recitem!(5.0, "Electromagnetic Turbine"),
                         recitem!(5.0, "Titanium Alloy")
@@ -854,9 +883,9 @@ pub mod itemsmod {
             "Super-magnetic Ring",
             item!(
                 "Super-magnetic Ring",
-                (Assembler),
                 (recipe!(
                     3.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Energetic Graphite"),
                         recitem!(3.0, "Magnet"),
@@ -872,10 +901,10 @@ pub mod itemsmod {
             "Particle Container",
             item!(
                 "Particle Container",
-                (Assembler),
                 (
                     recipe!(
                         4.0,
+                        ManFac::Assembler,
                         (
                             recitem!(2.0, "Graphene"),
                             recitem!(2.0, "Copper Ingot"),
@@ -885,6 +914,7 @@ pub mod itemsmod {
                     ),
                     recipe!(
                         4.0,
+                        ManFac::Assembler,
                         (
                             recitem!(2.0, "Copper Ingot"),
                             recitem!(10.0, "Unipolar Magnet")
@@ -900,9 +930,9 @@ pub mod itemsmod {
             "Plastic",
             item!(
                 "Plastic",
-                (ChemicalPlant),
                 (recipe!(
                     3.0,
+                    ManFac::ChemicalPlant,
                     (
                         recitem!(1.0, "Energetic Graphite"),
                         recitem!(2.0, "Refined Oil")
@@ -917,10 +947,10 @@ pub mod itemsmod {
             "Organic Crystal",
             item!(
                 "Organic Crystal",
-                (ChemicalPlant),
                 (
                     recipe!(
                         6.0,
+                        ManFac::ChemicalPlant,
                         (
                             recitem!(1.0, "Water"),
                             recitem!(1.0, "Refined Oil"),
@@ -930,6 +960,7 @@ pub mod itemsmod {
                     ),
                     recipe!(
                         6.0,
+                        ManFac::ChemicalPlant,
                         (
                             recitem!(10.0, "Water"),
                             recitem!(30.0, "Plant Fuel"),
@@ -943,10 +974,10 @@ pub mod itemsmod {
         // can't use macros because of the declaration earlier
         graphene = Item::new(
             "Graphene",
-            vec![ManFac::ChemicalPlant],
             vec![
                 Recipe::new(
                     3.0,
+                    ManFac::ChemicalPlant,
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Sulfuric Acid"))),
                         IsItem::new(ItemAmount::new(3.0, String::from("Energetic Graphite"))),
@@ -955,6 +986,7 @@ pub mod itemsmod {
                 ),
                 Recipe::new(
                     2.0,
+                    ManFac::ChemicalPlant,
                     vec![IsItem::new(ItemAmount::new(2.0, String::from("Fire Ice")))],
                     vec![
                         IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
@@ -970,9 +1002,9 @@ pub mod itemsmod {
             "Annihilation Constraint Sphere",
             item!(
                 "Annihilation Constraint Sphere",
-                (Assembler),
                 (recipe!(
                     20.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Processor"),
                         recitem!(1.0, "Particle Container")
@@ -987,9 +1019,9 @@ pub mod itemsmod {
             "Strange Matter",
             item!(
                 "Strange Matter",
-                (MiniatureParticleCollider),
                 (recipe!(
                     8.0,
+                    ManFac::MiniatureParticleCollider,
                     (
                         recitem!(10.0, "Deuterium"),
                         recitem!(2.0, "Iron Ingot"),
@@ -1005,9 +1037,9 @@ pub mod itemsmod {
             "Titanium Crystal",
             item!(
                 "Titanium Crystal",
-                (Assembler),
                 (recipe!(
                     4.0,
+                    ManFac::Assembler,
                     (
                         recitem!(3.0, "Titanium Ingot"),
                         recitem!(1.0, "Organic Crystal")
@@ -1022,15 +1054,16 @@ pub mod itemsmod {
             "Carbon Nanotube",
             item!(
                 "Carbon Nanotube",
-                (ChemicalPlant),
                 (
                     recipe!(
                         4.0,
+                        ManFac::ChemicalPlant,
                         (recitem!(1.0, "Titanium Ingot"), recitem!(3.0, "Graphene")),
                         (recitem!(2.0, "Carbon Nanotube"))
                     ),
                     recipe!(
                         4.0,
+                        ManFac::ChemicalPlant,
                         (recitem!(6.0, "Stalagmite Crystal")),
                         (recitem!(2.0, "Carbon Nanotube"))
                     )
@@ -1043,9 +1076,9 @@ pub mod itemsmod {
             "Particle Broadband",
             item!(
                 "Particle Broadband",
-                (Assembler),
                 (recipe!(
                     8.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Plastic"),
                         recitem!(2.0, "Crystal Silicon"),
@@ -1061,10 +1094,10 @@ pub mod itemsmod {
             "Casimir Crystal",
             item!(
                 "Casimir Crystal",
-                (Assembler),
                 (
                     recipe!(
                         4.0,
+                        ManFac::Assembler,
                         (
                             recitem!(12.0, "Hydrogen"),
                             recitem!(2.0, "Graphene"),
@@ -1074,6 +1107,7 @@ pub mod itemsmod {
                     ),
                     recipe!(
                         4.0,
+                        ManFac::Assembler,
                         (
                             recitem!(12.0, "Hydrogen"),
                             recitem!(2.0, "Graphene"),
@@ -1090,9 +1124,9 @@ pub mod itemsmod {
             "Titanium Glass",
             item!(
                 "Titanium Glass",
-                (Assembler),
                 (recipe!(
                     5.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Water"),
                         recitem!(2.0, "Titanium Ingot"),
@@ -1108,9 +1142,9 @@ pub mod itemsmod {
             "Plane Filter",
             item!(
                 "Plane Filter",
-                (Assembler),
                 (recipe!(
                     12.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Titanium Glass"),
                         recitem!(1.0, "Casimir Crystal")
@@ -1125,9 +1159,9 @@ pub mod itemsmod {
             "Quantum Chip",
             item!(
                 "Quantum Chip",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (recitem!(2.0, "Plane Filter"), recitem!(2.0, "Processor")),
                     (recitem!(1.0, "Quantum Chip"))
                 ))
@@ -1140,9 +1174,9 @@ pub mod itemsmod {
             "Combustible Unit",
             item!(
                 "Combustible Unit",
-                (Assembler),
                 (recipe!(
                     3.0,
+                    ManFac::Assembler,
                     (recitem!(3.0, "Coal")),
                     (recitem!(1.0, "Combustible Unit"))
                 ))
@@ -1155,9 +1189,9 @@ pub mod itemsmod {
             "Logistics Bot",
             item!(
                 "Logistics Bot",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Processor"),
                         recitem!(1.0, "Engine"),
@@ -1173,9 +1207,9 @@ pub mod itemsmod {
             "Logistics Drone",
             item!(
                 "Logistics Drone",
-                (Assembler),
                 (recipe!(
                     4.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Thruster"),
                         recitem!(2.0, "Processor"),
@@ -1191,9 +1225,9 @@ pub mod itemsmod {
             "Interstellar Logistics Vessel",
             item!(
                 "Interstellar Logistics Vessel",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Reinforced Thruster"),
                         recitem!(10.0, "Processor"),
@@ -1209,9 +1243,9 @@ pub mod itemsmod {
             "Graviton Lens",
             item!(
                 "Graviton Lens",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (recitem!(1.0, "Strange Matter"), recitem!(4.0, "Diamond")),
                     (recitem!(1.0, "Graviton Lens"))
                 ))
@@ -1223,15 +1257,16 @@ pub mod itemsmod {
             "Space Warper",
             item!(
                 "Space Warper",
-                (Assembler),
                 (
                     recipe!(
                         10.0,
+                        ManFac::Assembler,
                         (recitem!(1.0, "Graviton Lens")),
                         (recitem!(1.0, "Space Warper"))
                     ),
                     recipe!(
                         10.0,
+                        ManFac::Assembler,
                         (recitem!(1.0, "Gravity Matrix")),
                         (recitem!(8.0, "Space Warper"))
                     )
@@ -1244,9 +1279,9 @@ pub mod itemsmod {
             "Foundation",
             item!(
                 "Foundation",
-                (Assembler),
                 (recipe!(
                     1.0,
+                    ManFac::Assembler,
                     (recitem!(1.0, "Steel"), recitem!(3.0, "Stone Brick")),
                     (recitem!(1.0, "Foundation"))
                 ))
@@ -1259,9 +1294,9 @@ pub mod itemsmod {
             "Proliferator Mk.I",
             item!(
                 "Proliferator Mk.I",
-                (Assembler),
                 (recipe!(
                     0.5,
+                    ManFac::Assembler,
                     (recitem!(1.0, "Coal")),
                     (recitem!(1.0, "Proliferator Mk.I"))
                 ))
@@ -1273,9 +1308,9 @@ pub mod itemsmod {
             "Proliferator Mk.II",
             item!(
                 "Proliferator MK.II",
-                (Assembler),
                 (recipe!(
                     1.0,
+                    ManFac::Assembler,
                     (recitem!(1.0, "Diamond"), recitem!(2.0, "Proliferator Mk.I")),
                     (recitem!(1.0, "Proliferator Mk.II"))
                 ))
@@ -1287,9 +1322,9 @@ pub mod itemsmod {
             "Proliferator Mk.III",
             item!(
                 "Proliferator Mk.III",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Carbon Nanotube"),
                         recitem!(2.0, "Proliferator Mk.II")
@@ -1305,9 +1340,9 @@ pub mod itemsmod {
             "Hydrogen Fuel Rod",
             item!(
                 "Hydrogen Fuel Rod",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (recitem!(10.0, "Hydrogen"), recitem!(1.0, "Titanium Ingot")),
                     (recitem!(2.0, "Hydrogen Fuel Rod"))
                 ))
@@ -1319,9 +1354,9 @@ pub mod itemsmod {
             "Deuterium Fuel Rod",
             item!(
                 "Deuterium Fuel Rod",
-                (Assembler),
                 (recipe!(
                     12.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Super-magnetic Ring"),
                         recitem!(20.0, "Deuterium"),
@@ -1337,9 +1372,9 @@ pub mod itemsmod {
             "Antimatter Fuel Rod",
             item!(
                 "Antimatter Fuel Rod",
-                (Assembler),
                 (recipe!(
                     24.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Titanium Alloy"),
                         recitem!(1.0, "Annihilation Constraint Sphere"),
@@ -1356,9 +1391,9 @@ pub mod itemsmod {
             "Strange Annihilation Fuel Rod",
             item!(
                 "Strange Annihilation Fuel Rod",
-                (Assembler),
                 (recipe!(
                     32.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Frame Material"),
                         recitem!(2.0, "Strange Matter"),
@@ -1376,9 +1411,9 @@ pub mod itemsmod {
             "Solar Sail",
             item!(
                 "Solar Sail",
-                (Assembler),
                 (recipe!(
                     4.0,
+                    ManFac::Assembler,
                     (recitem!(1.0, "Photon Combiner"), recitem!(1.0, "Graphene")),
                     (recitem!(2.0, "Solar Sail"))
                 ))
@@ -1390,9 +1425,9 @@ pub mod itemsmod {
             "Frame Material",
             item!(
                 "Frame Material",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "High-purity Silicon"),
                         recitem!(1.0, "Titanium Alloy"),
@@ -1408,9 +1443,9 @@ pub mod itemsmod {
             "Dyson Sphere Component",
             item!(
                 "Dyson Sphere Component",
-                (Assembler),
                 (recipe!(
                     8.0,
+                    ManFac::Assembler,
                     (
                         recitem!(3.0, "Processor"),
                         recitem!(3.0, "Solar Sail"),
@@ -1426,9 +1461,9 @@ pub mod itemsmod {
             "Small Carrier Rocket",
             item!(
                 "Small Carrier Rocket",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Quantum Chip"),
                         recitem!(4.0, "Deuterium Fuel Rod"),
@@ -1445,9 +1480,9 @@ pub mod itemsmod {
             "Electromagnetic Matrix",
             item!(
                 "Electromagnetic Matrix",
-                (Lab),
                 (recipe!(
                     3.0,
+                    ManFac::Lab,
                     (
                         recitem!(1.0, "Circuit Board"),
                         recitem!(1.0, "Magnetic Coil")
@@ -1462,9 +1497,9 @@ pub mod itemsmod {
             "Energy Matrix",
             item!(
                 "Energy Matrix",
-                (Lab),
                 (recipe!(
                     6.0,
+                    ManFac::Lab,
                     (
                         recitem!(2.0, "Hydrogen"),
                         recitem!(2.0, "Energetic Graphite")
@@ -1479,9 +1514,9 @@ pub mod itemsmod {
             "Structure Matrix",
             item!(
                 "Structure Matrix",
-                (Lab),
                 (recipe!(
                     8.0,
+                    ManFac::Lab,
                     (recitem!(1.0, "Titanium Crystal"), recitem!(1.0, "Diamond")),
                     (recitem!(1.0, "Structure Matrix"))
                 ))
@@ -1493,9 +1528,9 @@ pub mod itemsmod {
             "Information Matrix",
             item!(
                 "Information Matrix",
-                (Lab),
                 (recipe!(
                     10.0,
+                    ManFac::Lab,
                     (
                         recitem!(1.0, "Particle Broadband"),
                         recitem!(2.0, "Processor")
@@ -1510,9 +1545,9 @@ pub mod itemsmod {
             "Gravity Matrix",
             item!(
                 "Gravity Matrix",
-                (Lab),
                 (recipe!(
                     24.0,
+                    ManFac::Lab,
                     (
                         recitem!(1.0, "Quantum Chip"),
                         recitem!(1.0, "Graviton Lens")
@@ -1527,9 +1562,9 @@ pub mod itemsmod {
             "Universe Matrix",
             item!(
                 "Universe Matrix",
-                (Lab),
                 (recipe!(
                     15.0,
+                    ManFac::Lab,
                     (
                         recitem!(1.0, "Electromagnetic Matrix"),
                         recitem!(1.0, "Energy Matrix"),
@@ -1549,9 +1584,9 @@ pub mod itemsmod {
             "Magnum Ammo Box",
             item!(
                 "Magnum Ammo Box",
-                (Assembler),
                 (recipe!(
                     1.0,
+                    ManFac::Assembler,
                     (recitem!(3.0, "Copper Ingot")),
                     (recitem!(1.0, "Magnum Ammo Box"))
                 ))
@@ -1563,9 +1598,9 @@ pub mod itemsmod {
             "Titanium Ammo Box",
             item!(
                 "Titanium Ammo Box",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Titanium Ingot"),
                         recitem!(1.0, "Magnum Ammo Box")
@@ -1580,9 +1615,9 @@ pub mod itemsmod {
             "Superalloy Ammo Box",
             item!(
                 "Superalloy Ammo Box",
-                (Assembler),
                 (recipe!(
                     3.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Titanium Alloy"),
                         recitem!(1.0, "Titanium Ammo Box")
@@ -1597,9 +1632,9 @@ pub mod itemsmod {
             "Explosive Unit",
             item!(
                 "Explosive Unit",
-                (ChemicalPlant),
                 (recipe!(
                     6.0,
+                    ManFac::ChemicalPlant,
                     (
                         recitem!(1.0, "Sulfuric Acid"),
                         recitem!(2.0, "Plastic"),
@@ -1615,9 +1650,9 @@ pub mod itemsmod {
             "Crystal Explosive Unit",
             item!(
                 "Crystal Explosive Unit",
-                (ChemicalPlant),
                 (recipe!(
                     24.0,
+                    ManFac::ChemicalPlant,
                     (
                         recitem!(8.0, "Crystal Silicon"),
                         recitem!(1.0, "Casimir Crystal"),
@@ -1633,9 +1668,9 @@ pub mod itemsmod {
             "Missile Set",
             item!(
                 "Missile Set",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Engine"),
                         recitem!(2.0, "Combustible Unit"),
@@ -1652,9 +1687,9 @@ pub mod itemsmod {
             "Supersonic Missile Set",
             item!(
                 "Supersonic Missile Set",
-                (Assembler),
                 (recipe!(
                     4.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Thruster"),
                         recitem!(2.0, "Explosive Unit"),
@@ -1671,9 +1706,9 @@ pub mod itemsmod {
             "Gravity Missile Set",
             item!(
                 "Gravity Missile Set",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (
                         recitem!(3.0, "Strange Matter"),
                         recitem!(6.0, "Crystal Explosive Unit"),
@@ -1689,9 +1724,9 @@ pub mod itemsmod {
             "Shell Set",
             item!(
                 "Shell Set",
-                (Assembler),
                 (recipe!(
                     1.5,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Explosive Unit"),
                         recitem!(9.0, "Copper Ingot")
@@ -1706,9 +1741,9 @@ pub mod itemsmod {
             "High-Explosive Shell Set",
             item!(
                 "High-Explosive Shell Set",
-                (Assembler),
                 (recipe!(
                     3.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Explosive Unit"),
                         recitem!(6.0, "Titanium Ingot"),
@@ -1724,9 +1759,9 @@ pub mod itemsmod {
             "Crystal Shell Set",
             item!(
                 "Crystal Shell Set",
-                (Assembler),
                 (recipe!(
                     6.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Crystal Explosive Unit"),
                         recitem!(3.0, "Titanium Ingot"),
@@ -1742,9 +1777,9 @@ pub mod itemsmod {
             "Plasma Capsule",
             item!(
                 "Plasma Capsule",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(10.0, "Deuterium"),
                         recitem!(2.0, "Magnet"),
@@ -1760,9 +1795,9 @@ pub mod itemsmod {
             "Antimatter Capsule",
             item!(
                 "Antimatter Capsule",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(10.0, "Antimatter"),
                         recitem!(10.0, "Hydrogen"),
@@ -1779,9 +1814,9 @@ pub mod itemsmod {
             "Jamming Capsule",
             item!(
                 "Jamming Capsule",
-                (Assembler),
                 (recipe!(
                     2.0,
+                    ManFac::Assembler,
                     (
                         recitem!(3.0, "Hydrogen"),
                         recitem!(1.0, "Plasma Exciter"),
@@ -1797,9 +1832,9 @@ pub mod itemsmod {
             "Suppressing Capsule",
             item!(
                 "Suppressing Capsule",
-                (Assembler),
                 (recipe!(
                     8.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Titanium Glass"),
                         recitem!(1.0, "Super-magnetic Ring"),
@@ -1816,9 +1851,9 @@ pub mod itemsmod {
             "Prototype",
             item!(
                 "Prototype",
-                (Assembler),
                 (recipe!(
                     3.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Plasma Exciter"),
                         recitem!(2.0, "Circuit Board"),
@@ -1835,9 +1870,9 @@ pub mod itemsmod {
             "Precision Drone",
             item!(
                 "Precision Drone",
-                (Assembler),
                 (recipe!(
                     4.0,
+                    ManFac::Assembler,
                     (
                         recitem!(2.0, "Photon Combiner"),
                         recitem!(2.0, "Circuit Board"),
@@ -1854,9 +1889,9 @@ pub mod itemsmod {
             "Attack Drone",
             item!(
                 "Attack Drone",
-                (Assembler),
                 (recipe!(
                     4.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Particle Container"),
                         recitem!(1.0, "Processor"),
@@ -1873,9 +1908,9 @@ pub mod itemsmod {
             "Corvette",
             item!(
                 "Corvette",
-                (Assembler),
                 (recipe!(
                     5.0,
+                    ManFac::Assembler,
                     (
                         recitem!(3.0, "Particle Container"),
                         recitem!(2.0, "Processor"),
@@ -1892,9 +1927,9 @@ pub mod itemsmod {
             "Destroyer",
             item!(
                 "Destroyer",
-                (Assembler),
                 (recipe!(
                     8.0,
+                    ManFac::Assembler,
                     (
                         recitem!(1.0, "Strange Matter"),
                         recitem!(4.0, "Processor"),

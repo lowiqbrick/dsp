@@ -56,14 +56,21 @@ pub mod item_logic {
     pub struct Recipe {
         // crafting time (in seconds)
         crafting_time: f32,
+        pub crafting_station: ManFac,
         pub ingredients: Vec<IsItem>,
         pub products: Vec<IsItem>,
     }
 
     impl Recipe {
-        pub fn new(crafting_time: f32, ingredients: Vec<IsItem>, products: Vec<IsItem>) -> Recipe {
+        pub fn new(
+            crafting_time: f32,
+            crafting_station: ManFac,
+            ingredients: Vec<IsItem>,
+            products: Vec<IsItem>,
+        ) -> Recipe {
             Recipe {
                 crafting_time,
+                crafting_station,
                 ingredients,
                 products,
             }
@@ -132,14 +139,12 @@ pub mod item_logic {
     #[derive(Debug, Clone)]
     pub struct Item<'a> {
         pub name: &'a str,
-        pub creation_facility: Vec<ManFac>,
         pub recipes: Vec<Recipe>,
     }
 
     macro_rules! modrate {
-        ($item_rate: ident, $multiplier: literal, $manfac_counter: ident) => {
+        ($item_rate: ident, $multiplier: literal) => {
             $item_rate *= $multiplier;
-            $manfac_counter += 1;
         };
     }
 
@@ -155,12 +160,8 @@ pub mod item_logic {
     }
 
     impl<'a> Item<'a> {
-        pub fn new(name: &'a str, creation_facility: Vec<ManFac>, recipes: Vec<Recipe>) -> Item {
-            Item {
-                name,
-                creation_facility,
-                recipes,
-            }
+        pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item {
+            Item { name, recipes }
         }
 
         /// the central method on which everything in the program is build
@@ -330,66 +331,57 @@ pub mod item_logic {
             }
             // handle the different crafting stations
             let mut net_output_machine: f32 = net_output_proliferated;
-            let mut manfac_counter: i32 = 0;
-            for manfac in current_item.creation_facility.clone() {
-                match manfac {
-                    ManFac::Assembler => match settings.assembler {
-                        AssemblerMK::MKone => {
-                            modrate!(net_output_machine, 0.75, manfac_counter);
-                        }
-                        AssemblerMK::MKtwo => {
-                            modrate!(net_output_machine, 1.0, manfac_counter);
-                        }
-                        AssemblerMK::MKthree => {
-                            modrate!(net_output_machine, 1.5, manfac_counter);
-                        }
-                        AssemblerMK::MKfour => {
-                            modrate!(net_output_machine, 3.0, manfac_counter);
-                        }
-                    },
-                    ManFac::Furnace => match settings.smelter {
-                        SmelterMK::ArcSmelter => {
-                            modrate!(net_output_machine, 1.0, manfac_counter);
-                        }
-                        SmelterMK::PlaneSmelter => {
-                            modrate!(net_output_machine, 2.0, manfac_counter);
-                        }
-                        SmelterMK::NegentropySmelter => {
-                            modrate!(net_output_machine, 3.0, manfac_counter);
-                        }
-                    },
-                    ManFac::Lab => match settings.lab {
-                        LabMK::MatrixLab => {
-                            modrate!(net_output_machine, 1.0, manfac_counter);
-                        }
-                        LabMK::SelfEvolutionLab => {
-                            modrate!(net_output_machine, 3.0, manfac_counter);
-                        }
-                    },
-                    ManFac::OilRefinery => {
-                        modrate!(net_output_machine, 1.0, manfac_counter);
+            match current_recipe.crafting_station {
+                ManFac::Assembler => match settings.assembler {
+                    AssemblerMK::MKone => {
+                        modrate!(net_output_machine, 0.75);
                     }
-                    ManFac::ChemicalPlant => match settings.chemlab {
-                        ChemLabMK::Lab => {
-                            modrate!(net_output_machine, 1.0, manfac_counter);
-                        }
-                        ChemLabMK::QuantumLab => {
-                            modrate!(net_output_machine, 2.0, manfac_counter);
-                        }
-                    },
-                    ManFac::MiniatureParticleCollider => {
-                        modrate!(net_output_machine, 1.0, manfac_counter);
+                    AssemblerMK::MKtwo => {
+                        modrate!(net_output_machine, 1.0);
                     }
-                    ManFac::Origin => {
-                        net_output_machine *= 1.0;
+                    AssemblerMK::MKthree => {
+                        modrate!(net_output_machine, 1.5);
                     }
+                    AssemblerMK::MKfour => {
+                        modrate!(net_output_machine, 3.0);
+                    }
+                },
+                ManFac::Furnace => match settings.smelter {
+                    SmelterMK::ArcSmelter => {
+                        modrate!(net_output_machine, 1.0);
+                    }
+                    SmelterMK::PlaneSmelter => {
+                        modrate!(net_output_machine, 2.0);
+                    }
+                    SmelterMK::NegentropySmelter => {
+                        modrate!(net_output_machine, 3.0);
+                    }
+                },
+                ManFac::Lab => match settings.lab {
+                    LabMK::MatrixLab => {
+                        modrate!(net_output_machine, 1.0);
+                    }
+                    LabMK::SelfEvolutionLab => {
+                        modrate!(net_output_machine, 3.0);
+                    }
+                },
+                ManFac::OilRefinery => {
+                    modrate!(net_output_machine, 1.0);
                 }
-            }
-            if manfac_counter > 1 {
-                panic!(
-                    "item rate was modified multiple times ({}) for {}",
-                    manfac_counter, item_name
-                );
+                ManFac::ChemicalPlant => match settings.chemlab {
+                    ChemLabMK::Lab => {
+                        modrate!(net_output_machine, 1.0);
+                    }
+                    ChemLabMK::QuantumLab => {
+                        modrate!(net_output_machine, 2.0);
+                    }
+                },
+                ManFac::MiniatureParticleCollider => {
+                    modrate!(net_output_machine, 1.0);
+                }
+                ManFac::Origin => {
+                    net_output_machine *= 1.0;
+                }
             }
             // calculate how many crafting machines are required for matching troughput
             let manvac_count: f32 = item_per_sec / net_output_machine;
@@ -446,7 +438,7 @@ pub mod item_logic {
             }
             result_var.requirements = output_machine_ingredients;
             if result_var.station == vec![ManFac::Origin] {
-                result_var.station = current_item.creation_facility.clone();
+                result_var.station = vec![current_recipe.crafting_station.clone()];
             }
             // sanity checks on result_var
             assert_ne!(result_var.num_station, -1.0);
@@ -456,7 +448,8 @@ pub mod item_logic {
                 assert_ne!(
                     result_var.station,
                     vec!(ManFac::Origin),
-                    "result doesn't have a crafting station"
+                    "result of {} doesn't have a crafting station",
+                    item_name
                 );
                 assert_ne!(result_var.requirements, vec![]);
             }
@@ -616,7 +609,7 @@ pub mod item_logic {
             assume_basics: bool,
             produced_item: ItemAmount,
         ) -> ProgamInfo {
-            let basics = vec![
+            let basics: Vec<String> = vec![
                 String::from("Iron Ore"),
                 String::from("Copper Ore"),
                 String::from("Stone"),
@@ -640,6 +633,8 @@ pub mod item_logic {
                 String::from("Silicon-based Neuron"),
                 String::from("Negentropy Singularity"),
                 String::from("Matter Recombinator"),
+                String::from("Hydrogen"),
+                String::from("Deuterium"),
             ];
             ProgamInfo {
                 proliferators,
@@ -687,8 +682,8 @@ pub mod item_logic {
 // macro for creating items in a more convienent manner
 #[macro_export]
 macro_rules! recipe {
-    ($crafting_time: expr, ($($ingredients: tt)*), ($($products: tt)*)) => {
-        Recipe::new($crafting_time, vec![$($ingredients)*], vec![$($products)*])
+    ($crafting_time: expr, $crafting_station: expr,($($ingredients: tt)*), ($($products: tt)*)) => {
+        Recipe::new($crafting_time, $crafting_station, vec![$($ingredients)*], vec![$($products)*])
     };
 }
 #[macro_export]
@@ -699,8 +694,8 @@ macro_rules! recitem {
 }
 #[macro_export]
 macro_rules! item {
-    ($name: literal, ($($item_vec: tt)*), ($($rec_vec: tt)*)) => {
-        Item::new($name, vec![$($item_vec)*], vec![$($rec_vec)*])
+    ($name: literal,  ($($rec_vec: tt)*)) => {
+        Item::new($name, vec![$($rec_vec)*])
     };
 }
 #[macro_export]
