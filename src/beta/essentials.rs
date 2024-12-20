@@ -496,34 +496,38 @@ pub mod item_logic {
             }
             // finally make the function recursive by calling the function on the
             // ingredient items
-            for ingredient in current_item.recipes[current_recipe_index]
-                .ingredients
-                .iter()
-            {
-                match ingredient {
-                    IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item) {
-                        Some(call_item) => {
-                            call_item.crafting_chain(
-                                String::from(call_item.name),
-                                real_ingredient.amount * ingredient_multiplicator,
-                                &settings,
-                                result_order,
-                                result,
-                                prev_path.clone(),
-                                is_proliferated,
-                                false,
-                            );
+            // only make the function recursive if the program isn't restrained to the "main item"
+            if !settings.this_item_only {
+                for ingredient in current_item.recipes[current_recipe_index]
+                    .ingredients
+                    .iter()
+                {
+                    match ingredient {
+                        IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item)
+                        {
+                            Some(call_item) => {
+                                call_item.crafting_chain(
+                                    String::from(call_item.name),
+                                    real_ingredient.amount * ingredient_multiplicator,
+                                    &settings,
+                                    result_order,
+                                    result,
+                                    prev_path.clone(),
+                                    is_proliferated,
+                                    false,
+                                );
+                            }
+                            None => {
+                                panic!(
+                                    "failed to call 'fn crafting_chain' on key {}",
+                                    &real_ingredient.item
+                                );
+                            }
+                        },
+                        IsItem::NAI => {
+                            // if item is origin do nothing
+                            print!("");
                         }
-                        None => {
-                            panic!(
-                                "failed to call 'fn crafting_chain' on key {}",
-                                &real_ingredient.item
-                            );
-                        }
-                    },
-                    IsItem::NAI => {
-                        // if item is origin do nothing
-                        print!("");
                     }
                 }
             }

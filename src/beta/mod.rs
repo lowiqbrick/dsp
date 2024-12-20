@@ -270,10 +270,6 @@ pub mod items {
             match result.get(result_string) {
                 Some(result_match) => {
                     println!("{}", result_match);
-                    // abandon loop after the first item is printed, if only the first item is requested
-                    if settings.this_item_only {
-                        break;
-                    }
                     if index + 1 < vector_len {
                         println!("----------------------------------------");
                     }
