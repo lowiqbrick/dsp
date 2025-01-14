@@ -717,7 +717,7 @@ pub mod itemsmod {
             "Microcrystalline Component",
             vec![Recipe::new(
                 2.0,
-                ManFac::Furnace,
+                ManFac::Assembler,
                 vec![
                     IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
                     IsItem::new(ItemAmount::new(2.0, String::from("High-purity Silicon"))),
