@@ -502,16 +502,40 @@ pub mod item_logic {
                         IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item)
                         {
                             Some(call_item) => {
-                                call_item.crafting_chain(
-                                    String::from(call_item.name),
-                                    real_ingredient.amount * ingredient_multiplicator,
-                                    &settings,
-                                    result_order,
-                                    result,
-                                    prev_path.clone(),
-                                    is_proliferated,
-                                    false,
-                                );
+                                // are some items to be ignored?
+                                if settings.assume_basics {
+                                    // check if this particular item is in the vector of items
+                                    // that are to be ignored
+                                    if !settings
+                                        .basics
+                                        .clone()
+                                        .iter_mut()
+                                        .any(|vec_element| vec_element == call_item.name)
+                                    {
+                                        call_item.crafting_chain(
+                                            String::from(call_item.name),
+                                            real_ingredient.amount * ingredient_multiplicator,
+                                            &settings,
+                                            result_order,
+                                            result,
+                                            prev_path.clone(),
+                                            is_proliferated,
+                                            false,
+                                        );
+                                    }
+                                } else {
+                                    // of nothing is to be ignored call everything
+                                    call_item.crafting_chain(
+                                        String::from(call_item.name),
+                                        real_ingredient.amount * ingredient_multiplicator,
+                                        &settings,
+                                        result_order,
+                                        result,
+                                        prev_path.clone(),
+                                        is_proliferated,
+                                        false,
+                                    );
+                                }
                             }
                             None => {
                                 panic!(
