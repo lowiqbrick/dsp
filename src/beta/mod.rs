@@ -243,16 +243,24 @@ pub mod items {
         }
         match item_hashmap.get(&settings.produced_item.item) {
             // set off creation of the crafting chain
-            Some(item) => item.crafting_chain(
-                settings.produced_item.item.clone(),
-                settings.produced_item.amount,
-                &settings,
-                &mut result_order,
-                &mut result,
-                prev_path,
-                is_proliferated,
-                true,
-            ),
+            Some(item) => {
+                let twostrings: StringDuo = StringDuo {
+                    item_name: settings.produced_item.item.clone(),
+                    prev_path,
+                };
+                let twobools: BoolDuo = BoolDuo {
+                    is_proliferated,
+                    is_first_item: true,
+                };
+                item.crafting_chain(
+                    twostrings,
+                    settings.produced_item.amount,
+                    &settings,
+                    &mut result_order,
+                    &mut result,
+                    twobools,
+                )
+            }
             _ => {
                 panic!("requested item not in crafting recipes");
             }

@@ -137,6 +137,19 @@ pub mod item_logic {
             write!(f, "")
         }
     }
+
+    /// combines two bools for a small function call
+    pub struct BoolDuo {
+        pub is_proliferated: bool,
+        pub is_first_item: bool,
+    }
+
+    /// combines two strings for a small function call
+    pub struct StringDuo {
+        pub item_name: String,
+        pub prev_path: String,
+    }
+
     /// struct for representing an item
     #[derive(Debug, Clone)]
     pub struct Item<'a> {
@@ -169,28 +182,26 @@ pub mod item_logic {
         /// the central method on which everything in the program is build
         pub fn crafting_chain(
             &self,
-            item_name: String,
+            mut strings: StringDuo,
             item_per_sec: f32,
             settings: &ProgamInfo,
             result_order: &mut Vec<String>,
             result: &mut HashMap<String, ItemResult>,
-            mut prev_path: String,
-            mut is_proliferated: bool,
-            is_first_item: bool,
+            mut bools: BoolDuo,
         ) {
             // get rid of warning
-            if !is_first_item {
-                let _prev_path_warn: &str = &prev_path[0..1];
+            if !bools.is_first_item {
+                let _prev_path_warn: &str = &strings.prev_path[0..1];
             }
             // get all items
             let mut items_map: HashMap<String, Item> = HashMap::new();
             items_map = get_items(items_map);
-            let mut new_path: String = String::from(&item_name);
-            if !is_first_item {
+            let mut new_path: String = String::from(&strings.item_name);
+            if !bools.is_first_item {
                 new_path.extend([" -> "]);
             }
-            new_path.extend([prev_path.clone()]);
-            prev_path = new_path.clone();
+            new_path.extend([strings.prev_path.clone()]);
+            strings.prev_path = new_path.clone();
             // create result variable
             let mut result_var: ItemResult;
             // initialise result with default values
@@ -198,8 +209,8 @@ pub mod item_logic {
                 result_var = ItemResult::new(
                     // if results ar to be merged no ellaborate paths
                     // just the items name
-                    item_name.clone(),
-                    item_name.clone(),
+                    strings.item_name.clone(),
+                    strings.item_name.clone(),
                     -1.0,
                     -1.0,
                     vec![ManFac::Origin],
@@ -208,7 +219,7 @@ pub mod item_logic {
             } else {
                 result_var = ItemResult::new(
                     new_path.clone(),
-                    item_name.clone(),
+                    strings.item_name.clone(),
                     -1.0,
                     -1.0,
                     vec![ManFac::Origin],
@@ -223,7 +234,7 @@ pub mod item_logic {
             if settings.merge {
                 // if result item already exists copy all values
                 // if not remember that a new one needs to be created
-                match result.get(&item_name) {
+                match result.get(&strings.item_name) {
                     Some(existing_result) => {
                         result_var.target_rate += result_var.target_rate;
                         result_var.num_station = existing_result.num_station;
@@ -235,8 +246,8 @@ pub mod item_logic {
                     }
                 }
                 // only add String if not yet present
-                if !result_order.contains(&item_name) {
-                    result_order.push(item_name.clone());
+                if !result_order.contains(&strings.item_name) {
+                    result_order.push(strings.item_name.clone());
                 }
             } else {
                 result_order.push(new_path.clone());
@@ -244,10 +255,13 @@ pub mod item_logic {
             }
             // get a copy of the requested item from the item hashmap
             // after this match item_name can be assumed to be a valid key
-            let current_item: &Item = match items_map.get(&item_name) {
+            let current_item: &Item = match items_map.get(&strings.item_name) {
                 Some(item) => item,
                 _ => {
-                    panic!("requested item '{}' doesn't exist in hashmap", item_name)
+                    panic!(
+                        "requested item '{}' doesn't exist in hashmap",
+                        strings.item_name
+                    )
                 }
             };
             // is the recipe not the recipe at index 0?
@@ -255,13 +269,13 @@ pub mod item_logic {
             // find out if current item is in the list to have a different recipe
             for vec_element in settings.item_recipe.iter() {
                 // if item is in vector, the recipe index needs to be changed
-                if item_name == vec_element.item {
+                if strings.item_name == vec_element.item {
                     current_recipe_index = vec_element.amount as usize;
                     // sanity check; is the given recipe index valid?
                     if current_recipe_index + 1 > current_item.recipes.len() {
                         panic!(
                             "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
-                            item_name,
+                            strings.item_name,
                             current_recipe_index,
                             current_item.recipes.len()
                         );
@@ -317,12 +331,12 @@ pub mod item_logic {
             let mut net_output_proliferated: f32 = net_output_per_second;
             // factor in proliferation
             // proliferation deactivated by function?
-            if is_proliferated {
+            if bools.is_proliferated {
                 let mut no_proliferation_vector: bool = false;
                 for item_prolif in settings.no_proliferation.clone().iter() {
                     if item_prolif == &result_var.name {
                         no_proliferation_vector = true;
-                        is_proliferated = false;
+                        bools.is_proliferated = false;
                     }
                 }
                 if !no_proliferation_vector {
@@ -387,7 +401,7 @@ pub mod item_logic {
             // calculate how many crafting machines are required for matching troughput
             let manvac_count: f32 = item_per_sec / net_output_machine;
             // calculate the multiplier for the amount of ingredients required
-            let current_proliferator_factor: f32 = if is_proliferated {
+            let current_proliferator_factor: f32 = if bools.is_proliferated {
                 prolif_factor(settings)
             } else {
                 1.0
@@ -449,7 +463,7 @@ pub mod item_logic {
                     result_var.station,
                     vec!(ManFac::Origin),
                     "result of {} doesn't have a crafting station",
-                    item_name
+                    strings.item_name
                 );
                 assert_ne!(result_var.requirements, vec![]);
             }
@@ -460,36 +474,35 @@ pub mod item_logic {
                 } else {
                     result.insert(result_var.describer.clone(), result_var.clone());
                 }
-            } else {
-                if settings.merge {
-                    // increase the values already present
-                    match result.get_mut(&result_var.name) {
-                        Some(found_item) => {
-                            // increase amount of required items per minute
-                            found_item.target_rate += item_per_sec;
-                            // increase required prodiction buildings
-                            found_item.num_station = result_var.num_station;
-                            // increase the required ingrediences
-                            for (index, _found_ingredient) in
-                                found_item.requirements.clone().iter().enumerate()
-                            {
-                                found_item.requirements[index].amount +=
-                                    result_var.requirements[index].amount;
-                            }
-                        }
-                        _ => {
-                            panic!(
-                                "tried to write into the key '{}', which wasn't found",
-                                result_var.name.clone()
-                            );
+            } else if settings.merge {
+                // increase the values already present
+                match result.get_mut(&result_var.name) {
+                    Some(found_item) => {
+                        // increase amount of required items per minute
+                        found_item.target_rate += item_per_sec;
+                        // increase required prodiction buildings
+                        found_item.num_station = result_var.num_station;
+                        // increase the required ingrediences
+                        for (index, _found_ingredient) in
+                            found_item.requirements.clone().iter().enumerate()
+                        {
+                            found_item.requirements[index].amount +=
+                                result_var.requirements[index].amount;
                         }
                     }
-                } else {
-                    panic!(
+                    _ => {
+                        panic!(
+                            "tried to write into the key '{}', which wasn't found",
+                            result_var.name.clone()
+                        );
+                    }
+                }
+            } else {
+                panic!(
                         "eventhough nothing should me merged the given path '{}' for the hashmap already exists",
                         result_var.describer);
-                }
             }
+
             // finally make the function recursive by calling the function on the
             // ingredient items
             // only make the function recursive if the program isn't restrained to the "main item"
@@ -502,6 +515,14 @@ pub mod item_logic {
                         IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item)
                         {
                             Some(call_item) => {
+                                let twostrings_next: StringDuo = StringDuo {
+                                    item_name: String::from(call_item.name),
+                                    prev_path: strings.prev_path.clone(),
+                                };
+                                let twobools_next: BoolDuo = BoolDuo {
+                                    is_proliferated: bools.is_proliferated,
+                                    is_first_item: false,
+                                };
                                 // are some items to be ignored?
                                 if settings.assume_basics {
                                     // check if this particular item is in the vector of items
@@ -513,27 +534,23 @@ pub mod item_logic {
                                         .any(|vec_element| vec_element == call_item.name)
                                     {
                                         call_item.crafting_chain(
-                                            String::from(call_item.name),
+                                            twostrings_next,
                                             real_ingredient.amount * ingredient_multiplicator,
                                             settings,
                                             result_order,
                                             result,
-                                            prev_path.clone(),
-                                            is_proliferated,
-                                            false,
+                                            twobools_next,
                                         );
                                     }
                                 } else {
                                     // of nothing is to be ignored call everything
                                     call_item.crafting_chain(
-                                        String::from(call_item.name),
+                                        twostrings_next,
                                         real_ingredient.amount * ingredient_multiplicator,
                                         settings,
                                         result_order,
                                         result,
-                                        prev_path.clone(),
-                                        is_proliferated,
-                                        false,
+                                        twobools_next,
                                     );
                                 }
                             }
