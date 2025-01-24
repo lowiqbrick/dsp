@@ -10,13 +10,6 @@ pub mod items {
     use crate::beta::items_get::itemsmod::get_items;
     use std::collections::HashMap;
 
-    /// function for outputting all items
-    // fn print_items() {
-    //     let mut map: HashMap<String, Item> = HashMap::new();
-    //     map = get_items(map);
-    //     println!("{:?}", map);
-    // }
-
     /// the main function of the beta of the game
     pub fn beta(mut args: Vec<String>) {
         // declare the variables required for processing the inputs
@@ -29,8 +22,8 @@ pub mod items {
         let mut settings: ProgamInfo = ProgamInfo::new(
             Proliferator::None,
             ChemLabMK::Lab,
-            SmelterMK::ArcSmelter,
-            AssemblerMK::MKone,
+            SmelterMK::Arc,
+            AssemblerMK::One,
             LabMK::MatrixLab,
             vec![],
             vec![],
@@ -57,7 +50,7 @@ pub mod items {
             // println!("produced item set at index {}", index);
             settings.produced_item = ItemAmount::new(
                 args[1].parse::<f32>().expect("provided invalid number"),
-                String::from(args[0].clone()),
+                args[0].clone(),
             );
         } else {
             eprintln!("given item name {} isn't valid", args[0]);
@@ -85,15 +78,15 @@ pub mod items {
                 "chemlab=2" => settings.chemlab = ChemLabMK::QuantumLab,
                 // smelter
                 "-s" | "--smelter" => status = ArgState::FurnaceLevel,
-                "smelter=1" => settings.smelter = SmelterMK::ArcSmelter,
-                "smelter=2" => settings.smelter = SmelterMK::PlaneSmelter,
-                "smelter=3" => settings.smelter = SmelterMK::NegentropySmelter,
+                "smelter=1" => settings.smelter = SmelterMK::Arc,
+                "smelter=2" => settings.smelter = SmelterMK::Plane,
+                "smelter=3" => settings.smelter = SmelterMK::Negentropy,
                 // assembler
                 "-a" | "--assembler" => status = ArgState::AssemblerLevel,
-                "assembler=1" => settings.assembler = AssemblerMK::MKone,
-                "assembler=2" => settings.assembler = AssemblerMK::MKtwo,
-                "assembler=3" => settings.assembler = AssemblerMK::MKthree,
-                "assembler=4" => settings.assembler = AssemblerMK::MKfour,
+                "assembler=1" => settings.assembler = AssemblerMK::One,
+                "assembler=2" => settings.assembler = AssemblerMK::Two,
+                "assembler=3" => settings.assembler = AssemblerMK::Three,
+                "assembler=4" => settings.assembler = AssemblerMK::Four,
                 // research lab
                 "-l" | "--lab" => status = ArgState::LabLevel,
                 "lab=1" => settings.lab = LabMK::MatrixLab,
@@ -134,9 +127,9 @@ pub mod items {
                     // smelter level
                     ArgState::FurnaceLevel =>{
                         match argument.as_str() {
-                            "1" => settings.smelter = SmelterMK::ArcSmelter,
-                            "2" => settings.smelter = SmelterMK::PlaneSmelter,
-                            "3" => settings.smelter = SmelterMK::NegentropySmelter,
+                            "1" => settings.smelter = SmelterMK::Arc,
+                            "2" => settings.smelter = SmelterMK::Plane,
+                            "3" => settings.smelter = SmelterMK::Negentropy,
                             _ => eprintln!(
                                 "invalid smelter level was supplied (\"1\", \"2\" and \"3\" are valid; \"{}\" was supplied)", argument),
                         }
@@ -144,10 +137,10 @@ pub mod items {
                     // assembler level
                      ArgState::AssemblerLevel=> {
                         match argument.as_str() {
-                            "1" => settings.assembler = AssemblerMK::MKone,
-                            "2" => settings.assembler = AssemblerMK::MKtwo,
-                            "3" => settings.assembler = AssemblerMK::MKthree,
-                            "4" => settings.assembler = AssemblerMK::MKfour,
+                            "1" => settings.assembler = AssemblerMK::One,
+                            "2" => settings.assembler = AssemblerMK::Two,
+                            "3" => settings.assembler = AssemblerMK::Three,
+                            "4" => settings.assembler = AssemblerMK::Four,
                             _ => eprintln!(
                                 "invalid assembler level was supplied (\"1\", \"2\", \"3\" and \"4\"are valid; \"{}\" was supplied)", argument),
                         }
@@ -213,7 +206,7 @@ pub mod items {
                                     let item_clone: Item = t.clone();
                                     let recipe_tot_num = item_clone.recipes.len();
                                     // add item to vector if recipe number is a valid index for the vector
-                                    if recipe_tot_num - 1 >= recipe_num as usize {
+                                    if recipe_tot_num  > recipe_num as usize {
                                         settings.item_recipe.push(ItemAmount::new(
                                             recipe_num as f32,
                                             item_name.clone(),
@@ -250,7 +243,7 @@ pub mod items {
             // set off creation of the crafting chain
             Some(item) => item.crafting_chain(
                 settings.produced_item.item.clone(),
-                settings.produced_item.amount as f32,
+                settings.produced_item.amount,
                 &settings,
                 &mut result_order,
                 &mut result,

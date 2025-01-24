@@ -8,16 +8,15 @@ pub mod itemsmod {
     // import all macros
     use crate::{item, recipe, recitem, tohash};
     /// creates a big HashMap with all the items and buildings in the game
-    pub fn get_items<'a>(mut res_hash: HashMap<String, Item>) -> HashMap<String, Item> {
+    pub fn get_items(mut res_hash: HashMap<String, Item>) -> HashMap<String, Item> {
         // all ores/origin items
-        let iron_ore: Item;
         let iron_ore_rec: Recipe = Recipe::new(
             0.0,
             ManFac::Origin,
             vec![IsItem::new_nai()],
             vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
         );
-        iron_ore = Item::new("Iron Ore", vec![iron_ore_rec]);
+        let iron_ore: Item = Item::new("Iron Ore", vec![iron_ore_rec]);
         res_hash.insert(String::from("Iron Ore"), iron_ore);
         let copper_ore: Item = Item::new(
             "Copper Ore",
@@ -110,13 +109,6 @@ pub mod itemsmod {
         );
         res_hash.insert(String::from("Crude Oil"), crude_oil);
         // hydrogen requires a lot of other items to be declared
-        let refined_oil: Item;
-        let graphene: Item;
-        let fire_ice: Item;
-        let energetic_graphite: Item;
-        let antimatter: Item;
-        let critical_photon: Item;
-        let gear: Item;
         let hydrogen: Item = Item::new(
             "Hydrogen",
             vec![
@@ -183,7 +175,7 @@ pub mod itemsmod {
             ],
         );
         res_hash.insert(String::from("Deuterium"), deuterium);
-        antimatter = Item::new(
+        let antimatter: Item = Item::new(
             "Antimatter",
             vec![Recipe::new(
                 2.0,
@@ -212,7 +204,7 @@ pub mod itemsmod {
             )],
         );
         res_hash.insert(String::from("Core Element"), core_element);
-        critical_photon = Item::new(
+        let critical_photon: Item = Item::new(
             "Critical Photon",
             vec![Recipe::new(
                 0.0,
@@ -290,7 +282,7 @@ pub mod itemsmod {
             )],
         );
         res_hash.insert(String::from("Unipolar Magnet"), unipolar_magnet);
-        fire_ice = Item::new(
+        let fire_ice: Item = Item::new(
             "Fire Ice",
             vec![Recipe::new(
                 0.0,
@@ -434,7 +426,7 @@ pub mod itemsmod {
             )],
         );
         res_hash.insert(String::from("Stone Brick"), stone_brick);
-        energetic_graphite = Item::new(
+        let energetic_graphite: Item = Item::new(
             "Energetic Graphite",
             vec![
                 Recipe::new(
@@ -521,7 +513,7 @@ pub mod itemsmod {
             ],
         );
         res_hash.insert(String::from("Sulfuric Acid"), sulfuric_acid);
-        refined_oil = Item::new(
+        let refined_oil: Item = Item::new(
             "Refined Oil",
             vec![
                 Recipe::new(
@@ -732,7 +724,7 @@ pub mod itemsmod {
             String::from("Microcrystalline Component"),
             microcrystalline_component,
         );
-        gear = Item::new(
+        let gear: Item = Item::new(
             "Gear",
             vec![Recipe::new(
                 1.0,
@@ -972,7 +964,7 @@ pub mod itemsmod {
             )
         );
         // can't use macros because of the declaration earlier
-        graphene = Item::new(
+        let graphene: Item = Item::new(
             "Graphene",
             vec![
                 Recipe::new(
@@ -1975,7 +1967,7 @@ mod test_items {
                     let is_item: IsItem = ingredient;
                     let item: String = match is_item {
                         IsItem::Item(item_amount) => item_amount.item,
-                        IsItem::NAI => continue,
+                        IsItem::Nai => continue,
                     };
                     // check whether or not the string can be found as key in the
                     // item hashmap
@@ -1997,10 +1989,10 @@ mod test_items {
                     let is_item: IsItem = product;
                     let item: String = match is_item {
                         IsItem::Item(item_amount) => {
-                            print!("{:?}\n", item_amount);
+                            println!("{:?}", item_amount);
                             item_amount.item
                         }
-                        IsItem::NAI => continue,
+                        IsItem::Nai => continue,
                     };
                     // check whether or not the string can be found as key in the
                     // item hashmap

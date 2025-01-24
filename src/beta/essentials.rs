@@ -38,7 +38,7 @@ pub mod item_logic {
     pub enum IsItem {
         Item(ItemAmount),
         // NotAnItem
-        NAI,
+        Nai,
     }
 
     impl IsItem {
@@ -47,7 +47,7 @@ pub mod item_logic {
         }
 
         pub fn new_nai() -> IsItem {
-            IsItem::NAI
+            IsItem::Nai
         }
     }
 
@@ -110,8 +110,9 @@ pub mod item_logic {
     impl Display for ItemResult {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             // write all things with static values
-            write!(f, "{}\n", self.describer)?;
-            write!(f, "item target rate: {:.1}\n", self.target_rate)?;
+            writeln!(f, "{}", self.describer).expect("displaying ItemResult failed");
+            writeln!(f, "item target rate: {:.1}", self.target_rate)
+                .expect("displaying ItemResult failed");
             if self.station != vec![ManFac::Origin] {
                 write!(
                     f,
@@ -119,14 +120,15 @@ pub mod item_logic {
                     self.num_station.ceil(),
                     self.station,
                     self.num_station
-                )?;
-                write!(f, "\n")?;
-                write!(f, "this requires the following (per second):\n")?;
+                )
+                .expect("displaying ItemResult failed");
+                writeln!(f, "\nthis requires the following (per second):")
+                    .expect("displaying ItemResult failed");
                 // write vector
                 for (index, amount) in self.requirements.clone().iter().enumerate() {
                     // tab
                     if index == 0 {
-                        print!("   ");
+                        write!(f, "   ").expect("displaying ItemResult failed");
                     }
                     write!(f, "    {:.1} {}", amount.amount, amount.item)?;
                 }
@@ -160,7 +162,7 @@ pub mod item_logic {
     }
 
     impl<'a> Item<'a> {
-        pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item {
+        pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item<'a> {
             Item { name, recipes }
         }
 
@@ -223,8 +225,7 @@ pub mod item_logic {
                 // if not remember that a new one needs to be created
                 match result.get(&item_name) {
                     Some(existing_result) => {
-                        result_var.target_rate =
-                            existing_result.target_rate + result_var.target_rate;
+                        result_var.target_rate += result_var.target_rate;
                         result_var.num_station = existing_result.num_station;
                         result_var.station = existing_result.station.clone();
                         result_var.requirements = existing_result.requirements.clone();
@@ -279,7 +280,7 @@ pub mod item_logic {
                             output_amount = item_match.amount;
                         }
                     }
-                    IsItem::NAI => {
+                    IsItem::Nai => {
                         // do nothing
                         print!("");
                     }
@@ -298,7 +299,7 @@ pub mod item_logic {
                             input_amount = item_match.amount;
                         }
                     }
-                    IsItem::NAI => {
+                    IsItem::Nai => {
                         // do nothing
                         print!("");
                     }
@@ -312,7 +313,7 @@ pub mod item_logic {
                     net_output
                 );
             }
-            let net_output_per_second: f32 = net_output as f32 / current_recipe.crafting_time;
+            let net_output_per_second: f32 = net_output / current_recipe.crafting_time;
             let mut net_output_proliferated: f32 = net_output_per_second;
             // factor in proliferation
             // proliferation deactivated by function?
@@ -326,34 +327,34 @@ pub mod item_logic {
                 }
                 if !no_proliferation_vector {
                     let prolif_factor: f32 = prolif_factor(settings);
-                    net_output_proliferated = net_output_proliferated * prolif_factor;
+                    net_output_proliferated *= prolif_factor;
                 }
             }
             // handle the different crafting stations
             let mut net_output_machine: f32 = net_output_proliferated;
             match current_recipe.crafting_station {
                 ManFac::Assembler => match settings.assembler {
-                    AssemblerMK::MKone => {
+                    AssemblerMK::One => {
                         modrate!(net_output_machine, 0.75);
                     }
-                    AssemblerMK::MKtwo => {
+                    AssemblerMK::Two => {
                         modrate!(net_output_machine, 1.0);
                     }
-                    AssemblerMK::MKthree => {
+                    AssemblerMK::Three => {
                         modrate!(net_output_machine, 1.5);
                     }
-                    AssemblerMK::MKfour => {
+                    AssemblerMK::Four => {
                         modrate!(net_output_machine, 3.0);
                     }
                 },
                 ManFac::Furnace => match settings.smelter {
-                    SmelterMK::ArcSmelter => {
+                    SmelterMK::Arc => {
                         modrate!(net_output_machine, 1.0);
                     }
-                    SmelterMK::PlaneSmelter => {
+                    SmelterMK::Plane => {
                         modrate!(net_output_machine, 2.0);
                     }
-                    SmelterMK::NegentropySmelter => {
+                    SmelterMK::Negentropy => {
                         modrate!(net_output_machine, 3.0);
                     }
                 },
@@ -386,12 +387,11 @@ pub mod item_logic {
             // calculate how many crafting machines are required for matching troughput
             let manvac_count: f32 = item_per_sec / net_output_machine;
             // calculate the multiplier for the amount of ingredients required
-            let current_proliferator_factor: f32;
-            if is_proliferated {
-                current_proliferator_factor = prolif_factor(settings);
+            let current_proliferator_factor: f32 = if is_proliferated {
+                prolif_factor(settings)
             } else {
-                current_proliferator_factor = 1.0;
-            }
+                1.0
+            };
             let ingredient_multiplicator: f32 = ((item_per_sec / current_recipe.crafting_time)
                 / net_output_per_second)
                 / current_proliferator_factor;
@@ -406,7 +406,7 @@ pub mod item_logic {
                             ingredient.item.clone(),
                         ));
                     }
-                    IsItem::NAI => {
+                    IsItem::Nai => {
                         // do nothing
                         print!("");
                     }
@@ -438,7 +438,7 @@ pub mod item_logic {
             }
             result_var.requirements = output_machine_ingredients;
             if result_var.station == vec![ManFac::Origin] {
-                result_var.station = vec![current_recipe.crafting_station.clone()];
+                result_var.station = vec![current_recipe.crafting_station];
             }
             // sanity checks on result_var
             assert_ne!(result_var.num_station, -1.0);
@@ -515,7 +515,7 @@ pub mod item_logic {
                                         call_item.crafting_chain(
                                             String::from(call_item.name),
                                             real_ingredient.amount * ingredient_multiplicator,
-                                            &settings,
+                                            settings,
                                             result_order,
                                             result,
                                             prev_path.clone(),
@@ -528,7 +528,7 @@ pub mod item_logic {
                                     call_item.crafting_chain(
                                         String::from(call_item.name),
                                         real_ingredient.amount * ingredient_multiplicator,
-                                        &settings,
+                                        settings,
                                         result_order,
                                         result,
                                         prev_path.clone(),
@@ -544,7 +544,7 @@ pub mod item_logic {
                                 );
                             }
                         },
-                        IsItem::NAI => {
+                        IsItem::Nai => {
                             // if item is origin do nothing
                             print!("");
                         }
@@ -567,18 +567,18 @@ pub mod item_logic {
     /// enum for saving the type of assembler used
     #[derive(Debug)]
     pub enum SmelterMK {
-        ArcSmelter,
-        PlaneSmelter,
-        NegentropySmelter,
+        Arc,
+        Plane,
+        Negentropy,
     }
 
     /// enum for saving the type of assembler used
     #[derive(Debug)]
     pub enum AssemblerMK {
-        MKone,
-        MKtwo,
-        MKthree,
-        MKfour,
+        One,
+        Two,
+        Three,
+        Four,
     }
 
     /// enum for saving the type of assembler used
