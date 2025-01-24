@@ -597,6 +597,15 @@ pub mod item_logic {
         None,
     }
 
+    /// combines all the building enums for ease of calling functions
+    pub struct EnumCombiner {
+        pub chemlab: ChemLabMK,
+        pub smelter: SmelterMK,
+        pub assembler: AssemblerMK,
+        pub lab: LabMK,
+        pub proliferator: Proliferator,
+    }
+
     /// struct for containing all information for the main function
     #[derive(Debug)]
     pub struct ProgamInfo {
@@ -621,11 +630,7 @@ pub mod item_logic {
     }
     impl ProgamInfo {
         pub fn new(
-            proliferators: Proliferator,
-            chemlab: ChemLabMK,
-            smelter: SmelterMK,
-            assembler: AssemblerMK,
-            lab: LabMK,
+            mks: EnumCombiner,
             no_proliferation: Vec<String>,
             additional_items: Vec<ItemAmount>,
             item_recipe: Vec<ItemAmount>,
@@ -661,11 +666,11 @@ pub mod item_logic {
                 String::from("Deuterium"),
             ];
             ProgamInfo {
-                proliferators,
-                chemlab,
-                smelter,
-                assembler,
-                lab,
+                proliferators: mks.proliferator,
+                chemlab: mks.chemlab,
+                smelter: mks.smelter,
+                assembler: mks.assembler,
+                lab: mks.lab,
                 no_proliferation,
                 additional_items,
                 item_recipe,

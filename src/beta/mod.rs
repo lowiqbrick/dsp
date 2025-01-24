@@ -20,11 +20,13 @@ pub mod items {
         let mut status: ArgState = ArgState::Default;
         // Defualt settings of the program
         let mut settings: ProgamInfo = ProgamInfo::new(
-            Proliferator::None,
-            ChemLabMK::Lab,
-            SmelterMK::Arc,
-            AssemblerMK::One,
-            LabMK::MatrixLab,
+            EnumCombiner {
+                proliferator: Proliferator::None,
+                chemlab: ChemLabMK::Lab,
+                smelter: SmelterMK::Arc,
+                assembler: AssemblerMK::One,
+                lab: LabMK::MatrixLab,
+            },
             vec![],
             vec![],
             vec![],
