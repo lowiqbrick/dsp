@@ -15,8 +15,7 @@ pub mod items {
         // declare the variables required for processing the inputs
         let args_len: usize = args.len();
         // println!("args len: {}", args_len);
-        let mut item_hashmap: HashMap<String, Item> = HashMap::new();
-        item_hashmap = get_items(item_hashmap);
+        let item_hashmap: HashMap<String, Item> = get_items();
         let mut status: ArgState = ArgState::Default;
         // Defualt settings of the program
         let mut settings: ProgamInfo = ProgamInfo::new(

@@ -194,8 +194,7 @@ pub mod item_logic {
                 let _prev_path_warn: &str = &strings.prev_path[0..1];
             }
             // get all items
-            let mut items_map: HashMap<String, Item> = HashMap::new();
-            items_map = get_items(items_map);
+            let items_map: HashMap<String, Item> = get_items();
             let mut new_path: String = String::from(&strings.item_name);
             if !bools.is_first_item {
                 new_path.extend([" -> "]);

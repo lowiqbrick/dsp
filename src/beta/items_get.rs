@@ -8,7 +8,8 @@ pub mod itemsmod {
     // import all macros
     use crate::{item, recipe, recitem, tohash};
     /// creates a big HashMap with all the items and buildings in the game
-    pub fn get_items(mut res_hash: HashMap<String, Item>) -> HashMap<String, Item> {
+    pub fn get_items() -> HashMap<String, Item<'static>> {
+        let mut res_hash: HashMap<String, Item<'_>> = HashMap::new();
         // all ores/origin items
         let iron_ore_rec: Recipe = Recipe::new(
             0.0,
@@ -1947,8 +1948,7 @@ mod test_items {
     #[test]
     fn test_hashmap() {
         // get list of all items
-        let mut item_map: HashMap<String, Item> = HashMap::new();
-        item_map = get_items(item_map);
+        let item_map: HashMap<String, Item> = get_items();
         // get all keys
         let keys = item_map.keys();
         // access all items in HashMap
