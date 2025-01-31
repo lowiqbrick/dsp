@@ -192,8 +192,8 @@ pub mod item_logic {
         factor
     }
 
-    /// checks if the item is in a vector that dictates a specific chrafting recepie
-    fn check_recepie_index(
+    /// checks if the item is in a vector that dictates a specific chrafting recipe
+    fn check_recipe_index(
         settings: &ProgamInfo,
         strings: &StringDuo,
         current_item: &Item,
@@ -249,6 +249,45 @@ pub mod item_logic {
             ManFac::MiniatureParticleCollider => net_output_proliferated * 1.0,
             ManFac::Origin => net_output_proliferated * 1.0,
         }
+    }
+
+    /// in case a recipe requires itself as input,
+    /// the input needs to be subtracted from the output
+    fn calculate_net_output(
+        current_recipe: &Recipe,
+        current_recipe_index: &usize,
+        result_var: &ItemResult,
+    ) -> f32 {
+        // and calculate the production rate, with crafting speed, proliferation, etc.
+        let mut output_amount: f32 = 0.0;
+        let mut input_amount: f32 = 0.0;
+        for item_amount in current_recipe.products.clone().iter() {
+            match item_amount {
+                IsItem::Item(item_match) => {
+                    if item_match.item == result_var.name {
+                        output_amount = item_match.amount;
+                    }
+                }
+                IsItem::Nai => (),
+            }
+        }
+        if output_amount == 0.0 {
+            panic!(
+                "the output of recipe (index {}) from item '{}' doesn't contain the item",
+                current_recipe_index, result_var.name
+            );
+        }
+        for item_amount in current_recipe.ingredients.clone().iter() {
+            match item_amount {
+                IsItem::Item(item_match) => {
+                    if item_match.item == result_var.name {
+                        input_amount = item_match.amount;
+                    }
+                }
+                IsItem::Nai => (),
+            }
+        }
+        output_amount - input_amount
     }
 
     impl<'a> Item<'a> {
@@ -319,45 +358,12 @@ pub mod item_logic {
                 }
             };
             // is the recipe not the recipe at index 0?
-            let current_recipe_index: usize = check_recepie_index(settings, &strings, current_item);
-            // and calculate the production rate, with crafting speed, proliferation, etc.
-            let mut output_amount: f32 = 0.0;
-            let mut input_amount: f32 = 0.0;
+            let current_recipe_index: usize = check_recipe_index(settings, &strings, current_item);
             let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
-            for item_amount in current_recipe.products.clone().iter() {
-                match item_amount {
-                    IsItem::Item(item_match) => {
-                        if item_match.item == result_var.name {
-                            output_amount = item_match.amount;
-                        }
-                    }
-                    IsItem::Nai => {
-                        // do nothing
-                        print!("");
-                    }
-                }
-            }
-            if output_amount == 0.0 {
-                panic!(
-                    "the output of recipe (index {}) from item '{}' doesn't contain the item",
-                    current_recipe_index, result_var.name
-                );
-            }
-            for item_amount in current_recipe.ingredients.clone().iter() {
-                match item_amount {
-                    IsItem::Item(item_match) => {
-                        if item_match.item == result_var.name {
-                            input_amount = item_match.amount;
-                        }
-                    }
-                    IsItem::Nai => {
-                        // do nothing
-                        print!("");
-                    }
-                }
-            }
-            // calculate the net output of the recipe
-            let net_output: f32 = output_amount - input_amount;
+            // calculate the net output of the recipe, incase the output is partially the input
+            // of the recipe
+            let net_output: f32 =
+                calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
             if net_output <= 0.0 {
                 panic!(
                     "recipe has net output of {} which doesn't make sense",

@@ -184,7 +184,7 @@ pub mod items {
                             eprintln!("{} isn't a valid item", item_name);
                         }
                     }
-                    // set the recepie for a given item
+                    // set the recipe for a given item
                     // needs next element in for loop
                     ArgState::ItemRecipe=> {
                         // save current and next arguments for processing later
