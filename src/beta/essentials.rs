@@ -105,6 +105,30 @@ pub mod item_logic {
                 requirements,
             }
         }
+        fn initialise(settings: &ProgamInfo, strings: &StringDuo, new_path: &str) -> Self {
+            // initialise result with default values
+            if settings.merge {
+                ItemResult::new(
+                    // if results ar to be merged no ellaborate paths
+                    // just the items name
+                    strings.item_name.clone(),
+                    strings.item_name.clone(),
+                    -1.0,
+                    -1.0,
+                    vec![ManFac::Origin],
+                    vec![],
+                )
+            } else {
+                ItemResult::new(
+                    new_path.to_string(),
+                    strings.item_name.clone(),
+                    -1.0,
+                    -1.0,
+                    vec![ManFac::Origin],
+                    vec![],
+                )
+            }
+        }
     }
 
     impl Display for ItemResult {
@@ -157,12 +181,6 @@ pub mod item_logic {
         pub recipes: Vec<Recipe>,
     }
 
-    macro_rules! modrate {
-        ($item_rate: ident, $multiplier: literal) => {
-            $item_rate *= $multiplier;
-        };
-    }
-
     /// an function to return the current proliferation factor based on curent settings
     fn prolif_factor(settings: &ProgamInfo) -> f32 {
         let factor: f32 = match settings.proliferators {
@@ -172,6 +190,65 @@ pub mod item_logic {
             Proliferator::None => 1.0,
         };
         factor
+    }
+
+    /// checks if the item is in a vector that dictates a specific chrafting recepie
+    fn check_recepie_index(
+        settings: &ProgamInfo,
+        strings: &StringDuo,
+        current_item: &Item,
+    ) -> usize {
+        let mut current_recipe_index = 0;
+        // find out if current item is in the list to have a different recipe
+        // get amount of the item as output (and as an ingredient, if thats the case)
+        for vec_element in settings.item_recipe.iter() {
+            // if item is in vector, the recipe index needs to be changed
+            if strings.item_name == vec_element.item {
+                current_recipe_index = vec_element.amount as usize;
+                // sanity check; is the given recipe index valid?
+                if current_recipe_index + 1 > current_item.recipes.len() {
+                    panic!(
+                        "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
+                        strings.item_name,
+                        current_recipe_index,
+                        current_item.recipes.len()
+                    );
+                }
+            }
+        }
+        current_recipe_index
+    }
+
+    /// apply the factor of the currently responsible crafting station
+    fn apply_station_factor(
+        net_output_proliferated: f32,
+        current_recipe: &Recipe,
+        settings: &ProgamInfo,
+    ) -> f32 {
+        match current_recipe.crafting_station {
+            ManFac::Assembler => match settings.assembler {
+                AssemblerMK::One => net_output_proliferated * 0.75,
+                AssemblerMK::Two => net_output_proliferated * 1.0,
+                AssemblerMK::Three => net_output_proliferated * 1.5,
+                AssemblerMK::Four => net_output_proliferated * 3.0,
+            },
+            ManFac::Furnace => match settings.smelter {
+                SmelterMK::Arc => net_output_proliferated * 1.0,
+                SmelterMK::Plane => net_output_proliferated * 2.0,
+                SmelterMK::Negentropy => net_output_proliferated * 3.0,
+            },
+            ManFac::Lab => match settings.lab {
+                LabMK::MatrixLab => net_output_proliferated * 1.0,
+                LabMK::SelfEvolutionLab => net_output_proliferated * 3.0,
+            },
+            ManFac::OilRefinery => net_output_proliferated * 1.0,
+            ManFac::ChemicalPlant => match settings.chemlab {
+                ChemLabMK::Lab => net_output_proliferated * 1.0,
+                ChemLabMK::QuantumLab => net_output_proliferated * 2.0,
+            },
+            ManFac::MiniatureParticleCollider => net_output_proliferated * 1.0,
+            ManFac::Origin => net_output_proliferated * 1.0,
+        }
     }
 
     impl<'a> Item<'a> {
@@ -202,29 +279,7 @@ pub mod item_logic {
             new_path.extend([strings.prev_path.clone()]);
             strings.prev_path = new_path.clone();
             // create result variable
-            let mut result_var: ItemResult;
-            // initialise result with default values
-            if settings.merge {
-                result_var = ItemResult::new(
-                    // if results ar to be merged no ellaborate paths
-                    // just the items name
-                    strings.item_name.clone(),
-                    strings.item_name.clone(),
-                    -1.0,
-                    -1.0,
-                    vec![ManFac::Origin],
-                    vec![],
-                );
-            } else {
-                result_var = ItemResult::new(
-                    new_path.clone(),
-                    strings.item_name.clone(),
-                    -1.0,
-                    -1.0,
-                    vec![ManFac::Origin],
-                    vec![],
-                );
-            }
+            let mut result_var: ItemResult = ItemResult::initialise(settings, &strings, &new_path);
             // save desired target rate for item
             result_var.target_rate = item_per_sec;
             // write item information in result if the output
@@ -264,24 +319,7 @@ pub mod item_logic {
                 }
             };
             // is the recipe not the recipe at index 0?
-            let mut current_recipe_index: usize = 0;
-            // find out if current item is in the list to have a different recipe
-            for vec_element in settings.item_recipe.iter() {
-                // if item is in vector, the recipe index needs to be changed
-                if strings.item_name == vec_element.item {
-                    current_recipe_index = vec_element.amount as usize;
-                    // sanity check; is the given recipe index valid?
-                    if current_recipe_index + 1 > current_item.recipes.len() {
-                        panic!(
-                            "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
-                            strings.item_name,
-                            current_recipe_index,
-                            current_item.recipes.len()
-                        );
-                    }
-                }
-            }
-            // get amount of the item as output (and as an ingredient, if thats the case)
+            let current_recipe_index: usize = check_recepie_index(settings, &strings, current_item);
             // and calculate the production rate, with crafting speed, proliferation, etc.
             let mut output_amount: f32 = 0.0;
             let mut input_amount: f32 = 0.0;
@@ -344,59 +382,8 @@ pub mod item_logic {
                 }
             }
             // handle the different crafting stations
-            let mut net_output_machine: f32 = net_output_proliferated;
-            match current_recipe.crafting_station {
-                ManFac::Assembler => match settings.assembler {
-                    AssemblerMK::One => {
-                        modrate!(net_output_machine, 0.75);
-                    }
-                    AssemblerMK::Two => {
-                        modrate!(net_output_machine, 1.0);
-                    }
-                    AssemblerMK::Three => {
-                        modrate!(net_output_machine, 1.5);
-                    }
-                    AssemblerMK::Four => {
-                        modrate!(net_output_machine, 3.0);
-                    }
-                },
-                ManFac::Furnace => match settings.smelter {
-                    SmelterMK::Arc => {
-                        modrate!(net_output_machine, 1.0);
-                    }
-                    SmelterMK::Plane => {
-                        modrate!(net_output_machine, 2.0);
-                    }
-                    SmelterMK::Negentropy => {
-                        modrate!(net_output_machine, 3.0);
-                    }
-                },
-                ManFac::Lab => match settings.lab {
-                    LabMK::MatrixLab => {
-                        modrate!(net_output_machine, 1.0);
-                    }
-                    LabMK::SelfEvolutionLab => {
-                        modrate!(net_output_machine, 3.0);
-                    }
-                },
-                ManFac::OilRefinery => {
-                    modrate!(net_output_machine, 1.0);
-                }
-                ManFac::ChemicalPlant => match settings.chemlab {
-                    ChemLabMK::Lab => {
-                        modrate!(net_output_machine, 1.0);
-                    }
-                    ChemLabMK::QuantumLab => {
-                        modrate!(net_output_machine, 2.0);
-                    }
-                },
-                ManFac::MiniatureParticleCollider => {
-                    modrate!(net_output_machine, 1.0);
-                }
-                ManFac::Origin => {
-                    net_output_machine *= 1.0;
-                }
-            }
+            let net_output_machine: f32 =
+                apply_station_factor(net_output_proliferated, &current_recipe, settings);
             // calculate how many crafting machines are required for matching troughput
             let manvac_count: f32 = item_per_sec / net_output_machine;
             // calculate the multiplier for the amount of ingredients required
@@ -428,23 +415,8 @@ pub mod item_logic {
             if settings.merge {
                 if is_adding_new_item {
                     result_var.num_station = manvac_count;
-                    // Debugging
-                    /*
-                    println!(
-                        "new item {} requires {} stations",
-                        current_item.name, manvac_count
-                    );*/
                 } else {
-                    // Debugging
-                    /*
-                    print!(
-                        "item {} went with {} addiionsal stations from {} station to",
-                        current_item.name, manvac_count, result_var.num_station
-                    );*/
                     result_var.num_station += manvac_count;
-                    // Debugging
-                    /*
-                    println!(" {} stations", result_var.num_station);*/
                 }
             } else {
                 result_var.num_station = manvac_count;
