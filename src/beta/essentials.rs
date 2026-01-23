@@ -290,6 +290,64 @@ pub mod item_logic {
         output_amount - input_amount
     }
 
+    /// when the output is supposed to be merged a new entry can't just be
+    /// created since the value needs to be added to an existing one
+    fn create_or_amend_entry(
+        settings: &ProgramInfo,
+        strings: &StringDuo,
+        result: &mut HashMap<String, ItemResult>,
+        result_var: &mut ItemResult,
+        result_order: &mut Vec<String>,
+        new_path: &str,
+        is_adding_new_item: &mut bool,
+    ) {
+        if settings.merge {
+            // if result item already exists copy all values
+            // if not remember that a new one needs to be created
+            match result.get(&strings.item_name) {
+                Some(existing_result) => {
+                    result_var.target_rate += result_var.target_rate;
+                    result_var.num_station = existing_result.num_station;
+                    result_var.station = existing_result.station.clone();
+                    result_var.requirements = existing_result.requirements.clone();
+                }
+                _ => {
+                    *is_adding_new_item = true;
+                }
+            }
+            // only add String if not yet present
+            if !result_order.contains(&strings.item_name) {
+                result_order.push(strings.item_name.clone());
+            }
+        } else {
+            result_order.push(new_path.to_string().clone());
+            *is_adding_new_item = true;
+        }
+    }
+
+    /// check if the current item is supposed to be proliferated and
+    /// update the values accordingly
+    fn factor_in_proliferation(
+        settings: &ProgramInfo,
+        result_var: &mut ItemResult,
+        bools: &mut BoolDuo,
+        net_output_proliferated: &mut f32,
+    ) {
+        if bools.is_proliferated {
+            let mut no_proliferation_vector: bool = false;
+            for item_prolif in settings.no_proliferation.clone().iter() {
+                if item_prolif == &result_var.name {
+                    no_proliferation_vector = true;
+                    bools.is_proliferated = false;
+                }
+            }
+            if !no_proliferation_vector {
+                let prolif_factor: f32 = prolif_factor(settings);
+                *net_output_proliferated *= prolif_factor;
+            }
+        }
+    }
+
     impl<'a> Item<'a> {
         pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item<'a> {
             Item { name, recipes }
@@ -324,28 +382,15 @@ pub mod item_logic {
             // write item information in result if the output
             // is supposed to be merged
             let mut is_adding_new_item: bool = false;
-            if settings.merge {
-                // if result item already exists copy all values
-                // if not remember that a new one needs to be created
-                match result.get(&strings.item_name) {
-                    Some(existing_result) => {
-                        result_var.target_rate += result_var.target_rate;
-                        result_var.num_station = existing_result.num_station;
-                        result_var.station = existing_result.station.clone();
-                        result_var.requirements = existing_result.requirements.clone();
-                    }
-                    _ => {
-                        is_adding_new_item = true;
-                    }
-                }
-                // only add String if not yet present
-                if !result_order.contains(&strings.item_name) {
-                    result_order.push(strings.item_name.clone());
-                }
-            } else {
-                result_order.push(new_path.clone());
-                is_adding_new_item = true;
-            }
+            create_or_amend_entry(
+                settings,
+                &strings,
+                result,
+                &mut result_var,
+                result_order,
+                &new_path,
+                &mut is_adding_new_item,
+            );
             // get a copy of the requested item from the item hashmap
             // after this match item_name can be assumed to be a valid key
             let current_item: &Item = match items_map.get(&strings.item_name) {
@@ -360,7 +405,7 @@ pub mod item_logic {
             // is the recipe not the recipe at index 0?
             let current_recipe_index: usize = check_recipe_index(settings, &strings, current_item);
             let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
-            // calculate the net output of the recipe, increase the output is partially the input
+            // calculate the net output of the recipe, if the output is partially the input
             // of the recipe
             let net_output: f32 =
                 calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
@@ -373,20 +418,12 @@ pub mod item_logic {
             let net_output_per_second: f32 = net_output / current_recipe.crafting_time;
             let mut net_output_proliferated: f32 = net_output_per_second;
             // factor in proliferation
-            // proliferation deactivated by function?
-            if bools.is_proliferated {
-                let mut no_proliferation_vector: bool = false;
-                for item_prolif in settings.no_proliferation.clone().iter() {
-                    if item_prolif == &result_var.name {
-                        no_proliferation_vector = true;
-                        bools.is_proliferated = false;
-                    }
-                }
-                if !no_proliferation_vector {
-                    let prolif_factor: f32 = prolif_factor(settings);
-                    net_output_proliferated *= prolif_factor;
-                }
-            }
+            factor_in_proliferation(
+                settings,
+                &mut result_var,
+                &mut bools,
+                &mut net_output_proliferated,
+            );
             // handle the different crafting stations
             let net_output_machine: f32 =
                 apply_station_factor(net_output_proliferated, &current_recipe, settings);
