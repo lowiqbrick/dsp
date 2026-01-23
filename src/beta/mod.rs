@@ -10,58 +10,29 @@ pub mod items {
     use crate::beta::items_get::itemsmod::get_items;
     use std::collections::HashMap;
 
-    /// the main function of the beta of the game
-    pub fn beta(mut args: Vec<String>) {
-        // declare the variables required for processing the inputs
-        let args_len: usize = args.len();
-        // println!("args len: {}", args_len);
-        let item_hashmap: HashMap<String, Item> = get_items();
-        let mut status: ArgState = ArgState::Default;
-        // Default settings of the program
-        let mut settings: ProgramInfo = ProgramInfo::new(
-            EnumCombiner {
-                proliferator: Proliferator::None,
-                chemlab: ChemLabMK::Lab,
-                smelter: SmelterMK::Arc,
-                assembler: AssemblerMK::One,
-                lab: LabMK::MatrixLab,
-            },
-            vec![],
-            vec![],
-            vec![],
-            false,
-            false,
-            ItemAmount::new(0.0, String::from("Default")),
-        );
-        // check for displaying the help text
+    /// checks fo the environment key words that tell the function to display the
+    /// documentation for the program
+    ///
+    /// # Return
+    ///
+    /// returns true if the help message was displayed and false otherwise
+    fn display_help(args: &mut [String]) -> bool {
         for argument in args.iter_mut() {
             if argument.as_str() == "-h" || argument.as_mut_str() == "--help" {
                 print_help();
-                return;
+                return true;
             }
         }
-        // sanity check
-        if args_len < 2 {
-            eprintln!("no arguments were given to the function");
-            return;
-        }
-        // loop for processing the arguments
-        // get the item to be produced
-        if item_hashmap.contains_key(&args[0]) {
-            // println!("produced item set at index {}", index);
-            settings.produced_item = ItemAmount::new(
-                args[1].parse::<f32>().expect("provided invalid number"),
-                args[0].clone(),
-            );
-        } else {
-            eprintln!("given item name {} isn't valid", args[0]);
-            return;
-        }
-        // remove the first two arguments
-        args.remove(0);
-        args.remove(0);
-        // process the arguments
+        false
+    }
+
+    fn process_env_args(
+        args: &mut [String],
+        settings: &mut ProgramInfo,
+        item_hashmap: &HashMap<String, Item>,
+    ) {
         let mut iterator: std::slice::Iter<'_, String> = args.iter();
+        let mut status: ArgState = ArgState::Default;
         while let Some(argument) = iterator.next() {
             match argument.as_str() {
                 // squash the output
@@ -227,6 +198,55 @@ pub mod items {
                 }
             }
         }
+    }
+
+    /// the main function of the beta of the game
+    pub fn beta(mut args: Vec<String>) {
+        // declare the variables required for processing the inputs
+        let args_len: usize = args.len();
+        // println!("args len: {}", args_len);
+        let item_hashmap: HashMap<String, Item> = get_items();
+        // Default settings of the program
+        let mut settings: ProgramInfo = ProgramInfo::new(
+            EnumCombiner {
+                proliferator: Proliferator::None,
+                chemlab: ChemLabMK::Lab,
+                smelter: SmelterMK::Arc,
+                assembler: AssemblerMK::One,
+                lab: LabMK::MatrixLab,
+            },
+            vec![],
+            vec![],
+            vec![],
+            false,
+            false,
+            ItemAmount::new(0.0, String::from("Default")),
+        );
+        if display_help(&mut args) {
+            return;
+        }
+        // sanity check
+        if args_len < 2 {
+            eprintln!("no arguments were given to the function");
+            return;
+        }
+        // loop for processing the arguments
+        // get the item to be produced
+        if item_hashmap.contains_key(&args[0]) {
+            // println!("produced item set at index {}", index);
+            settings.produced_item = ItemAmount::new(
+                args[1].parse::<f32>().expect("provided invalid number"),
+                args[0].clone(),
+            );
+        } else {
+            eprintln!("given item name {} isn't valid", args[0]);
+            return;
+        }
+        // remove the first two arguments
+        args.remove(0);
+        args.remove(0);
+        // process the arguments
+        process_env_args(&mut args, &mut settings, &item_hashmap);
         // Debugging only
         // println!("{:?}", settings);
         // call method on item
