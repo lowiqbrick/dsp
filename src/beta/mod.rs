@@ -17,8 +17,8 @@ pub mod items {
         // println!("args len: {}", args_len);
         let item_hashmap: HashMap<String, Item> = get_items();
         let mut status: ArgState = ArgState::Default;
-        // Defualt settings of the program
-        let mut settings: ProgamInfo = ProgamInfo::new(
+        // Default settings of the program
+        let mut settings: ProgramInfo = ProgramInfo::new(
             EnumCombiner {
                 proliferator: Proliferator::None,
                 chemlab: ChemLabMK::Lab,
@@ -117,7 +117,7 @@ pub mod items {
                         }
                     }
                     // chemlab level
-                   ArgState::ChemLabLevel=> {
+                    ArgState::ChemLabLevel=> {
                         match argument.as_str() {
                             "1" => settings.chemlab = ChemLabMK::Lab,
                             "2" => settings.chemlab = ChemLabMK::QuantumLab,
@@ -136,7 +136,7 @@ pub mod items {
                         }
                     }
                     // assembler level
-                     ArgState::AssemblerLevel=> {
+                    ArgState::AssemblerLevel=> {
                         match argument.as_str() {
                             "1" => settings.assembler = AssemblerMK::One,
                             "2" => settings.assembler = AssemblerMK::Two,
@@ -146,7 +146,7 @@ pub mod items {
                                 "invalid assembler level was supplied (\"1\", \"2\", \"3\" and \"4\"are valid; \"{}\" was supplied)", argument),
                         }
                     }
-                    // reserchlab level
+                    // research lab level
                     ArgState::LabLevel=> {
                         match argument.as_str() {
                             "1" => settings.lab = LabMK::MatrixLab,
@@ -156,7 +156,7 @@ pub mod items {
                         }
                     }
                     // disable proliferation for specific items and downward
-                     ArgState::NoProliferation =>{
+                    ArgState::NoProliferation =>{
                         if item_hashmap.contains_key(argument) {
                             settings.no_proliferation.push(argument.clone());
                         } else {
@@ -165,7 +165,7 @@ pub mod items {
                     }
                     // add additional production for specific items in a crafting chain
                     // needs next element in for loop
-                  ArgState::AdditionalItems=> {
+                    ArgState::AdditionalItems=> {
                         // save current and next arguments for processing later
                         let item_name: String = argument.clone();
                         let quantity: &String = match iterator.next() {

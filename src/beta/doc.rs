@@ -37,8 +37,8 @@ pub fn print_help() {
         -n --noproliferation        specify items that aren't supposed to be proliferated
                                         -n "Copper Ingot"
 
-        -i --items                  add additional quatities for items to the ones required for the chain
-                                    for example: in case you want more gravity marices for warpers
+        -i --items                  add additional quantities for items to the ones required for the chain
+                                    for example: in case you want more gravity matrices for warpers
                                         -i "Gravity Matrix" 1.0
 
         -r --recipe                 specify the recipe used, in case there is more than one way of producing something

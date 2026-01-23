@@ -37,7 +37,7 @@ pub mod item_logic {
     #[derive(Debug, Clone, PartialEq)]
     pub enum IsItem {
         Item(ItemAmount),
-        // NotAnItem
+        /// NotAnItem
         Nai,
     }
 
@@ -105,11 +105,11 @@ pub mod item_logic {
                 requirements,
             }
         }
-        fn initialise(settings: &ProgamInfo, strings: &StringDuo, new_path: &str) -> Self {
-            // initialise result with default values
+        fn initialize(settings: &ProgramInfo, strings: &StringDuo, new_path: &str) -> Self {
+            // initialize result with default values
             if settings.merge {
                 ItemResult::new(
-                    // if results ar to be merged no ellaborate paths
+                    // if results ar to be merged no elaborate paths
                     // just the items name
                     strings.item_name.clone(),
                     strings.item_name.clone(),
@@ -181,8 +181,8 @@ pub mod item_logic {
         pub recipes: Vec<Recipe>,
     }
 
-    /// an function to return the current proliferation factor based on curent settings
-    fn prolif_factor(settings: &ProgamInfo) -> f32 {
+    /// an function to return the current proliferation factor based on current settings
+    fn prolif_factor(settings: &ProgramInfo) -> f32 {
         let factor: f32 = match settings.proliferators {
             Proliferator::MKone => 1.125,
             Proliferator::MKtwo => 1.2,
@@ -192,9 +192,9 @@ pub mod item_logic {
         factor
     }
 
-    /// checks if the item is in a vector that dictates a specific chrafting recipe
+    /// checks if the item is in a vector that dictates a specific crafting recipe
     fn check_recipe_index(
-        settings: &ProgamInfo,
+        settings: &ProgramInfo,
         strings: &StringDuo,
         current_item: &Item,
     ) -> usize {
@@ -223,7 +223,7 @@ pub mod item_logic {
     fn apply_station_factor(
         net_output_proliferated: f32,
         current_recipe: &Recipe,
-        settings: &ProgamInfo,
+        settings: &ProgramInfo,
     ) -> f32 {
         match current_recipe.crafting_station {
             ManFac::Assembler => match settings.assembler {
@@ -300,7 +300,7 @@ pub mod item_logic {
             &self,
             mut strings: StringDuo,
             item_per_sec: f32,
-            settings: &ProgamInfo,
+            settings: &ProgramInfo,
             result_order: &mut Vec<String>,
             result: &mut HashMap<String, ItemResult>,
             mut bools: BoolDuo,
@@ -318,7 +318,7 @@ pub mod item_logic {
             new_path.extend([strings.prev_path.clone()]);
             strings.prev_path = new_path.clone();
             // create result variable
-            let mut result_var: ItemResult = ItemResult::initialise(settings, &strings, &new_path);
+            let mut result_var: ItemResult = ItemResult::initialize(settings, &strings, &new_path);
             // save desired target rate for item
             result_var.target_rate = item_per_sec;
             // write item information in result if the output
@@ -360,7 +360,7 @@ pub mod item_logic {
             // is the recipe not the recipe at index 0?
             let current_recipe_index: usize = check_recipe_index(settings, &strings, current_item);
             let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
-            // calculate the net output of the recipe, incase the output is partially the input
+            // calculate the net output of the recipe, increase the output is partially the input
             // of the recipe
             let net_output: f32 =
                 calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
@@ -390,7 +390,7 @@ pub mod item_logic {
             // handle the different crafting stations
             let net_output_machine: f32 =
                 apply_station_factor(net_output_proliferated, &current_recipe, settings);
-            // calculate how many crafting machines are required for matching troughput
+            // calculate how many crafting machines are required for matching throughput
             let manvac_count: f32 = item_per_sec / net_output_machine;
             // calculate the multiplier for the amount of ingredients required
             let current_proliferator_factor: f32 = if bools.is_proliferated {
@@ -404,8 +404,8 @@ pub mod item_logic {
             // putting everything together
             let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
             // apply modifier
-            for isitem in current_recipe.ingredients.clone().iter() {
-                match isitem {
+            for is_item in current_recipe.ingredients.clone().iter() {
+                match is_item {
                     IsItem::Item(ingredient) => {
                         output_machine_ingredients.push(ItemAmount::new(
                             ingredient.amount * ingredient_multiplicator,
@@ -457,9 +457,9 @@ pub mod item_logic {
                     Some(found_item) => {
                         // increase amount of required items per minute
                         found_item.target_rate += item_per_sec;
-                        // increase required prodiction buildings
+                        // increase required production buildings
                         found_item.num_station = result_var.num_station;
-                        // increase the required ingrediences
+                        // increase the required ingredients
                         for (index, _found_ingredient) in
                             found_item.requirements.clone().iter().enumerate()
                         {
@@ -476,7 +476,7 @@ pub mod item_logic {
                 }
             } else {
                 panic!(
-                        "eventhough nothing should me merged the given path '{}' for the hashmap already exists",
+                        "even though nothing should me merged the given path '{}' for the hashmap already exists",
                         result_var.describer);
             }
 
@@ -602,7 +602,7 @@ pub mod item_logic {
 
     /// struct for containing all information for the main function
     #[derive(Debug)]
-    pub struct ProgamInfo {
+    pub struct ProgramInfo {
         // enums to save the facilities used
         pub proliferators: Proliferator,
         pub chemlab: ChemLabMK,
@@ -613,7 +613,7 @@ pub mod item_logic {
         pub additional_items: Vec<ItemAmount>,
         // ItemAmount here is treated differently than in the item hashmap
         // ItemAmount.amount == Index of the to be used recipe
-        // ItemAbount.item == Name of the Item which is supposed to have its recipe changed
+        // ItemAbout.item == Name of the Item which is supposed to have its recipe changed
         pub item_recipe: Vec<ItemAmount>,
         pub merge: bool,
         pub assume_basics: bool,
@@ -622,7 +622,7 @@ pub mod item_logic {
         /// only show the item requested and not the entire chain
         pub this_item_only: bool,
     }
-    impl ProgamInfo {
+    impl ProgramInfo {
         pub fn new(
             mks: EnumCombiner,
             no_proliferation: Vec<String>,
@@ -631,7 +631,7 @@ pub mod item_logic {
             merge: bool,
             assume_basics: bool,
             produced_item: ItemAmount,
-        ) -> ProgamInfo {
+        ) -> ProgramInfo {
             let basics: Vec<String> = vec![
                 String::from("Iron Ore"),
                 String::from("Copper Ore"),
@@ -659,7 +659,7 @@ pub mod item_logic {
                 String::from("Hydrogen"),
                 String::from("Deuterium"),
             ];
-            ProgamInfo {
+            ProgramInfo {
                 proliferators: mks.proliferator,
                 chemlab: mks.chemlab,
                 smelter: mks.smelter,
@@ -702,7 +702,7 @@ pub mod item_logic {
     }
 }
 
-// macro for creating items in a more convienent manner
+// macro for creating items in a more convenient manner
 #[macro_export]
 macro_rules! recipe {
     ($crafting_time: expr, $crafting_station: expr,($($ingredients: tt)*), ($($products: tt)*)) => {
@@ -711,8 +711,8 @@ macro_rules! recipe {
 }
 #[macro_export]
 macro_rules! recitem {
-    ($amount: literal, $itemname: literal) => {
-        IsItem::new(ItemAmount::new($amount, String::from($itemname)))
+    ($amount: literal, $item_name: literal) => {
+        IsItem::new(ItemAmount::new($amount, String::from($item_name)))
     };
 }
 #[macro_export]
@@ -722,7 +722,7 @@ macro_rules! item {
     };
 }
 #[macro_export]
-macro_rules! tohash {
+macro_rules! to_hash {
     ($hashmap: ident, $item_name: ident, $item_str: literal, $item: expr) => {
         let $item_name: Item = $item;
         $hashmap.insert(String::from($item_str), $item_name);

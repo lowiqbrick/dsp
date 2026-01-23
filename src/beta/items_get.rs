@@ -1,12 +1,12 @@
 // all crafting recipe numbers are from the [wiki](https://dsp-wiki.com/Items) are
 
 pub mod itemsmod {
-    // import hasmaps
+    // import hashmaps
     use std::collections::HashMap;
     // import the structs, emuns, etc.
     use crate::beta::essentials::item_logic::{IsItem, Item, ItemAmount, ManFac, Recipe};
     // import all macros
-    use crate::{item, recipe, recitem, tohash};
+    use crate::{item, recipe, recitem, to_hash};
     /// creates a big HashMap with all the items and buildings in the game
     pub fn get_items() -> HashMap<String, Item<'static>> {
         let mut res_hash: HashMap<String, Item<'_>> = HashMap::new();
@@ -316,7 +316,7 @@ pub mod itemsmod {
             )],
         );
         res_hash.insert(String::from("Plant Fuel"), plant_fuel);
-        let dark_fog_matix: Item = Item::new(
+        let dark_fog_matrix: Item = Item::new(
             "Dark Fog Matrix",
             vec![Recipe::new(
                 0.0,
@@ -328,7 +328,7 @@ pub mod itemsmod {
                 ))],
             )],
         );
-        res_hash.insert(String::from("Dark Fog Matrix"), dark_fog_matix);
+        res_hash.insert(String::from("Dark Fog Matrix"), dark_fog_matrix);
         let energy_shard: Item = Item::new(
             "Energy Shard",
             vec![Recipe::new(
@@ -552,7 +552,7 @@ pub mod itemsmod {
             )],
         );
         res_hash.insert(String::from("Magnet"), magnet);
-        let magentic_coil: Item = Item::new(
+        let magnetic_coil: Item = Item::new(
             "Magnetic Coil",
             vec![Recipe::new(
                 1.0,
@@ -567,7 +567,7 @@ pub mod itemsmod {
                 ))],
             )],
         );
-        res_hash.insert(String::from("Magnetic Coil"), magentic_coil);
+        res_hash.insert(String::from("Magnetic Coil"), magnetic_coil);
         let glass: Item = Item::new(
             "Glass",
             vec![Recipe::new(
@@ -645,7 +645,7 @@ pub mod itemsmod {
             )],
         );
         res_hash.insert(String::from("Steel"), steel);
-        tohash!(
+        to_hash!(
             res_hash,
             titanium_alloy,
             "Titanium Alloy",
@@ -784,7 +784,7 @@ pub mod itemsmod {
             ],
         );
         res_hash.insert(String::from("Photon Combiner"), photon_combiner);
-        let electromagentic_turbine: Item = Item::new(
+        let electromagnetic_turbine: Item = Item::new(
             "Electromagnetic Turbine",
             vec![Recipe::new(
                 2.0,
@@ -801,7 +801,7 @@ pub mod itemsmod {
         );
         res_hash.insert(
             String::from("Electromagnetic Turbine"),
-            electromagentic_turbine,
+            electromagnetic_turbine,
         );
         let processor: Item = Item::new(
             "Processor",
@@ -844,7 +844,7 @@ pub mod itemsmod {
         res_hash.insert(String::from("Thruster"), thruster);
         /*
         macro template
-        tohash!(res_hash,
+        to_hash!(res_hash,
             ,
             ,
             item!(,
@@ -853,7 +853,7 @@ pub mod itemsmod {
                     (recitem!()),
                     (recitem!())))));
         */
-        tohash!(
+        to_hash!(
             res_hash,
             reinforced_thruster,
             "Reinforced Thruster",
@@ -870,9 +870,9 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
-            super_magentic_ring,
+            super_magnetic_ring,
             "Super-magnetic Ring",
             item!(
                 "Super-magnetic Ring",
@@ -888,7 +888,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             particle_container,
             "Particle Container",
@@ -917,7 +917,7 @@ pub mod itemsmod {
                 )
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             plastic,
             "Plastic",
@@ -934,7 +934,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             organic_crystal,
             "Organic Crystal",
@@ -989,7 +989,7 @@ pub mod itemsmod {
             ],
         );
         res_hash.insert(String::from("Graphene"), graphene);
-        tohash!(
+        to_hash!(
             res_hash,
             annihilation_constraint_sphere,
             "Annihilation Constraint Sphere",
@@ -1006,7 +1006,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             strange_matter,
             "Strange Matter",
@@ -1024,7 +1024,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             titanium_crystal,
             "Titanium Crystal",
@@ -1041,7 +1041,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             carbon_nanotube,
             "Carbon Nanotube",
@@ -1063,7 +1063,7 @@ pub mod itemsmod {
                 )
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             particle_broadband,
             "Particle Broadband",
@@ -1081,7 +1081,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             casimir_crystal,
             "Casimir Crystal",
@@ -1111,7 +1111,7 @@ pub mod itemsmod {
                 )
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             titanium_glass,
             "Titanium Glass",
@@ -1129,7 +1129,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             plane_filter,
             "Plane Filter",
@@ -1146,7 +1146,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             quantum_chip,
             "Quantum Chip",
@@ -1161,7 +1161,7 @@ pub mod itemsmod {
             )
         );
 
-        tohash!(
+        to_hash!(
             res_hash,
             combustible_unit,
             "Combustible Unit",
@@ -1176,9 +1176,9 @@ pub mod itemsmod {
             )
         );
         // logistics
-        tohash!(
+        to_hash!(
             res_hash,
-            logisitcs_bot,
+            logistics_bot,
             "Logistics Bot",
             item!(
                 "Logistics Bot",
@@ -1194,9 +1194,9 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
-            logisitcs_drone,
+            logistics_drone,
             "Logistics Drone",
             item!(
                 "Logistics Drone",
@@ -1212,7 +1212,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             interstellar_logistics_vessel,
             "Interstellar Logistics Vessel",
@@ -1230,7 +1230,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             graviton_lens,
             "Graviton Lens",
@@ -1244,7 +1244,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             space_warper,
             "Space Warper",
@@ -1266,7 +1266,7 @@ pub mod itemsmod {
                 )
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             foundation,
             "Foundation",
@@ -1281,7 +1281,7 @@ pub mod itemsmod {
             )
         );
         // proliferator
-        tohash!(
+        to_hash!(
             res_hash,
             proliferator_mki,
             "Proliferator Mk.I",
@@ -1295,7 +1295,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             proliferator_mkii,
             "Proliferator Mk.II",
@@ -1309,7 +1309,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             proliferator_mkiii,
             "Proliferator Mk.III",
@@ -1327,7 +1327,7 @@ pub mod itemsmod {
             )
         );
         // fuel rods
-        tohash!(
+        to_hash!(
             res_hash,
             hydrogen_fuel_rod,
             "Hydrogen Fuel Rod",
@@ -1341,7 +1341,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             deuterium_fuel_rod,
             "Deuterium Fuel Rod",
@@ -1359,7 +1359,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             antimatter_fuel_rod,
             "Antimatter Fuel Rod",
@@ -1378,9 +1378,9 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
-            strange_anihilation_fuel_rod,
+            strange_annihilation_fuel_rod,
             "Strange Annihilation Fuel Rod",
             item!(
                 "Strange Annihilation Fuel Rod",
@@ -1397,8 +1397,8 @@ pub mod itemsmod {
                 ))
             )
         );
-        // dyson shpere building
-        tohash!(
+        // dyson sphere building
+        to_hash!(
             res_hash,
             solar_sail,
             "Solar Sail",
@@ -1412,7 +1412,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             frame_material,
             "Frame Material",
@@ -1430,7 +1430,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             dyson_sphere_component,
             "Dyson Sphere Component",
@@ -1448,7 +1448,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             small_carrier_rocket,
             "Small Carrier Rocket",
@@ -1467,7 +1467,7 @@ pub mod itemsmod {
             )
         );
         // Matrices
-        tohash!(
+        to_hash!(
             res_hash,
             electromagnetic_matrix,
             "Electromagnetic Matrix",
@@ -1484,7 +1484,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             energy_matrix,
             "Energy Matrix",
@@ -1501,7 +1501,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             structure_matrix,
             "Structure Matrix",
@@ -1515,7 +1515,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             information_matrix,
             "Information Matrix",
@@ -1532,7 +1532,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             gravity_matrix,
             "Gravity Matrix",
@@ -1549,7 +1549,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             universe_matrix,
             "Universe Matrix",
@@ -1571,7 +1571,7 @@ pub mod itemsmod {
             )
         );
         // ammunition
-        tohash!(
+        to_hash!(
             res_hash,
             magnum_ammo_box,
             "Magnum Ammo Box",
@@ -1585,7 +1585,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             titanium_ammo_box,
             "Titanium Ammo Box",
@@ -1602,7 +1602,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             superalloy_ammo_box,
             "Superalloy Ammo Box",
@@ -1619,7 +1619,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             explosive_unit,
             "Explosive Unit",
@@ -1637,7 +1637,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             crystal_explosive_unit,
             "Crystal Explosive Unit",
@@ -1655,7 +1655,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             missile_set,
             "Missile Set",
@@ -1674,7 +1674,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             supersonic_missile_set,
             "Supersonic Missile Set",
@@ -1693,7 +1693,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             gravity_missile_set,
             "Gravity Missile Set",
@@ -1711,7 +1711,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             shell_set,
             "Shell Set",
@@ -1728,7 +1728,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             high_explosive_shell_set,
             "High-Explosive Shell Set",
@@ -1746,7 +1746,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             crystal_shell_set,
             "Crystal Shell Set",
@@ -1764,7 +1764,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             plasma_capsule,
             "Plasma Capsule",
@@ -1782,9 +1782,9 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
-            anitmatter_capsule,
+            antimatter_capsule,
             "Antimatter Capsule",
             item!(
                 "Antimatter Capsule",
@@ -1801,7 +1801,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             jamming_capsule,
             "Jamming Capsule",
@@ -1819,7 +1819,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             suppressing_capsule,
             "Suppressing Capsule",
@@ -1838,7 +1838,7 @@ pub mod itemsmod {
             )
         );
         // drones and ships
-        tohash!(
+        to_hash!(
             res_hash,
             prototype,
             "Prototype",
@@ -1857,7 +1857,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             precision_drone,
             "Precision Drone",
@@ -1876,7 +1876,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             attack_drone,
             "Attack Drone",
@@ -1895,7 +1895,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             corvette,
             "Corvette",
@@ -1914,7 +1914,7 @@ pub mod itemsmod {
                 ))
             )
         );
-        tohash!(
+        to_hash!(
             res_hash,
             destroyer,
             "Destroyer",
