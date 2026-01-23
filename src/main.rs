@@ -2,9 +2,9 @@
 // imports
 // read the terminal input
 use std::env;
-
-use beta::items::beta;
 mod beta;
+
+use beta::beta;
 
 fn main() {
     //get the terminal arguments
