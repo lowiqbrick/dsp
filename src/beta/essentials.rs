@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::fmt::{self, Display};
 
-use crate::beta::items_get::get_items;
+use crate::beta::items_get;
 
 /// enum for manufacturing facilities
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -363,7 +363,7 @@ impl<'a> Item<'a> {
             let _prev_path_warn: &str = &strings.prev_path[0..1];
         }
         // get all items
-        let items_map: HashMap<String, Item> = get_items();
+        let items_map: HashMap<String, Item> = items_get::get_items();
         let mut new_path: String = String::from(&strings.item_name);
         if !bools.is_first_item {
             new_path.extend([" -> "]);

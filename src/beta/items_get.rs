@@ -1943,11 +1943,10 @@ mod test_items {
     use crate::beta::essentials::*;
     use std::collections::HashMap;
 
-    use super::get_items;
     #[test]
     fn test_hashmap() {
         // get list of all items
-        let item_map: HashMap<String, Item> = get_items();
+        let item_map: HashMap<String, Item> = super::get_items();
         // get all keys
         let keys = item_map.keys();
         // access all items in HashMap

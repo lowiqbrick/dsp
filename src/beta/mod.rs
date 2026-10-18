@@ -5,8 +5,6 @@ mod essentials;
 mod items_get;
 
 use crate::beta::essentials::*;
-use crate::beta::items_get::get_items;
-use doc::print_help;
 use std::collections::HashMap;
 
 /// checks fo the environment key words that tell the function to display the
@@ -18,7 +16,7 @@ use std::collections::HashMap;
 fn display_help(args: &mut [String]) -> bool {
     for argument in args.iter_mut() {
         if argument.as_str() == "-h" || argument.as_mut_str() == "--help" {
-            print_help();
+            doc::print_help();
             return true;
         }
     }
@@ -69,7 +67,7 @@ fn process_env_args(
             // set the recipe
             "-r" | "-recipe" => status = ArgState::ItemRecipe,
             // display the documentation
-            "-h" | "--help" => print_help(),
+            "-h" | "--help" => doc::print_help(),
             // only show the item requested and not the entire chain
             "-t" | "--this-item" => settings.this_item_only = true,
             // catch all
@@ -204,7 +202,7 @@ pub fn beta(mut args: Vec<String>) {
     // declare the variables required for processing the inputs
     let args_len: usize = args.len();
     // println!("args len: {}", args_len);
-    let item_hashmap: HashMap<String, Item> = get_items();
+    let item_hashmap: HashMap<String, Item> = items_get::get_items();
     // Default settings of the program
     let mut settings: ProgramInfo = ProgramInfo::new(
         EnumCombiner {
