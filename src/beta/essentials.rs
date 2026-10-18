@@ -742,7 +742,7 @@ macro_rules! recipe {
 #[macro_export]
 macro_rules! recitem {
     ($amount: literal, $item_name: literal) => {
-        IsItem::new(ItemAmount::new($amount, String::from($item_name)))
+        IsItem::new(ItemAmount::new($amount, $item_name.to_string()))
     };
 }
 #[macro_export]
@@ -755,6 +755,6 @@ macro_rules! item {
 macro_rules! to_hash {
     ($hashmap: ident, $item_name: ident, $item_str: literal, $item: expr) => {
         let $item_name: Item = $item;
-        $hashmap.insert(String::from($item_str), $item_name);
+        $hashmap.insert($item_str.to_string(), $item_name);
     };
 }
