@@ -4,8 +4,8 @@ mod doc;
 mod essentials;
 mod items_get;
 
-use crate::beta::essentials::item_logic::*;
-use crate::beta::items_get::itemsmod::get_items;
+use crate::beta::essentials::*;
+use crate::beta::items_get::get_items;
 use doc::print_help;
 use std::collections::HashMap;
 

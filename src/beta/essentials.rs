@@ -1,563 +1,546 @@
 // file for all structs functions etc.
 
-pub mod item_logic {
-    use std::collections::HashMap;
-    use std::fmt::{self, Display};
+use std::collections::HashMap;
+use std::fmt::{self, Display};
 
-    use crate::beta::items_get::itemsmod::get_items;
+use crate::beta::items_get::get_items;
 
-    /// enum for manufacturing facilities
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub enum ManFac {
-        Origin,
-        Assembler,
-        Furnace,
-        Lab,
-        OilRefinery,
-        ChemicalPlant,
-        MiniatureParticleCollider,
+/// enum for manufacturing facilities
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ManFac {
+    Origin,
+    Assembler,
+    Furnace,
+    Lab,
+    OilRefinery,
+    ChemicalPlant,
+    MiniatureParticleCollider,
+}
+
+/// struct for combining an item and an amount of said item
+#[derive(Debug, Clone, PartialEq)]
+pub struct ItemAmount {
+    pub amount: f32,
+    pub item: String,
+}
+
+impl ItemAmount {
+    pub fn new(amount: f32, item: String) -> ItemAmount {
+        ItemAmount { amount, item }
+    }
+}
+
+/// enum for differentiation between items and not an item (nai)
+/// which is relevant for crafting recipes for items which cannot be
+/// crafted and only be obtained/mined (ores, critical photons, etc.)
+#[derive(Debug, Clone, PartialEq)]
+pub enum IsItem {
+    Item(ItemAmount),
+    /// NotAnItem
+    Nai,
+}
+
+impl IsItem {
+    pub fn new(item_amount: ItemAmount) -> IsItem {
+        IsItem::Item(item_amount)
     }
 
-    /// struct for combining an item and an amount of said item
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct ItemAmount {
-        pub amount: f32,
-        pub item: String,
+    pub fn new_nai() -> IsItem {
+        IsItem::Nai
     }
+}
 
-    impl ItemAmount {
-        pub fn new(amount: f32, item: String) -> ItemAmount {
-            ItemAmount { amount, item }
-        }
-    }
+/// struct for recipes
+#[derive(Debug, Clone)]
+pub struct Recipe {
+    // crafting time (in seconds)
+    crafting_time: f32,
+    pub crafting_station: ManFac,
+    pub ingredients: Vec<IsItem>,
+    pub products: Vec<IsItem>,
+}
 
-    /// enum for differentiation between items and not an item (nai)
-    /// which is relevant for crafting recipes for items which cannot be
-    /// crafted and only be obtained/mined (ores, critical photons, etc.)
-    #[derive(Debug, Clone, PartialEq)]
-    pub enum IsItem {
-        Item(ItemAmount),
-        /// NotAnItem
-        Nai,
-    }
-
-    impl IsItem {
-        pub fn new(item_amount: ItemAmount) -> IsItem {
-            IsItem::Item(item_amount)
-        }
-
-        pub fn new_nai() -> IsItem {
-            IsItem::Nai
-        }
-    }
-
-    /// struct for recipes
-    #[derive(Debug, Clone)]
-    pub struct Recipe {
-        // crafting time (in seconds)
+impl Recipe {
+    pub fn new(
         crafting_time: f32,
-        pub crafting_station: ManFac,
-        pub ingredients: Vec<IsItem>,
-        pub products: Vec<IsItem>,
-    }
-
-    impl Recipe {
-        pub fn new(
-            crafting_time: f32,
-            crafting_station: ManFac,
-            ingredients: Vec<IsItem>,
-            products: Vec<IsItem>,
-        ) -> Recipe {
-            Recipe {
-                crafting_time,
-                crafting_station,
-                ingredients,
-                products,
-            }
+        crafting_station: ManFac,
+        ingredients: Vec<IsItem>,
+        products: Vec<IsItem>,
+    ) -> Recipe {
+        Recipe {
+            crafting_time,
+            crafting_station,
+            ingredients,
+            products,
         }
     }
-    /// Struct for storing the result of a part of the crafting chain
-    #[derive(Debug, Clone)]
-    pub struct ItemResult {
-        pub describer: String,
-        pub name: String,
-        pub target_rate: f32,
-        pub num_station: f32,
-        pub station: Vec<ManFac>,
-        pub requirements: Vec<ItemAmount>,
-    }
+}
+/// Struct for storing the result of a part of the crafting chain
+#[derive(Debug, Clone)]
+pub struct ItemResult {
+    pub describer: String,
+    pub name: String,
+    pub target_rate: f32,
+    pub num_station: f32,
+    pub station: Vec<ManFac>,
+    pub requirements: Vec<ItemAmount>,
+}
 
-    impl ItemResult {
-        fn new(
-            describer: String,
-            name: String,
-            target_rate: f32,
-            num_station: f32,
-            station: Vec<ManFac>,
-            requirements: Vec<ItemAmount>,
-        ) -> ItemResult {
-            ItemResult {
-                describer,
-                name,
-                target_rate,
-                num_station,
-                station,
-                requirements,
-            }
-        }
-        fn initialize(settings: &ProgramInfo, strings: &StringDuo, new_path: &str) -> Self {
-            // initialize result with default values
-            if settings.merge {
-                ItemResult::new(
-                    // if results ar to be merged no elaborate paths
-                    // just the items name
-                    strings.item_name.clone(),
-                    strings.item_name.clone(),
-                    -1.0,
-                    -1.0,
-                    vec![ManFac::Origin],
-                    vec![],
-                )
-            } else {
-                ItemResult::new(
-                    new_path.to_string(),
-                    strings.item_name.clone(),
-                    -1.0,
-                    -1.0,
-                    vec![ManFac::Origin],
-                    vec![],
-                )
-            }
+impl ItemResult {
+    fn new(
+        describer: String,
+        name: String,
+        target_rate: f32,
+        num_station: f32,
+        station: Vec<ManFac>,
+        requirements: Vec<ItemAmount>,
+    ) -> ItemResult {
+        ItemResult {
+            describer,
+            name,
+            target_rate,
+            num_station,
+            station,
+            requirements,
         }
     }
+    fn initialize(settings: &ProgramInfo, strings: &StringDuo, new_path: &str) -> Self {
+        // initialize result with default values
+        if settings.merge {
+            ItemResult::new(
+                // if results ar to be merged no elaborate paths
+                // just the items name
+                strings.item_name.clone(),
+                strings.item_name.clone(),
+                -1.0,
+                -1.0,
+                vec![ManFac::Origin],
+                vec![],
+            )
+        } else {
+            ItemResult::new(
+                new_path.to_string(),
+                strings.item_name.clone(),
+                -1.0,
+                -1.0,
+                vec![ManFac::Origin],
+                vec![],
+            )
+        }
+    }
+}
 
-    impl Display for ItemResult {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            // write all things with static values
-            writeln!(f, "{}", self.describer).expect("displaying ItemResult failed");
-            writeln!(f, "item target rate: {:.1}", self.target_rate)
+impl Display for ItemResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // write all things with static values
+        writeln!(f, "{}", self.describer).expect("displaying ItemResult failed");
+        writeln!(f, "item target rate: {:.1}", self.target_rate)
+            .expect("displaying ItemResult failed");
+        if self.station != vec![ManFac::Origin] {
+            write!(
+                f,
+                "buildings to build: {} {:?} ({:.1})",
+                self.num_station.ceil(),
+                self.station,
+                self.num_station
+            )
+            .expect("displaying ItemResult failed");
+            writeln!(f, "\nthis requires the following (per second):")
                 .expect("displaying ItemResult failed");
-            if self.station != vec![ManFac::Origin] {
-                write!(
-                    f,
-                    "buildings to build: {} {:?} ({:.1})",
-                    self.num_station.ceil(),
-                    self.station,
-                    self.num_station
-                )
-                .expect("displaying ItemResult failed");
-                writeln!(f, "\nthis requires the following (per second):")
-                    .expect("displaying ItemResult failed");
-                // write vector
-                for (index, amount) in self.requirements.clone().iter().enumerate() {
-                    // tab
-                    if index == 0 {
-                        write!(f, "   ").expect("displaying ItemResult failed");
-                    }
-                    write!(f, "    {:.1} {}", amount.amount, amount.item)?;
+            // write vector
+            for (index, amount) in self.requirements.clone().iter().enumerate() {
+                // tab
+                if index == 0 {
+                    write!(f, "   ").expect("displaying ItemResult failed");
                 }
+                write!(f, "    {:.1} {}", amount.amount, amount.item)?;
             }
-            // hand over the results
-            write!(f, "")
         }
+        // hand over the results
+        write!(f, "")
     }
+}
 
-    /// combines two bools for a small function call
-    pub struct BoolDuo {
-        pub is_proliferated: bool,
-        pub is_first_item: bool,
-    }
+/// combines two bools for a small function call
+pub struct BoolDuo {
+    pub is_proliferated: bool,
+    pub is_first_item: bool,
+}
 
-    /// combines two strings for a small function call
-    pub struct StringDuo {
-        pub item_name: String,
-        pub prev_path: String,
-    }
+/// combines two strings for a small function call
+pub struct StringDuo {
+    pub item_name: String,
+    pub prev_path: String,
+}
 
-    /// struct for representing an item
-    #[derive(Debug, Clone)]
-    pub struct Item<'a> {
-        pub name: &'a str,
-        pub recipes: Vec<Recipe>,
-    }
+/// struct for representing an item
+#[derive(Debug, Clone)]
+pub struct Item<'a> {
+    pub name: &'a str,
+    pub recipes: Vec<Recipe>,
+}
 
-    /// an function to return the current proliferation factor based on current settings
-    fn prolif_factor(settings: &ProgramInfo) -> f32 {
-        let factor: f32 = match settings.proliferators {
-            Proliferator::MKone => 1.125,
-            Proliferator::MKtwo => 1.2,
-            Proliferator::MKthree => 1.25,
-            Proliferator::None => 1.0,
-        };
-        factor
-    }
+/// an function to return the current proliferation factor based on current settings
+fn prolif_factor(settings: &ProgramInfo) -> f32 {
+    let factor: f32 = match settings.proliferators {
+        Proliferator::MKone => 1.125,
+        Proliferator::MKtwo => 1.2,
+        Proliferator::MKthree => 1.25,
+        Proliferator::None => 1.0,
+    };
+    factor
+}
 
-    /// checks if the item is in a vector that dictates a specific crafting recipe
-    fn check_recipe_index(
-        settings: &ProgramInfo,
-        strings: &StringDuo,
-        current_item: &Item,
-    ) -> usize {
-        let mut current_recipe_index = 0;
-        // find out if current item is in the list to have a different recipe
-        // get amount of the item as output (and as an ingredient, if thats the case)
-        for vec_element in settings.item_recipe.iter() {
-            // if item is in vector, the recipe index needs to be changed
-            if strings.item_name == vec_element.item {
-                current_recipe_index = vec_element.amount as usize;
-                // sanity check; is the given recipe index valid?
-                if current_recipe_index + 1 > current_item.recipes.len() {
-                    panic!(
+/// checks if the item is in a vector that dictates a specific crafting recipe
+fn check_recipe_index(settings: &ProgramInfo, strings: &StringDuo, current_item: &Item) -> usize {
+    let mut current_recipe_index = 0;
+    // find out if current item is in the list to have a different recipe
+    // get amount of the item as output (and as an ingredient, if thats the case)
+    for vec_element in settings.item_recipe.iter() {
+        // if item is in vector, the recipe index needs to be changed
+        if strings.item_name == vec_element.item {
+            current_recipe_index = vec_element.amount as usize;
+            // sanity check; is the given recipe index valid?
+            if current_recipe_index + 1 > current_item.recipes.len() {
+                panic!(
                         "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
                         strings.item_name,
                         current_recipe_index,
                         current_item.recipes.len()
                     );
-                }
             }
         }
-        current_recipe_index
+    }
+    current_recipe_index
+}
+
+/// apply the factor of the currently responsible crafting station
+fn apply_station_factor(
+    net_output_proliferated: f32,
+    current_recipe: &Recipe,
+    settings: &ProgramInfo,
+) -> f32 {
+    match current_recipe.crafting_station {
+        ManFac::Assembler => match settings.assembler {
+            AssemblerMK::One => net_output_proliferated * 0.75,
+            AssemblerMK::Two => net_output_proliferated * 1.0,
+            AssemblerMK::Three => net_output_proliferated * 1.5,
+            AssemblerMK::Four => net_output_proliferated * 3.0,
+        },
+        ManFac::Furnace => match settings.smelter {
+            SmelterMK::Arc => net_output_proliferated * 1.0,
+            SmelterMK::Plane => net_output_proliferated * 2.0,
+            SmelterMK::Negentropy => net_output_proliferated * 3.0,
+        },
+        ManFac::Lab => match settings.lab {
+            LabMK::MatrixLab => net_output_proliferated * 1.0,
+            LabMK::SelfEvolutionLab => net_output_proliferated * 3.0,
+        },
+        ManFac::OilRefinery => net_output_proliferated * 1.0,
+        ManFac::ChemicalPlant => match settings.chemlab {
+            ChemLabMK::Lab => net_output_proliferated * 1.0,
+            ChemLabMK::QuantumLab => net_output_proliferated * 2.0,
+        },
+        ManFac::MiniatureParticleCollider => net_output_proliferated * 1.0,
+        ManFac::Origin => net_output_proliferated * 1.0,
+    }
+}
+
+/// in case a recipe requires itself as input,
+/// the input needs to be subtracted from the output
+fn calculate_net_output(
+    current_recipe: &Recipe,
+    current_recipe_index: &usize,
+    result_var: &ItemResult,
+) -> f32 {
+    // and calculate the production rate, with crafting speed, proliferation, etc.
+    let mut output_amount: f32 = 0.0;
+    let mut input_amount: f32 = 0.0;
+    for item_amount in current_recipe.products.clone().iter() {
+        match item_amount {
+            IsItem::Item(item_match) => {
+                if item_match.item == result_var.name {
+                    output_amount = item_match.amount;
+                }
+            }
+            IsItem::Nai => (),
+        }
+    }
+    if output_amount == 0.0 {
+        panic!(
+            "the output of recipe (index {}) from item '{}' doesn't contain the item",
+            current_recipe_index, result_var.name
+        );
+    }
+    for item_amount in current_recipe.ingredients.clone().iter() {
+        match item_amount {
+            IsItem::Item(item_match) => {
+                if item_match.item == result_var.name {
+                    input_amount = item_match.amount;
+                }
+            }
+            IsItem::Nai => (),
+        }
+    }
+    output_amount - input_amount
+}
+
+/// when the output is supposed to be merged a new entry can't just be
+/// created since the value needs to be added to an existing one
+fn create_or_amend_entry(
+    settings: &ProgramInfo,
+    strings: &StringDuo,
+    result: &mut HashMap<String, ItemResult>,
+    result_var: &mut ItemResult,
+    result_order: &mut Vec<String>,
+    new_path: &str,
+    is_adding_new_item: &mut bool,
+) {
+    if settings.merge {
+        // if result item already exists copy all values
+        // if not remember that a new one needs to be created
+        match result.get(&strings.item_name) {
+            Some(existing_result) => {
+                result_var.target_rate += result_var.target_rate;
+                result_var.num_station = existing_result.num_station;
+                result_var.station = existing_result.station.clone();
+                result_var.requirements = existing_result.requirements.clone();
+            }
+            _ => {
+                *is_adding_new_item = true;
+            }
+        }
+        // only add String if not yet present
+        if !result_order.contains(&strings.item_name) {
+            result_order.push(strings.item_name.clone());
+        }
+    } else {
+        result_order.push(new_path.to_string().clone());
+        *is_adding_new_item = true;
+    }
+}
+
+/// check if the current item is supposed to be proliferated and
+/// update the values accordingly
+fn factor_in_proliferation(
+    settings: &ProgramInfo,
+    result_var: &mut ItemResult,
+    bools: &mut BoolDuo,
+    net_output_proliferated: &mut f32,
+) {
+    if bools.is_proliferated {
+        let mut no_proliferation_vector: bool = false;
+        for item_prolif in settings.no_proliferation.clone().iter() {
+            if item_prolif == &result_var.name {
+                no_proliferation_vector = true;
+                bools.is_proliferated = false;
+            }
+        }
+        if !no_proliferation_vector {
+            let prolif_factor: f32 = prolif_factor(settings);
+            *net_output_proliferated *= prolif_factor;
+        }
+    }
+}
+
+impl<'a> Item<'a> {
+    pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item<'a> {
+        Item { name, recipes }
     }
 
-    /// apply the factor of the currently responsible crafting station
-    fn apply_station_factor(
-        net_output_proliferated: f32,
-        current_recipe: &Recipe,
+    /// the central method on which everything in the program is build
+    pub fn crafting_chain(
+        &self,
+        mut strings: StringDuo,
+        item_per_sec: f32,
         settings: &ProgramInfo,
-    ) -> f32 {
-        match current_recipe.crafting_station {
-            ManFac::Assembler => match settings.assembler {
-                AssemblerMK::One => net_output_proliferated * 0.75,
-                AssemblerMK::Two => net_output_proliferated * 1.0,
-                AssemblerMK::Three => net_output_proliferated * 1.5,
-                AssemblerMK::Four => net_output_proliferated * 3.0,
-            },
-            ManFac::Furnace => match settings.smelter {
-                SmelterMK::Arc => net_output_proliferated * 1.0,
-                SmelterMK::Plane => net_output_proliferated * 2.0,
-                SmelterMK::Negentropy => net_output_proliferated * 3.0,
-            },
-            ManFac::Lab => match settings.lab {
-                LabMK::MatrixLab => net_output_proliferated * 1.0,
-                LabMK::SelfEvolutionLab => net_output_proliferated * 3.0,
-            },
-            ManFac::OilRefinery => net_output_proliferated * 1.0,
-            ManFac::ChemicalPlant => match settings.chemlab {
-                ChemLabMK::Lab => net_output_proliferated * 1.0,
-                ChemLabMK::QuantumLab => net_output_proliferated * 2.0,
-            },
-            ManFac::MiniatureParticleCollider => net_output_proliferated * 1.0,
-            ManFac::Origin => net_output_proliferated * 1.0,
+        result_order: &mut Vec<String>,
+        result: &mut HashMap<String, ItemResult>,
+        mut bools: BoolDuo,
+    ) {
+        // get rid of warning
+        if !bools.is_first_item {
+            let _prev_path_warn: &str = &strings.prev_path[0..1];
         }
-    }
-
-    /// in case a recipe requires itself as input,
-    /// the input needs to be subtracted from the output
-    fn calculate_net_output(
-        current_recipe: &Recipe,
-        current_recipe_index: &usize,
-        result_var: &ItemResult,
-    ) -> f32 {
-        // and calculate the production rate, with crafting speed, proliferation, etc.
-        let mut output_amount: f32 = 0.0;
-        let mut input_amount: f32 = 0.0;
-        for item_amount in current_recipe.products.clone().iter() {
-            match item_amount {
-                IsItem::Item(item_match) => {
-                    if item_match.item == result_var.name {
-                        output_amount = item_match.amount;
-                    }
-                }
-                IsItem::Nai => (),
+        // get all items
+        let items_map: HashMap<String, Item> = get_items();
+        let mut new_path: String = String::from(&strings.item_name);
+        if !bools.is_first_item {
+            new_path.extend([" -> "]);
+        }
+        new_path.extend([strings.prev_path.clone()]);
+        strings.prev_path = new_path.clone();
+        // create result variable
+        let mut result_var: ItemResult = ItemResult::initialize(settings, &strings, &new_path);
+        // save desired target rate for item
+        result_var.target_rate = item_per_sec;
+        // write item information in result if the output
+        // is supposed to be merged
+        let mut is_adding_new_item: bool = false;
+        create_or_amend_entry(
+            settings,
+            &strings,
+            result,
+            &mut result_var,
+            result_order,
+            &new_path,
+            &mut is_adding_new_item,
+        );
+        // get a copy of the requested item from the item hashmap
+        // after this match item_name can be assumed to be a valid key
+        let current_item: &Item = match items_map.get(&strings.item_name) {
+            Some(item) => item,
+            _ => {
+                panic!(
+                    "requested item '{}' doesn't exist in hashmap",
+                    strings.item_name
+                )
             }
-        }
-        if output_amount == 0.0 {
+        };
+        // is the recipe not the recipe at index 0?
+        let current_recipe_index: usize = check_recipe_index(settings, &strings, current_item);
+        let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
+        // calculate the net output of the recipe, if the output is partially the input
+        // of the recipe
+        let net_output: f32 =
+            calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
+        if net_output <= 0.0 {
             panic!(
-                "the output of recipe (index {}) from item '{}' doesn't contain the item",
-                current_recipe_index, result_var.name
+                "recipe has net output of {} which doesn't make sense",
+                net_output
             );
         }
-        for item_amount in current_recipe.ingredients.clone().iter() {
-            match item_amount {
-                IsItem::Item(item_match) => {
-                    if item_match.item == result_var.name {
-                        input_amount = item_match.amount;
-                    }
+        let net_output_per_second: f32 = net_output / current_recipe.crafting_time;
+        let mut net_output_proliferated: f32 = net_output_per_second;
+        // factor in proliferation
+        factor_in_proliferation(
+            settings,
+            &mut result_var,
+            &mut bools,
+            &mut net_output_proliferated,
+        );
+        // handle the different crafting stations
+        let net_output_machine: f32 =
+            apply_station_factor(net_output_proliferated, &current_recipe, settings);
+        // calculate how many crafting machines are required for matching throughput
+        let manvac_count: f32 = item_per_sec / net_output_machine;
+        // calculate the multiplier for the amount of ingredients required
+        let current_proliferator_factor: f32 = if bools.is_proliferated {
+            prolif_factor(settings)
+        } else {
+            1.0
+        };
+        let ingredient_multiplicator: f32 = ((item_per_sec / current_recipe.crafting_time)
+            / net_output_per_second)
+            / current_proliferator_factor;
+        // putting everything together
+        let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
+        // apply modifier
+        for is_item in current_recipe.ingredients.clone().iter() {
+            match is_item {
+                IsItem::Item(ingredient) => {
+                    output_machine_ingredients.push(ItemAmount::new(
+                        ingredient.amount * ingredient_multiplicator,
+                        ingredient.item.clone(),
+                    ));
                 }
-                IsItem::Nai => (),
+                IsItem::Nai => {
+                    // do nothing
+                    print!("");
+                }
             }
         }
-        output_amount - input_amount
-    }
-
-    /// when the output is supposed to be merged a new entry can't just be
-    /// created since the value needs to be added to an existing one
-    fn create_or_amend_entry(
-        settings: &ProgramInfo,
-        strings: &StringDuo,
-        result: &mut HashMap<String, ItemResult>,
-        result_var: &mut ItemResult,
-        result_order: &mut Vec<String>,
-        new_path: &str,
-        is_adding_new_item: &mut bool,
-    ) {
         if settings.merge {
-            // if result item already exists copy all values
-            // if not remember that a new one needs to be created
-            match result.get(&strings.item_name) {
-                Some(existing_result) => {
-                    result_var.target_rate += result_var.target_rate;
-                    result_var.num_station = existing_result.num_station;
-                    result_var.station = existing_result.station.clone();
-                    result_var.requirements = existing_result.requirements.clone();
-                }
-                _ => {
-                    *is_adding_new_item = true;
-                }
-            }
-            // only add String if not yet present
-            if !result_order.contains(&strings.item_name) {
-                result_order.push(strings.item_name.clone());
+            if is_adding_new_item {
+                result_var.num_station = manvac_count;
+            } else {
+                result_var.num_station += manvac_count;
             }
         } else {
-            result_order.push(new_path.to_string().clone());
-            *is_adding_new_item = true;
+            result_var.num_station = manvac_count;
         }
-    }
-
-    /// check if the current item is supposed to be proliferated and
-    /// update the values accordingly
-    fn factor_in_proliferation(
-        settings: &ProgramInfo,
-        result_var: &mut ItemResult,
-        bools: &mut BoolDuo,
-        net_output_proliferated: &mut f32,
-    ) {
-        if bools.is_proliferated {
-            let mut no_proliferation_vector: bool = false;
-            for item_prolif in settings.no_proliferation.clone().iter() {
-                if item_prolif == &result_var.name {
-                    no_proliferation_vector = true;
-                    bools.is_proliferated = false;
-                }
-            }
-            if !no_proliferation_vector {
-                let prolif_factor: f32 = prolif_factor(settings);
-                *net_output_proliferated *= prolif_factor;
-            }
+        result_var.requirements = output_machine_ingredients;
+        if result_var.station == vec![ManFac::Origin] {
+            result_var.station = vec![current_recipe.crafting_station];
         }
-    }
-
-    impl<'a> Item<'a> {
-        pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item<'a> {
-            Item { name, recipes }
-        }
-
-        /// the central method on which everything in the program is build
-        pub fn crafting_chain(
-            &self,
-            mut strings: StringDuo,
-            item_per_sec: f32,
-            settings: &ProgramInfo,
-            result_order: &mut Vec<String>,
-            result: &mut HashMap<String, ItemResult>,
-            mut bools: BoolDuo,
-        ) {
-            // get rid of warning
-            if !bools.is_first_item {
-                let _prev_path_warn: &str = &strings.prev_path[0..1];
-            }
-            // get all items
-            let items_map: HashMap<String, Item> = get_items();
-            let mut new_path: String = String::from(&strings.item_name);
-            if !bools.is_first_item {
-                new_path.extend([" -> "]);
-            }
-            new_path.extend([strings.prev_path.clone()]);
-            strings.prev_path = new_path.clone();
-            // create result variable
-            let mut result_var: ItemResult = ItemResult::initialize(settings, &strings, &new_path);
-            // save desired target rate for item
-            result_var.target_rate = item_per_sec;
-            // write item information in result if the output
-            // is supposed to be merged
-            let mut is_adding_new_item: bool = false;
-            create_or_amend_entry(
-                settings,
-                &strings,
-                result,
-                &mut result_var,
-                result_order,
-                &new_path,
-                &mut is_adding_new_item,
+        // sanity checks on result_var
+        assert_ne!(result_var.num_station, -1.0);
+        let help_assert: String = String::from(current_item.name);
+        // only assert if the item doesn't have vec!(ManFac::Origin) naturally
+        if !settings.basics.contains(&help_assert) {
+            assert_ne!(
+                result_var.station,
+                vec!(ManFac::Origin),
+                "result of {} doesn't have a crafting station",
+                strings.item_name
             );
-            // get a copy of the requested item from the item hashmap
-            // after this match item_name can be assumed to be a valid key
-            let current_item: &Item = match items_map.get(&strings.item_name) {
-                Some(item) => item,
+            assert_ne!(result_var.requirements, vec![]);
+        }
+        // write results into hashmap
+        if is_adding_new_item {
+            if settings.merge {
+                result.insert(result_var.name.clone(), result_var.clone());
+            } else {
+                result.insert(result_var.describer.clone(), result_var.clone());
+            }
+        } else if settings.merge {
+            // increase the values already present
+            match result.get_mut(&result_var.name) {
+                Some(found_item) => {
+                    // increase amount of required items per minute
+                    found_item.target_rate += item_per_sec;
+                    // increase required production buildings
+                    found_item.num_station = result_var.num_station;
+                    // increase the required ingredients
+                    for (index, _found_ingredient) in
+                        found_item.requirements.clone().iter().enumerate()
+                    {
+                        found_item.requirements[index].amount +=
+                            result_var.requirements[index].amount;
+                    }
+                }
                 _ => {
                     panic!(
-                        "requested item '{}' doesn't exist in hashmap",
-                        strings.item_name
-                    )
-                }
-            };
-            // is the recipe not the recipe at index 0?
-            let current_recipe_index: usize = check_recipe_index(settings, &strings, current_item);
-            let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
-            // calculate the net output of the recipe, if the output is partially the input
-            // of the recipe
-            let net_output: f32 =
-                calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
-            if net_output <= 0.0 {
-                panic!(
-                    "recipe has net output of {} which doesn't make sense",
-                    net_output
-                );
-            }
-            let net_output_per_second: f32 = net_output / current_recipe.crafting_time;
-            let mut net_output_proliferated: f32 = net_output_per_second;
-            // factor in proliferation
-            factor_in_proliferation(
-                settings,
-                &mut result_var,
-                &mut bools,
-                &mut net_output_proliferated,
-            );
-            // handle the different crafting stations
-            let net_output_machine: f32 =
-                apply_station_factor(net_output_proliferated, &current_recipe, settings);
-            // calculate how many crafting machines are required for matching throughput
-            let manvac_count: f32 = item_per_sec / net_output_machine;
-            // calculate the multiplier for the amount of ingredients required
-            let current_proliferator_factor: f32 = if bools.is_proliferated {
-                prolif_factor(settings)
-            } else {
-                1.0
-            };
-            let ingredient_multiplicator: f32 = ((item_per_sec / current_recipe.crafting_time)
-                / net_output_per_second)
-                / current_proliferator_factor;
-            // putting everything together
-            let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
-            // apply modifier
-            for is_item in current_recipe.ingredients.clone().iter() {
-                match is_item {
-                    IsItem::Item(ingredient) => {
-                        output_machine_ingredients.push(ItemAmount::new(
-                            ingredient.amount * ingredient_multiplicator,
-                            ingredient.item.clone(),
-                        ));
-                    }
-                    IsItem::Nai => {
-                        // do nothing
-                        print!("");
-                    }
+                        "tried to write into the key '{}', which wasn't found",
+                        result_var.name.clone()
+                    );
                 }
             }
-            if settings.merge {
-                if is_adding_new_item {
-                    result_var.num_station = manvac_count;
-                } else {
-                    result_var.num_station += manvac_count;
-                }
-            } else {
-                result_var.num_station = manvac_count;
-            }
-            result_var.requirements = output_machine_ingredients;
-            if result_var.station == vec![ManFac::Origin] {
-                result_var.station = vec![current_recipe.crafting_station];
-            }
-            // sanity checks on result_var
-            assert_ne!(result_var.num_station, -1.0);
-            let help_assert: String = String::from(current_item.name);
-            // only assert if the item doesn't have vec!(ManFac::Origin) naturally
-            if !settings.basics.contains(&help_assert) {
-                assert_ne!(
-                    result_var.station,
-                    vec!(ManFac::Origin),
-                    "result of {} doesn't have a crafting station",
-                    strings.item_name
-                );
-                assert_ne!(result_var.requirements, vec![]);
-            }
-            // write results into hashmap
-            if is_adding_new_item {
-                if settings.merge {
-                    result.insert(result_var.name.clone(), result_var.clone());
-                } else {
-                    result.insert(result_var.describer.clone(), result_var.clone());
-                }
-            } else if settings.merge {
-                // increase the values already present
-                match result.get_mut(&result_var.name) {
-                    Some(found_item) => {
-                        // increase amount of required items per minute
-                        found_item.target_rate += item_per_sec;
-                        // increase required production buildings
-                        found_item.num_station = result_var.num_station;
-                        // increase the required ingredients
-                        for (index, _found_ingredient) in
-                            found_item.requirements.clone().iter().enumerate()
-                        {
-                            found_item.requirements[index].amount +=
-                                result_var.requirements[index].amount;
-                        }
-                    }
-                    _ => {
-                        panic!(
-                            "tried to write into the key '{}', which wasn't found",
-                            result_var.name.clone()
-                        );
-                    }
-                }
-            } else {
-                panic!(
+        } else {
+            panic!(
                         "even though nothing should me merged the given path '{}' for the hashmap already exists",
                         result_var.describer);
-            }
+        }
 
-            // finally make the function recursive by calling the function on the
-            // ingredient items
-            // only make the function recursive if the program isn't restrained to the "main item"
-            if !settings.this_item_only {
-                for ingredient in current_item.recipes[current_recipe_index]
-                    .ingredients
-                    .iter()
-                {
-                    match ingredient {
-                        IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item)
-                        {
-                            Some(call_item) => {
-                                let twostrings_next: StringDuo = StringDuo {
-                                    item_name: String::from(call_item.name),
-                                    prev_path: strings.prev_path.clone(),
-                                };
-                                let twobools_next: BoolDuo = BoolDuo {
-                                    is_proliferated: bools.is_proliferated,
-                                    is_first_item: false,
-                                };
-                                // are some items to be ignored?
-                                if settings.assume_basics {
-                                    // check if this particular item is in the vector of items
-                                    // that are to be ignored
-                                    if !settings
-                                        .basics
-                                        .clone()
-                                        .iter_mut()
-                                        .any(|vec_element| vec_element == call_item.name)
-                                    {
-                                        call_item.crafting_chain(
-                                            twostrings_next,
-                                            real_ingredient.amount * ingredient_multiplicator,
-                                            settings,
-                                            result_order,
-                                            result,
-                                            twobools_next,
-                                        );
-                                    }
-                                } else {
-                                    // of nothing is to be ignored call everything
+        // finally make the function recursive by calling the function on the
+        // ingredient items
+        // only make the function recursive if the program isn't restrained to the "main item"
+        if !settings.this_item_only {
+            for ingredient in current_item.recipes[current_recipe_index]
+                .ingredients
+                .iter()
+            {
+                match ingredient {
+                    IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item) {
+                        Some(call_item) => {
+                            let twostrings_next: StringDuo = StringDuo {
+                                item_name: String::from(call_item.name),
+                                prev_path: strings.prev_path.clone(),
+                            };
+                            let twobools_next: BoolDuo = BoolDuo {
+                                is_proliferated: bools.is_proliferated,
+                                is_first_item: false,
+                            };
+                            // are some items to be ignored?
+                            if settings.assume_basics {
+                                // check if this particular item is in the vector of items
+                                // that are to be ignored
+                                if !settings
+                                    .basics
+                                    .clone()
+                                    .iter_mut()
+                                    .any(|vec_element| vec_element == call_item.name)
+                                {
                                     call_item.crafting_chain(
                                         twostrings_next,
                                         real_ingredient.amount * ingredient_multiplicator,
@@ -567,176 +550,186 @@ pub mod item_logic {
                                         twobools_next,
                                     );
                                 }
-                            }
-                            None => {
-                                panic!(
-                                    "failed to call 'fn crafting_chain' on key {}",
-                                    &real_ingredient.item
+                            } else {
+                                // of nothing is to be ignored call everything
+                                call_item.crafting_chain(
+                                    twostrings_next,
+                                    real_ingredient.amount * ingredient_multiplicator,
+                                    settings,
+                                    result_order,
+                                    result,
+                                    twobools_next,
                                 );
                             }
-                        },
-                        IsItem::Nai => {
-                            // if item is origin do nothing
-                            print!("");
                         }
+                        None => {
+                            panic!(
+                                "failed to call 'fn crafting_chain' on key {}",
+                                &real_ingredient.item
+                            );
+                        }
+                    },
+                    IsItem::Nai => {
+                        // if item is origin do nothing
+                        print!("");
                     }
                 }
             }
         }
     }
+}
 
-    // enums and structs for the execution of the main function
-    /// enum for saving the type of lab used
-    #[derive(Debug)]
-    pub enum ChemLabMK {
-        // Chemical Plant
-        Lab,
-        // Quantum Chemical Plant
-        QuantumLab,
-    }
+// enums and structs for the execution of the main function
+/// enum for saving the type of lab used
+#[derive(Debug)]
+pub enum ChemLabMK {
+    // Chemical Plant
+    Lab,
+    // Quantum Chemical Plant
+    QuantumLab,
+}
 
-    /// enum for saving the type of assembler used
-    #[derive(Debug)]
-    pub enum SmelterMK {
-        Arc,
-        Plane,
-        Negentropy,
-    }
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum SmelterMK {
+    Arc,
+    Plane,
+    Negentropy,
+}
 
-    /// enum for saving the type of assembler used
-    #[derive(Debug)]
-    pub enum AssemblerMK {
-        One,
-        Two,
-        Three,
-        Four,
-    }
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum AssemblerMK {
+    One,
+    Two,
+    Three,
+    Four,
+}
 
-    /// enum for saving the type of assembler used
-    #[derive(Debug)]
-    pub enum LabMK {
-        MatrixLab,
-        SelfEvolutionLab,
-    }
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum LabMK {
+    MatrixLab,
+    SelfEvolutionLab,
+}
 
-    /// enum for saving the type of assembler used
-    #[derive(Debug)]
-    pub enum Proliferator {
-        MKone,
-        MKtwo,
-        MKthree,
-        None,
-    }
+/// enum for saving the type of assembler used
+#[derive(Debug)]
+pub enum Proliferator {
+    MKone,
+    MKtwo,
+    MKthree,
+    None,
+}
 
-    /// combines all the building enums for ease of calling functions
-    pub struct EnumCombiner {
-        pub chemlab: ChemLabMK,
-        pub smelter: SmelterMK,
-        pub assembler: AssemblerMK,
-        pub lab: LabMK,
-        pub proliferator: Proliferator,
-    }
+/// combines all the building enums for ease of calling functions
+pub struct EnumCombiner {
+    pub chemlab: ChemLabMK,
+    pub smelter: SmelterMK,
+    pub assembler: AssemblerMK,
+    pub lab: LabMK,
+    pub proliferator: Proliferator,
+}
 
-    /// struct for containing all information for the main function
-    #[derive(Debug)]
-    pub struct ProgramInfo {
-        // enums to save the facilities used
-        pub proliferators: Proliferator,
-        pub chemlab: ChemLabMK,
-        pub smelter: SmelterMK,
-        pub assembler: AssemblerMK,
-        pub lab: LabMK,
-        pub no_proliferation: Vec<String>,
-        pub additional_items: Vec<ItemAmount>,
-        // ItemAmount here is treated differently than in the item hashmap
-        // ItemAmount.amount == Index of the to be used recipe
-        // ItemAbout.item == Name of the Item which is supposed to have its recipe changed
-        pub item_recipe: Vec<ItemAmount>,
-        pub merge: bool,
-        pub assume_basics: bool,
-        pub basics: Vec<String>,
-        pub produced_item: ItemAmount,
-        /// only show the item requested and not the entire chain
-        pub this_item_only: bool,
-    }
-    impl ProgramInfo {
-        pub fn new(
-            mks: EnumCombiner,
-            no_proliferation: Vec<String>,
-            additional_items: Vec<ItemAmount>,
-            item_recipe: Vec<ItemAmount>,
-            merge: bool,
-            assume_basics: bool,
-            produced_item: ItemAmount,
-        ) -> ProgramInfo {
-            let basics: Vec<String> = vec![
-                String::from("Iron Ore"),
-                String::from("Copper Ore"),
-                String::from("Stone"),
-                String::from("Coal"),
-                String::from("Silicon Ore"),
-                String::from("Titanium Ore"),
-                String::from("Water"),
-                String::from("Crude Oil"),
-                String::from("Core Element"),
-                String::from("Critical Photon"),
-                String::from("Kimberlite Ore"),
-                String::from("Fractal Silicon"),
-                String::from("Grating Crystal"),
-                String::from("Stalagmite Crystal"),
-                String::from("Unipolar Magnet"),
-                String::from("Fire Ice"),
-                String::from("Log"),
-                String::from("Plant Fuel"),
-                String::from("Dark Fog Matrix"),
-                String::from("Energy Shard"),
-                String::from("Silicon-based Neuron"),
-                String::from("Negentropy Singularity"),
-                String::from("Matter Recombinator"),
-                String::from("Hydrogen"),
-                String::from("Deuterium"),
-            ];
-            ProgramInfo {
-                proliferators: mks.proliferator,
-                chemlab: mks.chemlab,
-                smelter: mks.smelter,
-                assembler: mks.assembler,
-                lab: mks.lab,
-                no_proliferation,
-                additional_items,
-                item_recipe,
-                merge,
-                assume_basics,
-                basics: basics.clone(),
-                produced_item,
-                this_item_only: false,
-            }
+/// struct for containing all information for the main function
+#[derive(Debug)]
+pub struct ProgramInfo {
+    // enums to save the facilities used
+    pub proliferators: Proliferator,
+    pub chemlab: ChemLabMK,
+    pub smelter: SmelterMK,
+    pub assembler: AssemblerMK,
+    pub lab: LabMK,
+    pub no_proliferation: Vec<String>,
+    pub additional_items: Vec<ItemAmount>,
+    // ItemAmount here is treated differently than in the item hashmap
+    // ItemAmount.amount == Index of the to be used recipe
+    // ItemAbout.item == Name of the Item which is supposed to have its recipe changed
+    pub item_recipe: Vec<ItemAmount>,
+    pub merge: bool,
+    pub assume_basics: bool,
+    pub basics: Vec<String>,
+    pub produced_item: ItemAmount,
+    /// only show the item requested and not the entire chain
+    pub this_item_only: bool,
+}
+impl ProgramInfo {
+    pub fn new(
+        mks: EnumCombiner,
+        no_proliferation: Vec<String>,
+        additional_items: Vec<ItemAmount>,
+        item_recipe: Vec<ItemAmount>,
+        merge: bool,
+        assume_basics: bool,
+        produced_item: ItemAmount,
+    ) -> ProgramInfo {
+        let basics: Vec<String> = vec![
+            String::from("Iron Ore"),
+            String::from("Copper Ore"),
+            String::from("Stone"),
+            String::from("Coal"),
+            String::from("Silicon Ore"),
+            String::from("Titanium Ore"),
+            String::from("Water"),
+            String::from("Crude Oil"),
+            String::from("Core Element"),
+            String::from("Critical Photon"),
+            String::from("Kimberlite Ore"),
+            String::from("Fractal Silicon"),
+            String::from("Grating Crystal"),
+            String::from("Stalagmite Crystal"),
+            String::from("Unipolar Magnet"),
+            String::from("Fire Ice"),
+            String::from("Log"),
+            String::from("Plant Fuel"),
+            String::from("Dark Fog Matrix"),
+            String::from("Energy Shard"),
+            String::from("Silicon-based Neuron"),
+            String::from("Negentropy Singularity"),
+            String::from("Matter Recombinator"),
+            String::from("Hydrogen"),
+            String::from("Deuterium"),
+        ];
+        ProgramInfo {
+            proliferators: mks.proliferator,
+            chemlab: mks.chemlab,
+            smelter: mks.smelter,
+            assembler: mks.assembler,
+            lab: mks.lab,
+            no_proliferation,
+            additional_items,
+            item_recipe,
+            merge,
+            assume_basics,
+            basics: basics.clone(),
+            produced_item,
+            this_item_only: false,
         }
     }
+}
 
-    /// enum for containing the current state of the processing
-    /// of the arguments
-    #[derive(PartialEq)]
-    pub enum ArgState {
-        // the default; only an item name and an amount
-        Default,
-        // items not to be proliferated
-        NoProliferation,
-        // additional items
-        AdditionalItems,
-        // specify proliferation
-        ProlifLevel,
-        // specify chemical labs
-        ChemLabLevel,
-        // specify furnace
-        FurnaceLevel,
-        // specify assembler
-        AssemblerLevel,
-        // specify laboratory
-        LabLevel,
-        // specify the recipe use for an item
-        ItemRecipe,
-    }
+/// enum for containing the current state of the processing
+/// of the arguments
+#[derive(PartialEq)]
+pub enum ArgState {
+    // the default; only an item name and an amount
+    Default,
+    // items not to be proliferated
+    NoProliferation,
+    // additional items
+    AdditionalItems,
+    // specify proliferation
+    ProlifLevel,
+    // specify chemical labs
+    ChemLabLevel,
+    // specify furnace
+    FurnaceLevel,
+    // specify assembler
+    AssemblerLevel,
+    // specify laboratory
+    LabLevel,
+    // specify the recipe use for an item
+    ItemRecipe,
 }
 
 // macro for creating items in a more convenient manner
