@@ -10,6 +10,38 @@ use crate::{item, recipe, recitem, to_hash};
 /// creates a big HashMap with all the items and buildings in the game
 pub fn get_items() -> HashMap<String, Item<'static>> {
     let mut res_hash: HashMap<String, Item<'_>> = HashMap::new();
+    /*
+    macro template explanation
+    to_hash!(
+       res_hash,
+        <variable name>,
+        <item name string>,
+        item!(
+            <item name string>,
+            (recipe!(
+                <seconds to craft>,
+                <Manufacturing facility>,
+                    (recitem!(<Amount Item>, <ingredient item name string>)),
+                    (recitem!(<Amount Item>, <product item name string>))
+            ))
+        )
+    );
+    copy paste reference
+    to_hash!(
+       res_hash,
+        ,
+        ,
+        item!(
+            ,
+            (recipe!(
+                ,
+                ,
+                    (recitem!(,)),
+                    (recitem!(,))
+            ))
+        )
+    );
+    */
     // all ores/origin items
     let iron_ore_rec: Recipe = Recipe::new(
         0.0,
@@ -842,17 +874,6 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
         ))
     );
     res_hash.insert(String::from("Thruster"), thruster);
-    /*
-    macro template
-    to_hash!(res_hash,
-        ,
-        ,
-        item!(,
-            (),
-            (recipe!(,
-                (recitem!()),
-                (recitem!())))));
-    */
     to_hash!(
         res_hash,
         reinforced_thruster,
