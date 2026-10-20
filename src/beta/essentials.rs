@@ -565,7 +565,7 @@ impl<'a> Item<'a> {
                         None => {
                             panic!(
                                 "failed to call 'fn crafting_chain' on key {}",
-                                &real_ingredient.item
+                                real_ingredient.item
                             );
                         }
                     },
