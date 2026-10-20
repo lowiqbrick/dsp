@@ -43,379 +43,413 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
     );
     */
     // all ores/origin items
-    let iron_ore_rec: Recipe = Recipe::new(
-        0.0,
-        ManFac::Origin,
-        vec![IsItem::new_nai()],
-        vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
+    to_hash!(
+        res_hash,
+        iron_ore,
+        "Iron Ore",
+        item!(
+            "Iron Ore",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Iron Ore"))
+            ))
+        )
     );
-    let iron_ore: Item = Item::new("Iron Ore", vec![iron_ore_rec]);
-    res_hash.insert(String::from("Iron Ore"), iron_ore);
-    let copper_ore: Item = Item::new(
+    to_hash!(
+        res_hash,
+        copper_ore,
         "Copper Ore",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Copper Ore"),
-            ))],
-        )],
+        item!(
+            "Copper Ore",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Copper Ore"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Copper Ore"), copper_ore);
-    let stone: Item = Item::new(
+    to_hash!(
+        res_hash,
+        stone,
         "Stone",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Stone")))],
-        )],
+        item!(
+            "Stone",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Stone"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Stone"), stone);
-    let coal: Item = Item::new(
+    to_hash!(
+        res_hash,
+        coal,
         "Coal",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Coal")))],
-        )],
+        item!(
+            "Coal",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Coal"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Coal"), coal);
-    let silicon_ore: Item = Item::new(
+    to_hash!(
+        res_hash,
+        silicon_ore,
         "Silicon Ore",
-        vec![
-            Recipe::new(
-                0.0,
-                ManFac::Origin,
-                vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Silicon Ore"),
-                ))],
-            ),
-            Recipe::new(
-                10.0,
-                ManFac::Furnace,
-                vec![IsItem::new(ItemAmount::new(10.0, String::from("Stone")))],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Silicon Ore"),
-                ))],
-            ),
-        ],
+        item!(
+            "Silicon Ore",
+            (
+                recipe!(
+                    0.0,
+                    ManFac::Origin,
+                    (IsItem::new_nai()),
+                    (recitem!(1.0, "Silicon Ore"))
+                ),
+                recipe!(
+                    10.0,
+                    ManFac::Furnace,
+                    (recitem!(10.0, "Stone")),
+                    (recitem!(1.0, "Silicon Ore"))
+                )
+            )
+        )
     );
-    res_hash.insert(String::from("Silicon Ore"), silicon_ore);
-    let titanium_ore: Item = Item::new(
+    to_hash!(
+        res_hash,
+        titanium_ore,
         "Titanium Ore",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Titanium Ore"),
-            ))],
-        )],
-    );
-    res_hash.insert(String::from("Titanium Ore"), titanium_ore);
-    let water: Item = Item::new(
-        "Water",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Water")))],
-        )],
-    );
-    res_hash.insert(String::from("Water"), water);
-    let crude_oil: Item = Item::new(
-        "Crude Oil",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Crude Oil")))],
-        )],
-    );
-    res_hash.insert(String::from("Crude Oil"), crude_oil);
-    // hydrogen requires a lot of other items to be declared
-    let hydrogen: Item = Item::new(
-        "Hydrogen",
-        vec![
-            Recipe::new(
-                4.0,
-                ManFac::OilRefinery,
-                vec![IsItem::new(ItemAmount::new(2.0, String::from("Crude Oil")))],
-                vec![
-                    IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
-                    IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
-                ],
-            ),
-            Recipe::new(
-                2.0,
-                ManFac::ChemicalPlant,
-                vec![IsItem::new(ItemAmount::new(2.0, String::from("Fire Ice")))],
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
-                    IsItem::new(ItemAmount::new(2.0, String::from("Graphene"))),
-                ],
-            ),
-            Recipe::new(
-                4.0,
-                ManFac::OilRefinery,
-                vec![
-                    IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
-                    IsItem::new(ItemAmount::new(1.0, String::from("Refined Oil"))),
-                ],
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Energetic Graphite"))),
-                    IsItem::new(ItemAmount::new(3.0, String::from("Hydrogen"))),
-                ],
-            ),
-            Recipe::new(
-                2.0,
-                ManFac::MiniatureParticleCollider,
-                vec![IsItem::new(ItemAmount::new(
-                    2.0,
-                    String::from("Critical Photon"),
-                ))],
-                vec![
-                    IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
-                    IsItem::new(ItemAmount::new(2.0, String::from("Antimatter"))),
-                ],
-            ),
-        ],
-    );
-    res_hash.insert(String::from("Hydrogen"), hydrogen);
-    let deuterium: Item = Item::new(
-        "Deuterium",
-        vec![
-            Recipe::new(
+        item!(
+            "Titanium Ore",
+            (recipe!(
                 0.0,
                 ManFac::Origin,
-                vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(1.0, String::from("Deuterium")))],
-            ),
-            Recipe::new(
-                2.5,
-                ManFac::MiniatureParticleCollider,
-                vec![IsItem::new(ItemAmount::new(10.0, String::from("Hydrogen")))],
-                vec![IsItem::new(ItemAmount::new(5.0, String::from("Deuterium")))],
-            ),
-        ],
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Titanium Ore"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Deuterium"), deuterium);
-    let antimatter: Item = Item::new(
+    to_hash!(
+        res_hash,
+        water,
+        "Water",
+        item!(
+            "Water",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Water"))
+            ))
+        )
+    );
+    to_hash!(
+        res_hash,
+        crude_oil,
+        "Crude Oil",
+        item!(
+            "Crude Oil",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Crude Oil"))
+            ))
+        )
+    );
+    // hydrogen requires a lot of other items to be declared
+    to_hash!(
+        res_hash,
+        hydrogen,
+        "Hydrogen",
+        item!(
+            "Hydrogen",
+            (
+                recipe!(
+                    4.0,
+                    ManFac::OilRefinery,
+                    (recitem!(2.0, "Crude Oil")),
+                    (recitem!(2.0, "Refined Oil"), recitem!(1.0, "Hydrogen"))
+                ),
+                recipe!(
+                    2.0,
+                    ManFac::ChemicalPlant,
+                    (recitem!(2.0, "Fire Ice")),
+                    (recitem!(1.0, "Hydrogen"), recitem!(2.0, "Graphene"))
+                ),
+                recipe!(
+                    4.0,
+                    ManFac::OilRefinery,
+                    (recitem!(2.0, "Hydrogen"), recitem!(1.0, "Refined Oil")),
+                    (
+                        recitem!(1.0, "Energetic Graphite"),
+                        recitem!(3.0, "Hydrogen")
+                    )
+                ),
+                recipe!(
+                    2.0,
+                    ManFac::MiniatureParticleCollider,
+                    (recitem!(2.0, "Critical Photon")),
+                    (
+                        recitem!(2.0, "Hydrogen"),
+                        recitem!(2.0, "Antimatter")
+                    )
+                )
+            )
+        )
+    );
+    to_hash!(
+        res_hash,
+        deuterium,
+        "Deuterium",
+        item!(
+            "Deuterium",
+            (
+                recipe!(
+                    0.0,
+                    ManFac::Origin,
+                    (IsItem::new_nai()),
+                    (recitem!(1.0, "Deuterium"))
+                ),
+                recipe!(
+                    2.5,
+                    ManFac::MiniatureParticleCollider,
+                    (recitem!(10.0, "Hydrogen")),
+                    (recitem!(5.0, "Deuterium"))
+                )
+            )
+        )
+    );
+    to_hash!(
+        res_hash,
+        antimatter,
         "Antimatter",
-        vec![Recipe::new(
-            2.0,
-            ManFac::MiniatureParticleCollider,
-            vec![IsItem::new(ItemAmount::new(
+        item!(
+            "Antimatter",
+            (recipe!(
                 2.0,
-                String::from("Critical Photon"),
-            ))],
-            vec![
-                IsItem::new(ItemAmount::new(2.0, String::from("Hydrogen"))),
-                IsItem::new(ItemAmount::new(2.0, String::from("Antimatter"))),
-            ],
-        )],
+                ManFac::MiniatureParticleCollider,
+                (recitem!(2.0, "Critical Photon")),
+                (recitem!(2.0, "Hydrogen"), recitem!(2.0, "Antimatter"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Antimatter"), antimatter);
-    let core_element: Item = Item::new(
+    to_hash!(
+        res_hash,
+        core_element,
         "Core Element",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Core Element"),
-            ))],
-        )],
+        item!(
+            "Core Element",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Core Element"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Core Element"), core_element);
-    let critical_photon: Item = Item::new(
+    to_hash!(
+        res_hash,
+        critical_photon,
         "Critical Photon",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Critical Photon"),
-            ))],
-        )],
+        item!(
+            "Critical Photon",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Critical Photon"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Critical Photon"), critical_photon);
-    let kimberlite_ore: Item = Item::new(
+    to_hash!(
+        res_hash,
+        kimberlite_ore,
         "Kimberlite Ore",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Kimberlite Ore"),
-            ))],
-        )],
+        item!(
+            "Kimberlite Ore",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Kimberlite Ore"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Kimberlite Ore"), kimberlite_ore);
-    let fractal_silicon: Item = Item::new(
+    to_hash!(
+        res_hash,
+        fractal_silicon,
         "Fractal Silicon",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Fractal Silicon"),
-            ))],
-        )],
+        item!(
+            "Fractal Silicon",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Fractal Silicon"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Fractal Silicon"), fractal_silicon);
-    let grating_crystal: Item = Item::new(
+    to_hash!(
+        res_hash,
+        grating_crystal,
         "Grating Crystal",
-        vec![Recipe::new(
-            1.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
+        item!(
+            "Grating Crystal",
+            (recipe!(
                 1.0,
-                String::from("Grating Crystal"),
-            ))],
-        )],
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Grating Crystal"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Grating Crystal"), grating_crystal);
-    let stalagmite_crystal: Item = Item::new(
+    to_hash!(
+        res_hash,
+        stalagmite_crystal,
         "Stalagmite Crystal",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Stalagmite Crystal"),
-            ))],
-        )],
+        item!(
+            "Stalagmite Crystal",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Stalagmite Crystal"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Stalagmite Crystal"), stalagmite_crystal);
-    let unipolar_magnet: Item = Item::new(
+    to_hash!(
+        res_hash,
+        unipolar_magnet,
         "Unipolar Magnet",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Unipolar Magnet"),
-            ))],
-        )],
+        item!(
+            "Unipolar Magnet",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Unipolar Magnet"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Unipolar Magnet"), unipolar_magnet);
-    let fire_ice: Item = Item::new(
+    to_hash!(
+        res_hash,
+        fire_ice,
         "Fire Ice",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Fire Ice")))],
-        )],
+        item!(
+            "Fire Ice",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Fire Ice"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Fire Ice"), fire_ice);
-    let log: Item = Item::new(
+    to_hash!(
+        res_hash,
+        log,
         "Log",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Log")))],
-        )],
+        item!(
+            "Log",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Log"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Log"), log);
-    let plant_fuel: Item = Item::new(
+    to_hash!(
+        res_hash,
+        plant_fuel,
         "Plant Fuel",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Plant Fuel"),
-            ))],
-        )],
+        item!(
+            "Plant Fuel",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Plant Fuel"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Plant Fuel"), plant_fuel);
-    let dark_fog_matrix: Item = Item::new(
+    to_hash!(
+        res_hash,
+        dark_fog_matrix,
         "Dark Fog Matrix",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Dark Fog Matrix"),
-            ))],
-        )],
+        item!(
+            "Dark Fog Matrix",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Dark Fog Matrix"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Dark Fog Matrix"), dark_fog_matrix);
-    let energy_shard: Item = Item::new(
+    to_hash!(
+        res_hash,
+        energy_shard,
         "Energy Shard",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Energy Shard"),
-            ))],
-        )],
+        item!(
+            "Energy Shard",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Energy Shard"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Energy Shard"), energy_shard);
-    let silicon_based_neuron: Item = Item::new(
+    to_hash!(
+        res_hash,
+        silicon_based_neuron,
         "Silicon-based Neuron",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Silicon-based Neuron"),
-            ))],
-        )],
+        item!(
+            "Silicon-based Neuron",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Silicon-based Neuron"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Silicon-based Neuron"), silicon_based_neuron);
-    let negentropy_singularity: Item = Item::new(
-        "Negentropy Singularity",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Negentropy Singularity"),
-            ))],
-        )],
-    );
-    res_hash.insert(
-        String::from("Negentropy Singularity"),
+    to_hash!(
+        res_hash,
         negentropy_singularity,
+        "Negentropy Singularity",
+        item!(
+            "Negentropy Singularity",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Negentropy Singularity"))
+            ))
+        )
     );
-    let matter_recombinator: Item = Item::new(
+    to_hash!(
+        res_hash,
+        matter_recombinator,
         "Matter Recombinator",
-        vec![Recipe::new(
-            0.0,
-            ManFac::Origin,
-            vec![IsItem::new_nai()],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Matter Recombinator"),
-            ))],
-        )],
+        item!(
+            "Matter Recombinator",
+            (recipe!(
+                0.0,
+                ManFac::Origin,
+                (IsItem::new_nai()),
+                (recitem!(1.0, "Matter Recombinator"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Matter Recombinator"), matter_recombinator);
     // processed items
     to_hash!(
         res_hash,
@@ -512,165 +546,158 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
             ))
         )
     );
-    let sulfuric_acid: Item = Item::new(
+    to_hash!(
+        res_hash,
+        sulfuric_acid,
         "Sulfuric Acid",
-        vec![
-            Recipe::new(
-                6.0,
-                ManFac::ChemicalPlant,
-                vec![
-                    IsItem::new(ItemAmount::new(4.0, String::from("Water"))),
-                    IsItem::new(ItemAmount::new(8.0, String::from("Stone"))),
-                    IsItem::new(ItemAmount::new(6.0, String::from("Refined Oil"))),
-                ],
-                vec![IsItem::new(ItemAmount::new(
-                    4.0,
-                    String::from("Sulfuric Acid"),
-                ))],
-            ),
-            Recipe::new(
-                1.2,
-                ManFac::Origin,
-                vec![IsItem::new_nai()],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Sulfuric Acid"),
-                ))],
-            ),
-        ],
+        item!(
+            "Sulfuric Acid",
+            (
+                recipe!(
+                    6.0,
+                    ManFac::ChemicalPlant,
+                    (
+                        recitem!(4.0, "Water"),
+                        recitem!(8.0, "Stone"),
+                        recitem!(6.0, "Refined Oil")
+                    ),
+                    (recitem!(4.0, "Sulfuric Acid"))
+                ),
+                recipe!(
+                    1.2,
+                    ManFac::Origin,
+                    (IsItem::new_nai()),
+                    (recitem!(1.0, "Sulfuric Acid"))
+                )
+            )
+        )
     );
-    res_hash.insert(String::from("Sulfuric Acid"), sulfuric_acid);
-    let refined_oil: Item = Item::new(
+    to_hash!(
+        res_hash,
+        refined_oil,
         "Refined Oil",
-        vec![
-            Recipe::new(
-                4.0,
-                ManFac::OilRefinery,
-                vec![IsItem::new(ItemAmount::new(2.0, String::from("Crude Oil")))],
-                vec![
-                    IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
-                    IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
-                ],
-            ),
-            Recipe::new(
-                4.0,
-                ManFac::OilRefinery,
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Coal"))),
-                    IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
-                    IsItem::new(ItemAmount::new(2.0, String::from("Refined Oil"))),
-                ],
-                vec![IsItem::new(ItemAmount::new(
-                    3.0,
-                    String::from("Refined Oil"),
-                ))],
-            ),
-        ],
+        item!(
+            "Refined Oil",
+            (
+                recipe!(
+                    4.0,
+                    ManFac::OilRefinery,
+                    (recitem!(2.0, "Crude Oil")),
+                    (recitem!(2.0, "Refined Oil"), recitem!(1.0, "Hydrogen"))
+                ),
+                recipe!(
+                    4.0,
+                    ManFac::OilRefinery,
+                    (
+                        recitem!(1.0, "Coal"),
+                        recitem!(1.0, "Hydrogen"),
+                        recitem!(2.0, "Refined Oil")
+                    ),
+                    (recitem!(3.0, "Refined Oil"))
+                )
+            )
+        )
     );
-    res_hash.insert(String::from("Refined Oil"), refined_oil);
-    let magnet: Item = Item::new(
+    to_hash!(
+        res_hash,
+        magnet,
         "Magnet",
-        vec![Recipe::new(
-            1.5,
-            ManFac::Furnace,
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Iron Ore")))],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Magnet")))],
-        )],
+        item!(
+            "Magnet",
+            (recipe!(
+                1.5,
+                ManFac::Furnace,
+                (recitem!(1.0, "Iron Ore")),
+                (recitem!(1.0, "Magnet"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Magnet"), magnet);
-    let magnetic_coil: Item = Item::new(
+    to_hash!(
+        res_hash,
+        magnetic_coil,
         "Magnetic Coil",
-        vec![Recipe::new(
-            1.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
-                IsItem::new(ItemAmount::new(2.0, String::from("Magnet"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(
-                2.0,
-                String::from("Magnetic Coil"),
-            ))],
-        )],
+        item!(
+            "Magnetic Coil",
+            (recipe!(
+                1.0,
+                ManFac::Assembler,
+                (recitem!(1.0, "Copper Ingot"), recitem!(2.0, "Magnet")),
+                (recitem!(2.0, "Magnetic Coil"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Magnetic Coil"), magnetic_coil);
-    let glass: Item = Item::new(
+    to_hash!(
+        res_hash,
+        glass,
         "Glass",
-        vec![Recipe::new(
-            2.0,
-            ManFac::Furnace,
-            vec![IsItem::new(ItemAmount::new(2.0, String::from("Stone")))],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Glass")))],
-        )],
+        item!(
+            "Glass",
+            (recipe!(
+                2.0,
+                ManFac::Furnace,
+                (recitem!(2.0, "Stone")),
+                (recitem!(1.0, "Glass"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Glass"), glass);
-    let diamond: Item = Item::new(
+    to_hash!(
+        res_hash,
+        diamond,
         "Diamond",
-        vec![
-            Recipe::new(
-                2.0,
-                ManFac::Furnace,
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Energetic Graphite"),
-                ))],
-                vec![IsItem::new(ItemAmount::new(1.0, String::from("Diamond")))],
-            ),
-            Recipe::new(
-                1.5,
-                ManFac::Furnace,
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Kimberlite Ore"),
-                ))],
-                vec![IsItem::new(ItemAmount::new(2.0, String::from("Diamond")))],
-            ),
-        ],
-    );
-    res_hash.insert(String::from("Diamond"), diamond);
-    let crystal_silicon: Item = Item::new(
-        "Crystal Silicon",
-        vec![
-            Recipe::new(
-                2.0,
-                ManFac::Furnace,
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("High-purity Silicon"),
-                ))],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Crystal Silicon"),
-                ))],
-            ),
-            Recipe::new(
-                1.5,
-                ManFac::Furnace,
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Fractal Silicon"),
-                ))],
-                vec![IsItem::new(ItemAmount::new(
+        item!(
+            "Diamond",
+            (
+                recipe!(
                     2.0,
-                    String::from("Crystal Silicon"),
-                ))],
-            ),
-        ],
+                    ManFac::Furnace,
+                    (recitem!(1.0, "Energetic Graphite")),
+                    (recitem!(1.0, "Diamond"))
+                ),
+                recipe!(
+                    1.5,
+                    ManFac::Furnace,
+                    (recitem!(1.0, "Kimberlite Ore")),
+                    (recitem!(2.0, "Diamond"))
+                )
+            )
+        )
     );
-    res_hash.insert(String::from("Crystal Silicon"), crystal_silicon);
-    let steel: Item = Item::new(
+    to_hash!(
+        res_hash,
+        crystal_silicon,
+        "Crystal Silicon",
+        item!(
+            "Crystal Silicon",
+            (
+                recipe!(
+                    2.0,
+                    ManFac::Furnace,
+                    (recitem!(1.0, "High-purity Silicon")),
+                    (recitem!(1.0, "Crystal Silicon"))
+                ),
+                recipe!(
+                    1.5,
+                    ManFac::Furnace,
+                    (recitem!(1.0, "Fractal Silicon")),
+                    (recitem!(2.0, "Crystal Silicon"))
+                )
+            )
+        )
+    );
+    to_hash!(
+        res_hash,
+        steel,
         "Steel",
-        vec![Recipe::new(
-            3.0,
-            ManFac::Furnace,
-            vec![IsItem::new(ItemAmount::new(
+        item!(
+            "Steel",
+            (recipe!(
                 3.0,
-                String::from("Iron Ingot"),
-            ))],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Steel")))],
-        )],
+                ManFac::Furnace,
+                (recitem!(3.0, "Iron Ingot")),
+                (recitem!(1.0, "Steel"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Steel"), steel);
     to_hash!(
         res_hash,
         titanium_alloy,
@@ -689,185 +716,184 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
             ))
         )
     );
-    let circuit_board: Item = Item::new(
+    to_hash!(
+        res_hash,
+        circuit_board,
         "Circuit Board",
-        vec![Recipe::new(
-            1.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
-                IsItem::new(ItemAmount::new(2.0, String::from("Iron Ingot"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(
-                2.0,
-                String::from("Circuit Board"),
-            ))],
-        )],
+        item!(
+            "Circuit Board",
+            (recipe!(
+                1.0,
+                ManFac::Assembler,
+                (recitem!(1.0, "Copper Ingot"), recitem!(2.0, "Iron Ingot")),
+                (recitem!(2.0, "Circuit Board"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Circuit Board"), circuit_board);
-    let prism: Item = Item::new(
+    to_hash!(
+        res_hash,
+        prism,
         "Prism",
-        vec![Recipe::new(
-            2.0,
-            ManFac::Furnace,
-            vec![IsItem::new(ItemAmount::new(3.0, String::from("Glass")))],
-            vec![IsItem::new(ItemAmount::new(2.0, String::from("Prism")))],
-        )],
+        item!(
+            "Prism",
+            (recipe!(
+                2.0,
+                ManFac::Furnace,
+                (recitem!(3.0, "Glass")),
+                (recitem!(2.0, "Prism"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Prism"), prism);
-    let electric_motor: Item = Item::new(
+    to_hash!(
+        res_hash,
+        electric_motor,
         "Electric Motor",
-        vec![Recipe::new(
-            2.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(1.0, String::from("Magnetic Coil"))),
-                IsItem::new(ItemAmount::new(1.0, String::from("Gear"))),
-                IsItem::new(ItemAmount::new(2.0, String::from("Iron Ingot"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Electric Motor"),
-            ))],
-        )],
+        item!(
+            "Electric Motor",
+            (recipe!(
+                2.0,
+                ManFac::Assembler,
+                (
+                    recitem!(1.0, "Magnetic Coil"),
+                    recitem!(1.0, "Gear"),
+                    recitem!(2.0, "Iron Ingot")
+                ),
+                (recitem!(1.0, "Electric Motor"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Electric Motor"), electric_motor);
-    let microcrystalline_component: Item = Item::new(
-        "Microcrystalline Component",
-        vec![Recipe::new(
-            2.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(1.0, String::from("Copper Ingot"))),
-                IsItem::new(ItemAmount::new(2.0, String::from("High-purity Silicon"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Microcrystalline Component"),
-            ))],
-        )],
-    );
-    res_hash.insert(
-        String::from("Microcrystalline Component"),
+    to_hash!(
+        res_hash,
         microcrystalline_component,
+        "Microcrystalline Component",
+        item!(
+            "Microcrystalline Component",
+            (recipe!(
+                2.0,
+                ManFac::Assembler,
+                (
+                    recitem!(1.0, "Copper Ingot"),
+                    recitem!(2.0, "High-purity Silicon")
+                ),
+                (recitem!(1.0, "Microcrystalline Component"))
+            ))
+        )
     );
-    let gear: Item = Item::new(
+    to_hash!(
+        res_hash,
+        gear,
         "Gear",
-        vec![Recipe::new(
-            1.0,
-            ManFac::Assembler,
-            vec![IsItem::new(ItemAmount::new(
+        item!(
+            "Gear",
+            (recipe!(
                 1.0,
-                String::from("Iron Ingot"),
-            ))],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Gear")))],
-        )],
+                ManFac::Assembler,
+                (recitem!(1.0, "Iron Ingot")),
+                (recitem!(1.0, "Gear"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Gear"), gear);
-    let plasma_exciter: Item = Item::new(
+    to_hash!(
+        res_hash,
+        plasma_exciter,
         "Plasma Exciter",
-        vec![Recipe::new(
-            2.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(2.0, String::from("Prism"))),
-                IsItem::new(ItemAmount::new(4.0, String::from("Magnetic Coil"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Plasma Exciter"),
-            ))],
-        )],
+        item!(
+            "Plasma Exciter",
+            (recipe!(
+                2.0,
+                ManFac::Assembler,
+                (recitem!(2.0, "Prism"), recitem!(4.0, "Magnetic Coil")),
+                (recitem!(1.0, "Plasma Exciter"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Plasma Exciter"), plasma_exciter);
-    let photon_combiner: Item = Item::new(
+    to_hash!(
+        res_hash,
+        photon_combiner,
         "Photon Combiner",
-        vec![
-            Recipe::new(
-                3.0,
-                ManFac::Assembler,
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
-                    IsItem::new(ItemAmount::new(2.0, String::from("Prism"))),
-                ],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Photon Combiner"),
-                ))],
-            ),
-            Recipe::new(
-                3.0,
-                ManFac::Assembler,
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Circuit Board"))),
-                    IsItem::new(ItemAmount::new(1.0, String::from("Grating Crystal"))),
-                ],
-                vec![IsItem::new(ItemAmount::new(
-                    1.0,
-                    String::from("Photon Combiner"),
-                ))],
-            ),
-        ],
+        item!(
+            "Photon Combiner",
+            (
+                recipe!(
+                    3.0,
+                    ManFac::Assembler,
+                    (recitem!(1.0, "Circuit Board"), recitem!(2.0, "Prism")),
+                    (recitem!(1.0, "Photon Combiner"))
+                ),
+                recipe!(
+                    3.0,
+                    ManFac::Assembler,
+                    (
+                        recitem!(1.0, "Circuit Board"),
+                        recitem!(1.0, "Grating Crystal")
+                    ),
+                    (recitem!(1.0, "Photon Combiner"))
+                )
+            )
+        )
     );
-    res_hash.insert(String::from("Photon Combiner"), photon_combiner);
-    let electromagnetic_turbine: Item = Item::new(
-        "Electromagnetic Turbine",
-        vec![Recipe::new(
-            2.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(2.0, String::from("Magnetic Coil"))),
-                IsItem::new(ItemAmount::new(2.0, String::from("Electric Motor"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(
-                1.0,
-                String::from("Electromagnetic Turbine"),
-            ))],
-        )],
-    );
-    res_hash.insert(
-        String::from("Electromagnetic Turbine"),
+    to_hash!(
+        res_hash,
         electromagnetic_turbine,
+        "Electromagnetic Turbine",
+        item!(
+            "Electromagnetic Turbine",
+            (recipe!(
+                2.0,
+                ManFac::Assembler,
+                (
+                    recitem!(2.0, "Magnetic Coil"),
+                    recitem!(2.0, "Electric Motor")
+                ),
+                (recitem!(1.0, "Electromagnetic Turbine"))
+            ))
+        )
     );
-    let processor: Item = Item::new(
+    to_hash!(
+        res_hash,
+        processor,
         "Processor",
-        vec![Recipe::new(
-            3.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(
-                    2.0,
-                    String::from("Microcrystalline Component"),
-                )),
-                IsItem::new(ItemAmount::new(2.0, String::from("Circuit Board"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Processor")))],
-        )],
+        item!(
+            "Processor",
+            (recipe!(
+                3.0,
+                ManFac::Assembler,
+                (
+                    recitem!(2.0, "Microcrystalline Component"),
+                    recitem!(2.0, "Circuit Board")
+                ),
+                (recitem!(1.0, "Processor"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Processor"), processor);
-    let engine: Item = Item::new(
+    to_hash!(
+        res_hash,
+        engine,
         "Engine",
-        vec![Recipe::new(
-            3.0,
-            ManFac::Assembler,
-            vec![
-                IsItem::new(ItemAmount::new(2.0, String::from("Copper Ingot"))),
-                IsItem::new(ItemAmount::new(1.0, String::from("Magnetic Coil"))),
-            ],
-            vec![IsItem::new(ItemAmount::new(1.0, String::from("Engine")))],
-        )],
+        item!(
+            "Engine",
+            (recipe!(
+                3.0,
+                ManFac::Assembler,
+                (recitem!(2.0, "Copper Ingot"), recitem!(1.0, "Magnetic Coil")),
+                (recitem!(1.0, "Engine"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Engine"), engine);
-    let thruster: Item = item!(
+    to_hash!(
+        res_hash,
+        thruster,
         "Thruster",
-        (recipe!(
-            4.0,
-            ManFac::Assembler,
-            (recitem!(3.0, "Copper Ingot")),
-            (recitem!(2.0, "Steel"))
-        ))
+        item!(
+            "Thruster",
+            (recipe!(
+                4.0,
+                ManFac::Assembler,
+                (recitem!(3.0, "Copper Ingot")),
+                (recitem!(2.0, "Steel"))
+            ))
+        )
     );
-    res_hash.insert(String::from("Thruster"), thruster);
     to_hash!(
         res_hash,
         reinforced_thruster,
@@ -979,31 +1005,31 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
             )
         )
     );
-    // can't use macros because of the declaration earlier
-    let graphene: Item = Item::new(
+    to_hash!(
+        res_hash,
+        graphene,
         "Graphene",
-        vec![
-            Recipe::new(
-                3.0,
-                ManFac::ChemicalPlant,
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Sulfuric Acid"))),
-                    IsItem::new(ItemAmount::new(3.0, String::from("Energetic Graphite"))),
-                ],
-                vec![IsItem::new(ItemAmount::new(2.0, String::from("Graphene")))],
-            ),
-            Recipe::new(
-                2.0,
-                ManFac::ChemicalPlant,
-                vec![IsItem::new(ItemAmount::new(2.0, String::from("Fire Ice")))],
-                vec![
-                    IsItem::new(ItemAmount::new(1.0, String::from("Hydrogen"))),
-                    IsItem::new(ItemAmount::new(2.0, String::from("Graphene"))),
-                ],
-            ),
-        ],
+        item!(
+            "Graphene",
+            (
+                recipe!(
+                    3.0,
+                    ManFac::ChemicalPlant,
+                    (
+                        recitem!(1.0, "Sulfuric Acid"),
+                        recitem!(3.0, "Energetic Graphite")
+                    ),
+                    (recitem!(2.0, "Graphene"))
+                ),
+                recipe!(
+                    2.0,
+                    ManFac::ChemicalPlant,
+                    (recitem!(2.0, "Fire Ice")),
+                    (recitem!(1.0, "Hydrogen"), recitem!(2.0, "Graphene"))
+                )
+            )
+        )
     );
-    res_hash.insert(String::from("Graphene"), graphene);
     to_hash!(
         res_hash,
         annihilation_constraint_sphere,
