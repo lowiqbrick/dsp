@@ -16,14 +16,14 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
        res_hash,
         <variable name>,
-        <item name string>,
+        <item type>,
         item!(
-            <item name string>,
+            <item type>,
             (recipe!(
                 <seconds to craft>,
                 <Manufacturing facility>,
-                    (recitem!(<Amount Item>, <ingredient item name string>)),
-                    (recitem!(<Amount Item>, <product item name string>))
+                    (recitem!(<Amount Item>, <ingredient item type>)),
+                    (recitem!(<Amount Item>, <product item type>))
             ))
         )
     );
@@ -47,77 +47,77 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         iron_ore,
-        "Iron Ore",
+        ItemType::IronOre,
         item!(
-            "Iron Ore",
+            ItemType::IronOre,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Iron Ore"))
+                (recitem!(1.0, ItemType::IronOre))
             ))
         )
     );
     to_hash!(
         res_hash,
         copper_ore,
-        "Copper Ore",
+        ItemType::CopperOre,
         item!(
-            "Copper Ore",
+            ItemType::CopperOre,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Copper Ore"))
+                (recitem!(1.0, ItemType::CopperOre))
             ))
         )
     );
     to_hash!(
         res_hash,
         stone,
-        "Stone",
+        ItemType::Stone,
         item!(
-            "Stone",
+            ItemType::Stone,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Stone"))
+                (recitem!(1.0, ItemType::Stone))
             ))
         )
     );
     to_hash!(
         res_hash,
         coal,
-        "Coal",
+        ItemType::Coal,
         item!(
-            "Coal",
+            ItemType::Coal,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Coal"))
+                (recitem!(1.0, ItemType::Coal))
             ))
         )
     );
     to_hash!(
         res_hash,
         silicon_ore,
-        "Silicon Ore",
+        ItemType::SiliconOre,
         item!(
-            "Silicon Ore",
+            ItemType::SiliconOre,
             (
                 recipe!(
                     0.0,
                     ManFac::Origin,
                     (IsItem::new_nai()),
-                    (recitem!(1.0, "Silicon Ore"))
+                    (recitem!(1.0, ItemType::SiliconOre))
                 ),
                 recipe!(
                     10.0,
                     ManFac::Furnace,
-                    (recitem!(10.0, "Stone")),
-                    (recitem!(1.0, "Silicon Ore"))
+                    (recitem!(10.0, ItemType::Stone)),
+                    (recitem!(1.0, ItemType::SiliconOre))
                 )
             )
         )
@@ -125,42 +125,42 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         titanium_ore,
-        "Titanium Ore",
+        ItemType::TitaniumOre,
         item!(
-            "Titanium Ore",
+            ItemType::TitaniumOre,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Titanium Ore"))
+                (recitem!(1.0, ItemType::TitaniumOre))
             ))
         )
     );
     to_hash!(
         res_hash,
         water,
-        "Water",
+        ItemType::Water,
         item!(
-            "Water",
+            ItemType::Water,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Water"))
+                (recitem!(1.0, ItemType::Water))
             ))
         )
     );
     to_hash!(
         res_hash,
         crude_oil,
-        "Crude Oil",
+        ItemType::CrudeOil,
         item!(
-            "Crude Oil",
+            ItemType::CrudeOil,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Crude Oil"))
+                (recitem!(1.0, ItemType::CrudeOil))
             ))
         )
     );
@@ -168,36 +168,48 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         hydrogen,
-        "Hydrogen",
+        ItemType::Hydrogen,
         item!(
-            "Hydrogen",
+            ItemType::Hydrogen,
             (
                 recipe!(
                     4.0,
                     ManFac::OilRefinery,
-                    (recitem!(2.0, "Crude Oil")),
-                    (recitem!(2.0, "Refined Oil"), recitem!(1.0, "Hydrogen"))
+                    (recitem!(2.0, ItemType::CrudeOil)),
+                    (
+                        recitem!(2.0, ItemType::RefinedOil),
+                        recitem!(1.0, ItemType::Hydrogen)
+                    )
                 ),
                 recipe!(
                     2.0,
                     ManFac::ChemicalPlant,
-                    (recitem!(2.0, "Fire Ice")),
-                    (recitem!(1.0, "Hydrogen"), recitem!(2.0, "Graphene"))
+                    (recitem!(2.0, ItemType::FireIce)),
+                    (
+                        recitem!(1.0, ItemType::Hydrogen),
+                        recitem!(2.0, ItemType::Graphene)
+                    )
                 ),
                 recipe!(
                     4.0,
                     ManFac::OilRefinery,
-                    (recitem!(2.0, "Hydrogen"), recitem!(1.0, "Refined Oil")),
                     (
-                        recitem!(1.0, "Energetic Graphite"),
-                        recitem!(3.0, "Hydrogen")
+                        recitem!(2.0, ItemType::Hydrogen),
+                        recitem!(1.0, ItemType::RefinedOil)
+                    ),
+                    (
+                        recitem!(1.0, ItemType::EnergeticGraphite),
+                        recitem!(3.0, ItemType::Hydrogen)
                     )
                 ),
                 recipe!(
                     2.0,
                     ManFac::MiniatureParticleCollider,
-                    (recitem!(2.0, "Critical Photon")),
-                    (recitem!(2.0, "Hydrogen"), recitem!(2.0, "Antimatter"))
+                    (recitem!(2.0, ItemType::CriticalPhoton)),
+                    (
+                        recitem!(2.0, ItemType::Hydrogen),
+                        recitem!(2.0, ItemType::Antimatter)
+                    )
                 )
             )
         )
@@ -205,21 +217,21 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         deuterium,
-        "Deuterium",
+        ItemType::Deuterium,
         item!(
-            "Deuterium",
+            ItemType::Deuterium,
             (
                 recipe!(
                     0.0,
                     ManFac::Origin,
                     (IsItem::new_nai()),
-                    (recitem!(1.0, "Deuterium"))
+                    (recitem!(1.0, ItemType::Deuterium))
                 ),
                 recipe!(
                     2.5,
                     ManFac::MiniatureParticleCollider,
-                    (recitem!(10.0, "Hydrogen")),
-                    (recitem!(5.0, "Deuterium"))
+                    (recitem!(10.0, ItemType::Hydrogen)),
+                    (recitem!(5.0, ItemType::Deuterium))
                 )
             )
         )
@@ -227,224 +239,227 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         antimatter,
-        "Antimatter",
+        ItemType::Antimatter,
         item!(
-            "Antimatter",
+            ItemType::Antimatter,
             (recipe!(
                 2.0,
                 ManFac::MiniatureParticleCollider,
-                (recitem!(2.0, "Critical Photon")),
-                (recitem!(2.0, "Hydrogen"), recitem!(2.0, "Antimatter"))
+                (recitem!(2.0, ItemType::CriticalPhoton)),
+                (
+                    recitem!(2.0, ItemType::Hydrogen),
+                    recitem!(2.0, ItemType::Antimatter)
+                )
             ))
         )
     );
     to_hash!(
         res_hash,
         core_element,
-        "Core Element",
+        ItemType::CoreElement,
         item!(
-            "Core Element",
+            ItemType::CoreElement,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Core Element"))
+                (recitem!(1.0, ItemType::CoreElement))
             ))
         )
     );
     to_hash!(
         res_hash,
         critical_photon,
-        "Critical Photon",
+        ItemType::CriticalPhoton,
         item!(
-            "Critical Photon",
+            ItemType::CriticalPhoton,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Critical Photon"))
+                (recitem!(1.0, ItemType::CriticalPhoton))
             ))
         )
     );
     to_hash!(
         res_hash,
         kimberlite_ore,
-        "Kimberlite Ore",
+        ItemType::KimberliteOre,
         item!(
-            "Kimberlite Ore",
+            ItemType::KimberliteOre,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Kimberlite Ore"))
+                (recitem!(1.0, ItemType::KimberliteOre))
             ))
         )
     );
     to_hash!(
         res_hash,
         fractal_silicon,
-        "Fractal Silicon",
+        ItemType::FractalSilicon,
         item!(
-            "Fractal Silicon",
+            ItemType::FractalSilicon,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Fractal Silicon"))
+                (recitem!(1.0, ItemType::FractalSilicon))
             ))
         )
     );
     to_hash!(
         res_hash,
         grating_crystal,
-        "Grating Crystal",
+        ItemType::GratingCrystal,
         item!(
-            "Grating Crystal",
+            ItemType::GratingCrystal,
             (recipe!(
                 1.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Grating Crystal"))
+                (recitem!(1.0, ItemType::GratingCrystal))
             ))
         )
     );
     to_hash!(
         res_hash,
         stalagmite_crystal,
-        "Stalagmite Crystal",
+        ItemType::StalagmiteCrystal,
         item!(
-            "Stalagmite Crystal",
+            ItemType::StalagmiteCrystal,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Stalagmite Crystal"))
+                (recitem!(1.0, ItemType::StalagmiteCrystal))
             ))
         )
     );
     to_hash!(
         res_hash,
         unipolar_magnet,
-        "Unipolar Magnet",
+        ItemType::UnipolarMagnet,
         item!(
-            "Unipolar Magnet",
+            ItemType::UnipolarMagnet,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Unipolar Magnet"))
+                (recitem!(1.0, ItemType::UnipolarMagnet))
             ))
         )
     );
     to_hash!(
         res_hash,
         fire_ice,
-        "Fire Ice",
+        ItemType::FireIce,
         item!(
-            "Fire Ice",
+            ItemType::FireIce,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Fire Ice"))
+                (recitem!(1.0, ItemType::FireIce))
             ))
         )
     );
     to_hash!(
         res_hash,
         log,
-        "Log",
+        ItemType::Log,
         item!(
-            "Log",
+            ItemType::Log,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Log"))
+                (recitem!(1.0, ItemType::Log))
             ))
         )
     );
     to_hash!(
         res_hash,
         plant_fuel,
-        "Plant Fuel",
+        ItemType::PlantFuel,
         item!(
-            "Plant Fuel",
+            ItemType::PlantFuel,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Plant Fuel"))
+                (recitem!(1.0, ItemType::PlantFuel))
             ))
         )
     );
     to_hash!(
         res_hash,
         dark_fog_matrix,
-        "Dark Fog Matrix",
+        ItemType::DarkFogMatrix,
         item!(
-            "Dark Fog Matrix",
+            ItemType::DarkFogMatrix,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Dark Fog Matrix"))
+                (recitem!(1.0, ItemType::DarkFogMatrix))
             ))
         )
     );
     to_hash!(
         res_hash,
         energy_shard,
-        "Energy Shard",
+        ItemType::EnergyShard,
         item!(
-            "Energy Shard",
+            ItemType::EnergyShard,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Energy Shard"))
+                (recitem!(1.0, ItemType::EnergyShard))
             ))
         )
     );
     to_hash!(
         res_hash,
         silicon_based_neuron,
-        "Silicon-based Neuron",
+        ItemType::SiliconBasedNeuron,
         item!(
-            "Silicon-based Neuron",
+            ItemType::SiliconBasedNeuron,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Silicon-based Neuron"))
+                (recitem!(1.0, ItemType::SiliconBasedNeuron))
             ))
         )
     );
     to_hash!(
         res_hash,
         negentropy_singularity,
-        "Negentropy Singularity",
+        ItemType::NegentropySingularity,
         item!(
-            "Negentropy Singularity",
+            ItemType::NegentropySingularity,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Negentropy Singularity"))
+                (recitem!(1.0, ItemType::NegentropySingularity))
             ))
         )
     );
     to_hash!(
         res_hash,
         matter_recombinator,
-        "Matter Recombinator",
+        ItemType::MatterRecombinator,
         item!(
-            "Matter Recombinator",
+            ItemType::MatterRecombinator,
             (recipe!(
                 0.0,
                 ManFac::Origin,
                 (IsItem::new_nai()),
-                (recitem!(1.0, "Matter Recombinator"))
+                (recitem!(1.0, ItemType::MatterRecombinator))
             ))
         )
     );
@@ -452,65 +467,68 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         iron_ingot,
-        "Iron Ingot",
+        ItemType::IronIngot,
         item!(
-            "Iron Ingot",
+            ItemType::IronIngot,
             (recipe!(
                 1.0,
                 ManFac::Furnace,
-                (recitem!(1.0, "Iron Ore")),
-                (recitem!(1.0, "Iron Ingot"))
+                (recitem!(1.0, ItemType::IronOre)),
+                (recitem!(1.0, ItemType::IronIngot))
             ))
         )
     );
     to_hash!(
         res_hash,
         copper_ingot,
-        "Copper Ingot",
+        ItemType::CopperIngot,
         item!(
-            "Copper Ingot",
+            ItemType::CopperIngot,
             (recipe!(
                 1.0,
                 ManFac::Furnace,
-                (recitem!(1.0, "Copper Ore")),
-                (recitem!(1.0, "Copper Ingot"))
+                (recitem!(1.0, ItemType::CopperOre)),
+                (recitem!(1.0, ItemType::CopperIngot))
             ))
         )
     );
     to_hash!(
         res_hash,
         stone_brick,
-        "Stone Brick",
+        ItemType::StoneBrick,
         item!(
-            "Stone Brick",
+            ItemType::StoneBrick,
             (recipe!(
                 1.0,
                 ManFac::Furnace,
-                (recitem!(1.0, "Stone")),
-                (recitem!(1.0, "Stone Brick"))
+                (recitem!(1.0, ItemType::Stone)),
+                (recitem!(1.0, ItemType::StoneBrick))
             ))
         )
     );
     to_hash!(
         res_hash,
         energetic_graphite,
-        "Energetic Graphite",
+        ItemType::EnergeticGraphite,
         item!(
-            "Energetic Graphite",
+            ItemType::EnergeticGraphite,
             (
                 recipe!(
                     2.0,
                     ManFac::Furnace,
-                    (recitem!(2.0, "Coal")),
-                    (recitem!(1.0, "Energetic Graphite"))
+                    (recitem!(2.0, ItemType::Coal)),
+                    (recitem!(1.0, ItemType::EnergeticGraphite))
                 ),
                 recipe!(
                     4.0,
                     ManFac::OilRefinery,
-                    (recitem!(2.0, "Hydrogen"), recitem!(1.0, "Refined Oil")),
                     (
-                        recitem!(1.0, "Energetic Graphite"),
-                        recitem!(3.0, "Hydrogen")
+                        recitem!(2.0, ItemType::Hydrogen),
+                        recitem!(1.0, ItemType::RefinedOil)
+                    ),
+                    (
+                        recitem!(1.0, ItemType::EnergeticGraphite),
+                        recitem!(3.0, ItemType::Hydrogen)
                     )
                 )
             )
@@ -519,53 +537,53 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         high_purity_silicon,
-        "High-purity Silicon",
+        ItemType::HighPuritySilicon,
         item!(
-            "High-purity Silicon",
+            ItemType::HighPuritySilicon,
             (recipe!(
                 2.0,
                 ManFac::Furnace,
-                (recitem!(2.0, "Silicon Ore")),
-                (recitem!(1.0, "High-purity Silicon"))
+                (recitem!(2.0, ItemType::SiliconOre)),
+                (recitem!(1.0, ItemType::HighPuritySilicon))
             ))
         )
     );
     to_hash!(
         res_hash,
         titanium_ingot,
-        "Titanium Ingot",
+        ItemType::TitaniumIngot,
         item!(
-            "Titanium Ingot",
+            ItemType::TitaniumIngot,
             (recipe!(
                 2.0,
                 ManFac::Furnace,
-                (recitem!(2.0, "Titanium Ore")),
-                (recitem!(1.0, "Titanium Ingot"))
+                (recitem!(2.0, ItemType::TitaniumOre)),
+                (recitem!(1.0, ItemType::TitaniumIngot))
             ))
         )
     );
     to_hash!(
         res_hash,
         sulfuric_acid,
-        "Sulfuric Acid",
+        ItemType::SulfuricAcid,
         item!(
-            "Sulfuric Acid",
+            ItemType::SulfuricAcid,
             (
                 recipe!(
                     6.0,
                     ManFac::ChemicalPlant,
                     (
-                        recitem!(4.0, "Water"),
-                        recitem!(8.0, "Stone"),
-                        recitem!(6.0, "Refined Oil")
+                        recitem!(4.0, ItemType::Water),
+                        recitem!(8.0, ItemType::Stone),
+                        recitem!(6.0, ItemType::RefinedOil)
                     ),
-                    (recitem!(4.0, "Sulfuric Acid"))
+                    (recitem!(4.0, ItemType::SulfuricAcid))
                 ),
                 recipe!(
                     1.2,
                     ManFac::Origin,
                     (IsItem::new_nai()),
-                    (recitem!(1.0, "Sulfuric Acid"))
+                    (recitem!(1.0, ItemType::SulfuricAcid))
                 )
             )
         )
@@ -573,25 +591,28 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         refined_oil,
-        "Refined Oil",
+        ItemType::RefinedOil,
         item!(
-            "Refined Oil",
+            ItemType::RefinedOil,
             (
                 recipe!(
                     4.0,
                     ManFac::OilRefinery,
-                    (recitem!(2.0, "Crude Oil")),
-                    (recitem!(2.0, "Refined Oil"), recitem!(1.0, "Hydrogen"))
+                    (recitem!(2.0, ItemType::CrudeOil)),
+                    (
+                        recitem!(2.0, ItemType::RefinedOil),
+                        recitem!(1.0, ItemType::Hydrogen)
+                    )
                 ),
                 recipe!(
                     4.0,
                     ManFac::OilRefinery,
                     (
-                        recitem!(1.0, "Coal"),
-                        recitem!(1.0, "Hydrogen"),
-                        recitem!(2.0, "Refined Oil")
+                        recitem!(1.0, ItemType::Coal),
+                        recitem!(1.0, ItemType::Hydrogen),
+                        recitem!(2.0, ItemType::RefinedOil)
                     ),
-                    (recitem!(3.0, "Refined Oil"))
+                    (recitem!(3.0, ItemType::RefinedOil))
                 )
             )
         )
@@ -599,63 +620,66 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         magnet,
-        "Magnet",
+        ItemType::Magnet,
         item!(
-            "Magnet",
+            ItemType::Magnet,
             (recipe!(
                 1.5,
                 ManFac::Furnace,
-                (recitem!(1.0, "Iron Ore")),
-                (recitem!(1.0, "Magnet"))
+                (recitem!(1.0, ItemType::IronOre)),
+                (recitem!(1.0, ItemType::Magnet))
             ))
         )
     );
     to_hash!(
         res_hash,
         magnetic_coil,
-        "Magnetic Coil",
+        ItemType::MagneticCoil,
         item!(
-            "Magnetic Coil",
+            ItemType::MagneticCoil,
             (recipe!(
                 1.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Copper Ingot"), recitem!(2.0, "Magnet")),
-                (recitem!(2.0, "Magnetic Coil"))
+                (
+                    recitem!(1.0, ItemType::CopperIngot),
+                    recitem!(2.0, ItemType::Magnet)
+                ),
+                (recitem!(2.0, ItemType::MagneticCoil))
             ))
         )
     );
     to_hash!(
         res_hash,
         glass,
-        "Glass",
+        ItemType::Glass,
         item!(
-            "Glass",
+            ItemType::Glass,
             (recipe!(
                 2.0,
                 ManFac::Furnace,
-                (recitem!(2.0, "Stone")),
-                (recitem!(1.0, "Glass"))
+                (recitem!(2.0, ItemType::Stone)),
+                (recitem!(1.0, ItemType::Glass))
             ))
         )
     );
     to_hash!(
         res_hash,
         diamond,
-        "Diamond",
+        ItemType::Diamond,
         item!(
-            "Diamond",
+            ItemType::Diamond,
             (
                 recipe!(
                     2.0,
                     ManFac::Furnace,
-                    (recitem!(1.0, "Energetic Graphite")),
-                    (recitem!(1.0, "Diamond"))
+                    (recitem!(1.0, ItemType::EnergeticGraphite)),
+                    (recitem!(1.0, ItemType::Diamond))
                 ),
                 recipe!(
                     1.5,
                     ManFac::Furnace,
-                    (recitem!(1.0, "Kimberlite Ore")),
-                    (recitem!(2.0, "Diamond"))
+                    (recitem!(1.0, ItemType::KimberliteOre)),
+                    (recitem!(2.0, ItemType::Diamond))
                 )
             )
         )
@@ -663,21 +687,21 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         crystal_silicon,
-        "Crystal Silicon",
+        ItemType::CrystalSilicon,
         item!(
-            "Crystal Silicon",
+            ItemType::CrystalSilicon,
             (
                 recipe!(
                     2.0,
                     ManFac::Furnace,
-                    (recitem!(1.0, "High-purity Silicon")),
-                    (recitem!(1.0, "Crystal Silicon"))
+                    (recitem!(1.0, ItemType::HighPuritySilicon)),
+                    (recitem!(1.0, ItemType::CrystalSilicon))
                 ),
                 recipe!(
                     1.5,
                     ManFac::Furnace,
-                    (recitem!(1.0, "Fractal Silicon")),
-                    (recitem!(2.0, "Crystal Silicon"))
+                    (recitem!(1.0, ItemType::FractalSilicon)),
+                    (recitem!(2.0, ItemType::CrystalSilicon))
                 )
             )
         )
@@ -685,147 +709,156 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         steel,
-        "Steel",
+        ItemType::Steel,
         item!(
-            "Steel",
+            ItemType::Steel,
             (recipe!(
                 3.0,
                 ManFac::Furnace,
-                (recitem!(3.0, "Iron Ingot")),
-                (recitem!(1.0, "Steel"))
+                (recitem!(3.0, ItemType::IronIngot)),
+                (recitem!(1.0, ItemType::Steel))
             ))
         )
     );
     to_hash!(
         res_hash,
         titanium_alloy,
-        "Titanium Alloy",
+        ItemType::TitaniumAlloy,
         item!(
-            "Titanium Alloy",
+            ItemType::TitaniumAlloy,
             (recipe!(
                 12.0,
                 ManFac::Furnace,
                 (
-                    recitem!(8.0, "Sulfuric Acid"),
-                    recitem!(4.0, "Steel"),
-                    recitem!(4.0, "Titanium Ingot")
+                    recitem!(8.0, ItemType::SulfuricAcid),
+                    recitem!(4.0, ItemType::Steel),
+                    recitem!(4.0, ItemType::TitaniumIngot)
                 ),
-                (recitem!(4.0, "Titanium Alloy"))
+                (recitem!(4.0, ItemType::TitaniumAlloy))
             ))
         )
     );
     to_hash!(
         res_hash,
         circuit_board,
-        "Circuit Board",
+        ItemType::CircuitBoard,
         item!(
-            "Circuit Board",
+            ItemType::CircuitBoard,
             (recipe!(
                 1.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Copper Ingot"), recitem!(2.0, "Iron Ingot")),
-                (recitem!(2.0, "Circuit Board"))
+                (
+                    recitem!(1.0, ItemType::CopperIngot),
+                    recitem!(2.0, ItemType::IronIngot)
+                ),
+                (recitem!(2.0, ItemType::CircuitBoard))
             ))
         )
     );
     to_hash!(
         res_hash,
         prism,
-        "Prism",
+        ItemType::Prism,
         item!(
-            "Prism",
+            ItemType::Prism,
             (recipe!(
                 2.0,
                 ManFac::Furnace,
-                (recitem!(3.0, "Glass")),
-                (recitem!(2.0, "Prism"))
+                (recitem!(3.0, ItemType::Glass)),
+                (recitem!(2.0, ItemType::Prism))
             ))
         )
     );
     to_hash!(
         res_hash,
         electric_motor,
-        "Electric Motor",
+        ItemType::ElectricMotor,
         item!(
-            "Electric Motor",
+            ItemType::ElectricMotor,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Magnetic Coil"),
-                    recitem!(1.0, "Gear"),
-                    recitem!(2.0, "Iron Ingot")
+                    recitem!(1.0, ItemType::MagneticCoil),
+                    recitem!(1.0, ItemType::Gear),
+                    recitem!(2.0, ItemType::IronIngot)
                 ),
-                (recitem!(1.0, "Electric Motor"))
+                (recitem!(1.0, ItemType::ElectricMotor))
             ))
         )
     );
     to_hash!(
         res_hash,
         microcrystalline_component,
-        "Microcrystalline Component",
+        ItemType::MicrocrystallineComponent,
         item!(
-            "Microcrystalline Component",
+            ItemType::MicrocrystallineComponent,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Copper Ingot"),
-                    recitem!(2.0, "High-purity Silicon")
+                    recitem!(1.0, ItemType::CopperIngot),
+                    recitem!(2.0, ItemType::HighPuritySilicon)
                 ),
-                (recitem!(1.0, "Microcrystalline Component"))
+                (recitem!(1.0, ItemType::MicrocrystallineComponent))
             ))
         )
     );
     to_hash!(
         res_hash,
         gear,
-        "Gear",
+        ItemType::Gear,
         item!(
-            "Gear",
+            ItemType::Gear,
             (recipe!(
                 1.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Iron Ingot")),
-                (recitem!(1.0, "Gear"))
+                (recitem!(1.0, ItemType::IronIngot)),
+                (recitem!(1.0, ItemType::Gear))
             ))
         )
     );
     to_hash!(
         res_hash,
         plasma_exciter,
-        "Plasma Exciter",
+        ItemType::PlasmaExciter,
         item!(
-            "Plasma Exciter",
+            ItemType::PlasmaExciter,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
-                (recitem!(2.0, "Prism"), recitem!(4.0, "Magnetic Coil")),
-                (recitem!(1.0, "Plasma Exciter"))
+                (
+                    recitem!(2.0, ItemType::Prism),
+                    recitem!(4.0, ItemType::MagneticCoil)
+                ),
+                (recitem!(1.0, ItemType::PlasmaExciter))
             ))
         )
     );
     to_hash!(
         res_hash,
         photon_combiner,
-        "Photon Combiner",
+        ItemType::PhotonCombiner,
         item!(
-            "Photon Combiner",
+            ItemType::PhotonCombiner,
             (
                 recipe!(
                     3.0,
                     ManFac::Assembler,
-                    (recitem!(1.0, "Circuit Board"), recitem!(2.0, "Prism")),
-                    (recitem!(1.0, "Photon Combiner"))
+                    (
+                        recitem!(1.0, ItemType::CircuitBoard),
+                        recitem!(2.0, ItemType::Prism)
+                    ),
+                    (recitem!(1.0, ItemType::PhotonCombiner))
                 ),
                 recipe!(
                     3.0,
                     ManFac::Assembler,
                     (
-                        recitem!(1.0, "Circuit Board"),
-                        recitem!(1.0, "Grating Crystal")
+                        recitem!(1.0, ItemType::CircuitBoard),
+                        recitem!(1.0, ItemType::GratingCrystal)
                     ),
-                    (recitem!(1.0, "Photon Combiner"))
+                    (recitem!(1.0, ItemType::PhotonCombiner))
                 )
             )
         )
@@ -833,128 +866,128 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         electromagnetic_turbine,
-        "Electromagnetic Turbine",
+        ItemType::ElectromagneticTurbine,
         item!(
-            "Electromagnetic Turbine",
+            ItemType::ElectromagneticTurbine,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Magnetic Coil"),
-                    recitem!(2.0, "Electric Motor")
+                    recitem!(2.0, ItemType::MagneticCoil),
+                    recitem!(2.0, ItemType::ElectricMotor)
                 ),
-                (recitem!(1.0, "Electromagnetic Turbine"))
+                (recitem!(1.0, ItemType::ElectromagneticTurbine))
             ))
         )
     );
     to_hash!(
         res_hash,
         processor,
-        "Processor",
+        ItemType::Processor,
         item!(
-            "Processor",
+            ItemType::Processor,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Microcrystalline Component"),
-                    recitem!(2.0, "Circuit Board")
+                    recitem!(2.0, ItemType::MicrocrystallineComponent),
+                    recitem!(2.0, ItemType::CircuitBoard)
                 ),
-                (recitem!(1.0, "Processor"))
+                (recitem!(1.0, ItemType::Processor))
             ))
         )
     );
     to_hash!(
         res_hash,
         engine,
-        "Engine",
+        ItemType::Engine,
         item!(
-            "Engine",
+            ItemType::Engine,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Copper Ingot"),
-                    recitem!(1.0, "Magnetic Coil")
+                    recitem!(2.0, ItemType::CopperIngot),
+                    recitem!(1.0, ItemType::MagneticCoil)
                 ),
-                (recitem!(1.0, "Engine"))
+                (recitem!(1.0, ItemType::Engine))
             ))
         )
     );
     to_hash!(
         res_hash,
         thruster,
-        "Thruster",
+        ItemType::Thruster,
         item!(
-            "Thruster",
+            ItemType::Thruster,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
-                (recitem!(3.0, "Copper Ingot")),
-                (recitem!(2.0, "Steel"))
+                (recitem!(3.0, ItemType::CopperIngot)),
+                (recitem!(2.0, ItemType::Steel))
             ))
         )
     );
     to_hash!(
         res_hash,
         reinforced_thruster,
-        "Reinforced Thruster",
+        ItemType::ReinforcedThruster,
         item!(
-            "Reinforced Thruster",
+            ItemType::ReinforcedThruster,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
                 (
-                    recitem!(5.0, "Electromagnetic Turbine"),
-                    recitem!(5.0, "Titanium Alloy")
+                    recitem!(5.0, ItemType::ElectromagneticTurbine),
+                    recitem!(5.0, ItemType::TitaniumAlloy)
                 ),
-                (recitem!(1.0, "Reinforced Thruster"))
+                (recitem!(1.0, ItemType::ReinforcedThruster))
             ))
         )
     );
     to_hash!(
         res_hash,
         super_magnetic_ring,
-        "Super-magnetic Ring",
+        ItemType::SuperMagneticRing,
         item!(
-            "Super-magnetic Ring",
+            ItemType::SuperMagneticRing,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Energetic Graphite"),
-                    recitem!(3.0, "Magnet"),
-                    recitem!(2.0, "Electromagnetic Turbine")
+                    recitem!(1.0, ItemType::EnergeticGraphite),
+                    recitem!(3.0, ItemType::Magnet),
+                    recitem!(2.0, ItemType::ElectromagneticTurbine)
                 ),
-                (recitem!(1.0, "Super-magnetic Ring"))
+                (recitem!(1.0, ItemType::SuperMagneticRing))
             ))
         )
     );
     to_hash!(
         res_hash,
         particle_container,
-        "Particle Container",
+        ItemType::ParticleContainer,
         item!(
-            "Particle Container",
+            ItemType::ParticleContainer,
             (
                 recipe!(
                     4.0,
                     ManFac::Assembler,
                     (
-                        recitem!(2.0, "Graphene"),
-                        recitem!(2.0, "Copper Ingot"),
-                        recitem!(2.0, "Electromagnetic Turbine")
+                        recitem!(2.0, ItemType::Graphene),
+                        recitem!(2.0, ItemType::CopperIngot),
+                        recitem!(2.0, ItemType::ElectromagneticTurbine)
                     ),
-                    (recitem!(1.0, "Particle Container"))
+                    (recitem!(1.0, ItemType::ParticleContainer))
                 ),
                 recipe!(
                     4.0,
                     ManFac::Assembler,
                     (
-                        recitem!(2.0, "Copper Ingot"),
-                        recitem!(10.0, "Unipolar Magnet")
+                        recitem!(2.0, ItemType::CopperIngot),
+                        recitem!(10.0, ItemType::UnipolarMagnet)
                     ),
-                    (recitem!(1.0, "Particle Container"))
+                    (recitem!(1.0, ItemType::ParticleContainer))
                 )
             )
         )
@@ -962,46 +995,46 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         plastic,
-        "Plastic",
+        ItemType::Plastic,
         item!(
-            "Plastic",
+            ItemType::Plastic,
             (recipe!(
                 3.0,
                 ManFac::ChemicalPlant,
                 (
-                    recitem!(1.0, "Energetic Graphite"),
-                    recitem!(2.0, "Refined Oil")
+                    recitem!(1.0, ItemType::EnergeticGraphite),
+                    recitem!(2.0, ItemType::RefinedOil)
                 ),
-                (recitem!(1.0, "Plastic"))
+                (recitem!(1.0, ItemType::Plastic))
             ))
         )
     );
     to_hash!(
         res_hash,
         organic_crystal,
-        "Organic Crystal",
+        ItemType::OrganicCrystal,
         item!(
-            "Organic Crystal",
+            ItemType::OrganicCrystal,
             (
                 recipe!(
                     6.0,
                     ManFac::ChemicalPlant,
                     (
-                        recitem!(1.0, "Water"),
-                        recitem!(1.0, "Refined Oil"),
-                        recitem!(2.0, "Plastic")
+                        recitem!(1.0, ItemType::Water),
+                        recitem!(1.0, ItemType::RefinedOil),
+                        recitem!(2.0, ItemType::Plastic)
                     ),
-                    (recitem!(1.0, "Organic Crystal"))
+                    (recitem!(1.0, ItemType::OrganicCrystal))
                 ),
                 recipe!(
                     6.0,
                     ManFac::ChemicalPlant,
                     (
-                        recitem!(10.0, "Water"),
-                        recitem!(30.0, "Plant Fuel"),
-                        recitem!(20.0, "Log"),
+                        recitem!(10.0, ItemType::Water),
+                        recitem!(30.0, ItemType::PlantFuel),
+                        recitem!(20.0, ItemType::Log),
                     ),
-                    (recitem!(1.0, "Organic Crystal"))
+                    (recitem!(1.0, ItemType::OrganicCrystal))
                 )
             )
         )
@@ -1009,24 +1042,27 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         graphene,
-        "Graphene",
+        ItemType::Graphene,
         item!(
-            "Graphene",
+            ItemType::Graphene,
             (
                 recipe!(
                     3.0,
                     ManFac::ChemicalPlant,
                     (
-                        recitem!(1.0, "Sulfuric Acid"),
-                        recitem!(3.0, "Energetic Graphite")
+                        recitem!(1.0, ItemType::SulfuricAcid),
+                        recitem!(3.0, ItemType::EnergeticGraphite)
                     ),
-                    (recitem!(2.0, "Graphene"))
+                    (recitem!(2.0, ItemType::Graphene))
                 ),
                 recipe!(
                     2.0,
                     ManFac::ChemicalPlant,
-                    (recitem!(2.0, "Fire Ice")),
-                    (recitem!(1.0, "Hydrogen"), recitem!(2.0, "Graphene"))
+                    (recitem!(2.0, ItemType::FireIce)),
+                    (
+                        recitem!(1.0, ItemType::Hydrogen),
+                        recitem!(2.0, ItemType::Graphene)
+                    )
                 )
             )
         )
@@ -1034,73 +1070,76 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         annihilation_constraint_sphere,
-        "Annihilation Constraint Sphere",
+        ItemType::AnnihilationConstraintSphere,
         item!(
-            "Annihilation Constraint Sphere",
+            ItemType::AnnihilationConstraintSphere,
             (recipe!(
                 20.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Processor"),
-                    recitem!(1.0, "Particle Container")
+                    recitem!(1.0, ItemType::Processor),
+                    recitem!(1.0, ItemType::ParticleContainer)
                 ),
-                (recitem!(1.0, "Annihilation Constraint Sphere"))
+                (recitem!(1.0, ItemType::AnnihilationConstraintSphere))
             ))
         )
     );
     to_hash!(
         res_hash,
         strange_matter,
-        "Strange Matter",
+        ItemType::StrangeMatter,
         item!(
-            "Strange Matter",
+            ItemType::StrangeMatter,
             (recipe!(
                 8.0,
                 ManFac::MiniatureParticleCollider,
                 (
-                    recitem!(10.0, "Deuterium"),
-                    recitem!(2.0, "Iron Ingot"),
-                    recitem!(2.0, "Particle Container")
+                    recitem!(10.0, ItemType::Deuterium),
+                    recitem!(2.0, ItemType::IronIngot),
+                    recitem!(2.0, ItemType::ParticleContainer)
                 ),
-                (recitem!(1.0, "Strange Matter"))
+                (recitem!(1.0, ItemType::StrangeMatter))
             ))
         )
     );
     to_hash!(
         res_hash,
         titanium_crystal,
-        "Titanium Crystal",
+        ItemType::TitaniumCrystal,
         item!(
-            "Titanium Crystal",
+            ItemType::TitaniumCrystal,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
                 (
-                    recitem!(3.0, "Titanium Ingot"),
-                    recitem!(1.0, "Organic Crystal")
+                    recitem!(3.0, ItemType::TitaniumIngot),
+                    recitem!(1.0, ItemType::OrganicCrystal)
                 ),
-                (recitem!(1.0, "Titanium Crystal"))
+                (recitem!(1.0, ItemType::TitaniumCrystal))
             ))
         )
     );
     to_hash!(
         res_hash,
         carbon_nanotube,
-        "Carbon Nanotube",
+        ItemType::CarbonNanotube,
         item!(
-            "Carbon Nanotube",
+            ItemType::CarbonNanotube,
             (
                 recipe!(
                     4.0,
                     ManFac::ChemicalPlant,
-                    (recitem!(1.0, "Titanium Ingot"), recitem!(3.0, "Graphene")),
-                    (recitem!(2.0, "Carbon Nanotube"))
+                    (
+                        recitem!(1.0, ItemType::TitaniumIngot),
+                        recitem!(3.0, ItemType::Graphene)
+                    ),
+                    (recitem!(2.0, ItemType::CarbonNanotube))
                 ),
                 recipe!(
                     4.0,
                     ManFac::ChemicalPlant,
-                    (recitem!(6.0, "Stalagmite Crystal")),
-                    (recitem!(2.0, "Carbon Nanotube"))
+                    (recitem!(6.0, ItemType::StalagmiteCrystal)),
+                    (recitem!(2.0, ItemType::CarbonNanotube))
                 )
             )
         )
@@ -1108,47 +1147,47 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         particle_broadband,
-        "Particle Broadband",
+        ItemType::ParticleBroadband,
         item!(
-            "Particle Broadband",
+            ItemType::ParticleBroadband,
             (recipe!(
                 8.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Plastic"),
-                    recitem!(2.0, "Crystal Silicon"),
-                    recitem!(2.0, "Carbon Nanotube")
+                    recitem!(1.0, ItemType::Plastic),
+                    recitem!(2.0, ItemType::CrystalSilicon),
+                    recitem!(2.0, ItemType::CarbonNanotube)
                 ),
-                (recitem!(1.0, "Particle Broadband"))
+                (recitem!(1.0, ItemType::ParticleBroadband))
             ))
         )
     );
     to_hash!(
         res_hash,
         casimir_crystal,
-        "Casimir Crystal",
+        ItemType::CasimirCrystal,
         item!(
-            "Casimir Crystal",
+            ItemType::CasimirCrystal,
             (
                 recipe!(
                     4.0,
                     ManFac::Assembler,
                     (
-                        recitem!(12.0, "Hydrogen"),
-                        recitem!(2.0, "Graphene"),
-                        recitem!(1.0, "Titanium Crystal")
+                        recitem!(12.0, ItemType::Hydrogen),
+                        recitem!(2.0, ItemType::Graphene),
+                        recitem!(1.0, ItemType::TitaniumCrystal)
                     ),
-                    (recitem!(1.0, "Casimir Crystal"))
+                    (recitem!(1.0, ItemType::CasimirCrystal))
                 ),
                 recipe!(
                     4.0,
                     ManFac::Assembler,
                     (
-                        recitem!(12.0, "Hydrogen"),
-                        recitem!(2.0, "Graphene"),
-                        recitem!(8.0, "Grating Crystal")
+                        recitem!(12.0, ItemType::Hydrogen),
+                        recitem!(2.0, ItemType::Graphene),
+                        recitem!(8.0, ItemType::GratingCrystal)
                     ),
-                    (recitem!(1.0, "Casimir Crystal"))
+                    (recitem!(1.0, ItemType::CasimirCrystal))
                 )
             )
         )
@@ -1156,49 +1195,52 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         titanium_glass,
-        "Titanium Glass",
+        ItemType::TitaniumGlass,
         item!(
-            "Titanium Glass",
+            ItemType::TitaniumGlass,
             (recipe!(
                 5.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Water"),
-                    recitem!(2.0, "Titanium Ingot"),
-                    recitem!(2.0, "Glass")
+                    recitem!(2.0, ItemType::Water),
+                    recitem!(2.0, ItemType::TitaniumIngot),
+                    recitem!(2.0, ItemType::Glass)
                 ),
-                (recitem!(2.0, "Titanium Glass"))
+                (recitem!(2.0, ItemType::TitaniumGlass))
             ))
         )
     );
     to_hash!(
         res_hash,
         plane_filter,
-        "Plane Filter",
+        ItemType::PlaneFilter,
         item!(
-            "Plane Filter",
+            ItemType::PlaneFilter,
             (recipe!(
                 12.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Titanium Glass"),
-                    recitem!(1.0, "Casimir Crystal")
+                    recitem!(2.0, ItemType::TitaniumGlass),
+                    recitem!(1.0, ItemType::CasimirCrystal)
                 ),
-                (recitem!(1.0, "Plane Filter"))
+                (recitem!(1.0, ItemType::PlaneFilter))
             ))
         )
     );
     to_hash!(
         res_hash,
         quantum_chip,
-        "Quantum Chip",
+        ItemType::QuantumChip,
         item!(
-            "Quantum Chip",
+            ItemType::QuantumChip,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
-                (recitem!(2.0, "Plane Filter"), recitem!(2.0, "Processor")),
-                (recitem!(1.0, "Quantum Chip"))
+                (
+                    recitem!(2.0, ItemType::PlaneFilter),
+                    recitem!(2.0, ItemType::Processor)
+                ),
+                (recitem!(1.0, ItemType::QuantumChip))
             ))
         )
     );
@@ -1206,14 +1248,14 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         combustible_unit,
-        "Combustible Unit",
+        ItemType::CombustibleUnit,
         item!(
-            "Combustible Unit",
+            ItemType::CombustibleUnit,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
-                (recitem!(3.0, "Coal")),
-                (recitem!(1.0, "Combustible Unit"))
+                (recitem!(3.0, ItemType::Coal)),
+                (recitem!(1.0, ItemType::CombustibleUnit))
             ))
         )
     );
@@ -1221,89 +1263,92 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         logistics_bot,
-        "Logistics Bot",
+        ItemType::LogisticsBot,
         item!(
-            "Logistics Bot",
+            ItemType::LogisticsBot,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Processor"),
-                    recitem!(1.0, "Engine"),
-                    recitem!(2.0, "Iron Ingot")
+                    recitem!(1.0, ItemType::Processor),
+                    recitem!(1.0, ItemType::Engine),
+                    recitem!(2.0, ItemType::IronIngot)
                 ),
-                (recitem!(1.0, "Logistics Bot"))
+                (recitem!(1.0, ItemType::LogisticsBot))
             ))
         )
     );
     to_hash!(
         res_hash,
         logistics_drone,
-        "Logistics Drone",
+        ItemType::LogisticsDrone,
         item!(
-            "Logistics Drone",
+            ItemType::LogisticsDrone,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Thruster"),
-                    recitem!(2.0, "Processor"),
-                    recitem!(5.0, "Iron Ingot")
+                    recitem!(2.0, ItemType::Thruster),
+                    recitem!(2.0, ItemType::Processor),
+                    recitem!(5.0, ItemType::IronIngot)
                 ),
-                (recitem!(1.0, "Logistics Drone"))
+                (recitem!(1.0, ItemType::LogisticsDrone))
             ))
         )
     );
     to_hash!(
         res_hash,
         interstellar_logistics_vessel,
-        "Interstellar Logistics Vessel",
+        ItemType::InterstellarLogisticsVessel,
         item!(
-            "Interstellar Logistics Vessel",
+            ItemType::InterstellarLogisticsVessel,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Reinforced Thruster"),
-                    recitem!(10.0, "Processor"),
-                    recitem!(10.0, "Titanium Alloy")
+                    recitem!(2.0, ItemType::ReinforcedThruster),
+                    recitem!(10.0, ItemType::Processor),
+                    recitem!(10.0, ItemType::TitaniumAlloy)
                 ),
-                (recitem!(1.0, "Interstellar Logistics Vessel"))
+                (recitem!(1.0, ItemType::InterstellarLogisticsVessel))
             ))
         )
     );
     to_hash!(
         res_hash,
         graviton_lens,
-        "Graviton Lens",
+        ItemType::GravitonLens,
         item!(
-            "Graviton Lens",
+            ItemType::GravitonLens,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Strange Matter"), recitem!(4.0, "Diamond")),
-                (recitem!(1.0, "Graviton Lens"))
+                (
+                    recitem!(1.0, ItemType::StrangeMatter),
+                    recitem!(4.0, ItemType::Diamond)
+                ),
+                (recitem!(1.0, ItemType::GravitonLens))
             ))
         )
     );
     to_hash!(
         res_hash,
         space_warper,
-        "Space Warper",
+        ItemType::SpaceWarper,
         item!(
-            "Space Warper",
+            ItemType::SpaceWarper,
             (
                 recipe!(
                     10.0,
                     ManFac::Assembler,
-                    (recitem!(1.0, "Graviton Lens")),
-                    (recitem!(1.0, "Space Warper"))
+                    (recitem!(1.0, ItemType::GravitonLens)),
+                    (recitem!(1.0, ItemType::SpaceWarper))
                 ),
                 recipe!(
                     10.0,
                     ManFac::Assembler,
-                    (recitem!(1.0, "Gravity Matrix")),
-                    (recitem!(8.0, "Space Warper"))
+                    (recitem!(1.0, ItemType::GravityMatrix)),
+                    (recitem!(8.0, ItemType::SpaceWarper))
                 )
             )
         )
@@ -1311,14 +1356,17 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         foundation,
-        "Foundation",
+        ItemType::Foundation,
         item!(
-            "Foundation",
+            ItemType::Foundation,
             (recipe!(
                 1.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Steel"), recitem!(3.0, "Stone Brick")),
-                (recitem!(1.0, "Foundation"))
+                (
+                    recitem!(1.0, ItemType::Steel),
+                    recitem!(3.0, ItemType::StoneBrick)
+                ),
+                (recitem!(1.0, ItemType::Foundation))
             ))
         )
     );
@@ -1326,45 +1374,48 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         proliferator_mki,
-        "Proliferator Mk.I",
+        ItemType::ProliferatorMkI,
         item!(
-            "Proliferator Mk.I",
+            ItemType::ProliferatorMkI,
             (recipe!(
                 0.5,
                 ManFac::Assembler,
-                (recitem!(1.0, "Coal")),
-                (recitem!(1.0, "Proliferator Mk.I"))
+                (recitem!(1.0, ItemType::Coal)),
+                (recitem!(1.0, ItemType::ProliferatorMkI))
             ))
         )
     );
     to_hash!(
         res_hash,
         proliferator_mkii,
-        "Proliferator Mk.II",
+        ItemType::ProliferatorMkII,
         item!(
-            "Proliferator MK.II",
+            ItemType::ProliferatorMkII,
             (recipe!(
                 1.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Diamond"), recitem!(2.0, "Proliferator Mk.I")),
-                (recitem!(1.0, "Proliferator Mk.II"))
+                (
+                    recitem!(1.0, ItemType::Diamond),
+                    recitem!(2.0, ItemType::ProliferatorMkI)
+                ),
+                (recitem!(1.0, ItemType::ProliferatorMkII))
             ))
         )
     );
     to_hash!(
         res_hash,
         proliferator_mkiii,
-        "Proliferator Mk.III",
+        ItemType::ProliferatorMkIII,
         item!(
-            "Proliferator Mk.III",
+            ItemType::ProliferatorMkIII,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Carbon Nanotube"),
-                    recitem!(2.0, "Proliferator Mk.II")
+                    recitem!(1.0, ItemType::CarbonNanotube),
+                    recitem!(2.0, ItemType::ProliferatorMkII)
                 ),
-                (recitem!(1.0, "Proliferator Mk.III"))
+                (recitem!(1.0, ItemType::ProliferatorMkIII))
             ))
         )
     );
@@ -1372,70 +1423,73 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         hydrogen_fuel_rod,
-        "Hydrogen Fuel Rod",
+        ItemType::HydrogenFuelRod,
         item!(
-            "Hydrogen Fuel Rod",
+            ItemType::HydrogenFuelRod,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
-                (recitem!(10.0, "Hydrogen"), recitem!(1.0, "Titanium Ingot")),
-                (recitem!(2.0, "Hydrogen Fuel Rod"))
+                (
+                    recitem!(10.0, ItemType::Hydrogen),
+                    recitem!(1.0, ItemType::TitaniumIngot)
+                ),
+                (recitem!(2.0, ItemType::HydrogenFuelRod))
             ))
         )
     );
     to_hash!(
         res_hash,
         deuterium_fuel_rod,
-        "Deuterium Fuel Rod",
+        ItemType::DeuteriumFuelRod,
         item!(
-            "Deuterium Fuel Rod",
+            ItemType::DeuteriumFuelRod,
             (recipe!(
                 12.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Super-magnetic Ring"),
-                    recitem!(20.0, "Deuterium"),
-                    recitem!(1.0, "Titanium Alloy")
+                    recitem!(1.0, ItemType::SuperMagneticRing),
+                    recitem!(20.0, ItemType::Deuterium),
+                    recitem!(1.0, ItemType::TitaniumAlloy)
                 ),
-                (recitem!(2.0, "Deuterium Fuel Rod"))
+                (recitem!(2.0, ItemType::DeuteriumFuelRod))
             ))
         )
     );
     to_hash!(
         res_hash,
         antimatter_fuel_rod,
-        "Antimatter Fuel Rod",
+        ItemType::AntimatterFuelRod,
         item!(
-            "Antimatter Fuel Rod",
+            ItemType::AntimatterFuelRod,
             (recipe!(
                 24.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Titanium Alloy"),
-                    recitem!(1.0, "Annihilation Constraint Sphere"),
-                    recitem!(12.0, "Hydrogen"),
-                    recitem!(12.0, "Antimatter")
+                    recitem!(1.0, ItemType::TitaniumAlloy),
+                    recitem!(1.0, ItemType::AnnihilationConstraintSphere),
+                    recitem!(12.0, ItemType::Hydrogen),
+                    recitem!(12.0, ItemType::Antimatter)
                 ),
-                (recitem!(2.0, "Antimatter Fuel Rod"))
+                (recitem!(2.0, ItemType::AntimatterFuelRod))
             ))
         )
     );
     to_hash!(
         res_hash,
         strange_annihilation_fuel_rod,
-        "Strange Annihilation Fuel Rod",
+        ItemType::StrangeAnnihilationFuelRod,
         item!(
-            "Strange Annihilation Fuel Rod",
+            ItemType::StrangeAnnihilationFuelRod,
             (recipe!(
                 32.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Frame Material"),
-                    recitem!(2.0, "Strange Matter"),
-                    recitem!(1.0, "Core Element"),
-                    recitem!(8.0, "Antimatter Fuel Rod")
+                    recitem!(1.0, ItemType::FrameMaterial),
+                    recitem!(2.0, ItemType::StrangeMatter),
+                    recitem!(1.0, ItemType::CoreElement),
+                    recitem!(8.0, ItemType::AntimatterFuelRod)
                 ),
-                (recitem!(1.0, "Strange Annihilation Fuel Rod"))
+                (recitem!(1.0, ItemType::StrangeAnnihilationFuelRod))
             ))
         )
     );
@@ -1443,68 +1497,71 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         solar_sail,
-        "Solar Sail",
+        ItemType::SolarSail,
         item!(
-            "Solar Sail",
+            ItemType::SolarSail,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
-                (recitem!(1.0, "Photon Combiner"), recitem!(1.0, "Graphene")),
-                (recitem!(2.0, "Solar Sail"))
+                (
+                    recitem!(1.0, ItemType::PhotonCombiner),
+                    recitem!(1.0, ItemType::Graphene)
+                ),
+                (recitem!(2.0, ItemType::SolarSail))
             ))
         )
     );
     to_hash!(
         res_hash,
         frame_material,
-        "Frame Material",
+        ItemType::FrameMaterial,
         item!(
-            "Frame Material",
+            ItemType::FrameMaterial,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "High-purity Silicon"),
-                    recitem!(1.0, "Titanium Alloy"),
-                    recitem!(4.0, "Carbon Nanotube")
+                    recitem!(1.0, ItemType::HighPuritySilicon),
+                    recitem!(1.0, ItemType::TitaniumAlloy),
+                    recitem!(4.0, ItemType::CarbonNanotube)
                 ),
-                (recitem!(1.0, "Frame Material"))
+                (recitem!(1.0, ItemType::FrameMaterial))
             ))
         )
     );
     to_hash!(
         res_hash,
         dyson_sphere_component,
-        "Dyson Sphere Component",
+        ItemType::DysonSphereComponent,
         item!(
-            "Dyson Sphere Component",
+            ItemType::DysonSphereComponent,
             (recipe!(
                 8.0,
                 ManFac::Assembler,
                 (
-                    recitem!(3.0, "Processor"),
-                    recitem!(3.0, "Solar Sail"),
-                    recitem!(3.0, "Frame Material")
+                    recitem!(3.0, ItemType::Processor),
+                    recitem!(3.0, ItemType::SolarSail),
+                    recitem!(3.0, ItemType::FrameMaterial)
                 ),
-                (recitem!(1.0, "Dyson Sphere Component"))
+                (recitem!(1.0, ItemType::DysonSphereComponent))
             ))
         )
     );
     to_hash!(
         res_hash,
         small_carrier_rocket,
-        "Small Carrier Rocket",
+        ItemType::SmallCarrierRocket,
         item!(
-            "Small Carrier Rocket",
+            ItemType::SmallCarrierRocket,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Quantum Chip"),
-                    recitem!(4.0, "Deuterium Fuel Rod"),
-                    recitem!(2.0, "Dyson Sphere Component")
+                    recitem!(2.0, ItemType::QuantumChip),
+                    recitem!(4.0, ItemType::DeuteriumFuelRod),
+                    recitem!(2.0, ItemType::DysonSphereComponent)
                 ),
-                (recitem!(1.0, "Small Carrier Rocket"))
+                (recitem!(1.0, ItemType::SmallCarrierRocket))
             ))
         )
     );
@@ -1512,103 +1569,106 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         electromagnetic_matrix,
-        "Electromagnetic Matrix",
+        ItemType::ElectromagneticMatrix,
         item!(
-            "Electromagnetic Matrix",
+            ItemType::ElectromagneticMatrix,
             (recipe!(
                 3.0,
                 ManFac::Lab,
                 (
-                    recitem!(1.0, "Circuit Board"),
-                    recitem!(1.0, "Magnetic Coil")
+                    recitem!(1.0, ItemType::CircuitBoard),
+                    recitem!(1.0, ItemType::MagneticCoil)
                 ),
-                (recitem!(1.0, "Electromagnetic Matrix"))
+                (recitem!(1.0, ItemType::ElectromagneticMatrix))
             ))
         )
     );
     to_hash!(
         res_hash,
         energy_matrix,
-        "Energy Matrix",
+        ItemType::EnergyMatrix,
         item!(
-            "Energy Matrix",
+            ItemType::EnergyMatrix,
             (recipe!(
                 6.0,
                 ManFac::Lab,
                 (
-                    recitem!(2.0, "Hydrogen"),
-                    recitem!(2.0, "Energetic Graphite")
+                    recitem!(2.0, ItemType::Hydrogen),
+                    recitem!(2.0, ItemType::EnergeticGraphite)
                 ),
-                (recitem!(1.0, "Energy Matrix"))
+                (recitem!(1.0, ItemType::EnergyMatrix))
             ))
         )
     );
     to_hash!(
         res_hash,
         structure_matrix,
-        "Structure Matrix",
+        ItemType::StructureMatrix,
         item!(
-            "Structure Matrix",
+            ItemType::StructureMatrix,
             (recipe!(
                 8.0,
                 ManFac::Lab,
-                (recitem!(1.0, "Titanium Crystal"), recitem!(1.0, "Diamond")),
-                (recitem!(1.0, "Structure Matrix"))
+                (
+                    recitem!(1.0, ItemType::TitaniumCrystal),
+                    recitem!(1.0, ItemType::Diamond)
+                ),
+                (recitem!(1.0, ItemType::StructureMatrix))
             ))
         )
     );
     to_hash!(
         res_hash,
         information_matrix,
-        "Information Matrix",
+        ItemType::InformationMatrix,
         item!(
-            "Information Matrix",
+            ItemType::InformationMatrix,
             (recipe!(
                 10.0,
                 ManFac::Lab,
                 (
-                    recitem!(1.0, "Particle Broadband"),
-                    recitem!(2.0, "Processor")
+                    recitem!(1.0, ItemType::ParticleBroadband),
+                    recitem!(2.0, ItemType::Processor)
                 ),
-                (recitem!(1.0, "Information Matrix"))
+                (recitem!(1.0, ItemType::InformationMatrix))
             ))
         )
     );
     to_hash!(
         res_hash,
         gravity_matrix,
-        "Gravity Matrix",
+        ItemType::GravityMatrix,
         item!(
-            "Gravity Matrix",
+            ItemType::GravityMatrix,
             (recipe!(
                 24.0,
                 ManFac::Lab,
                 (
-                    recitem!(1.0, "Quantum Chip"),
-                    recitem!(1.0, "Graviton Lens")
+                    recitem!(1.0, ItemType::QuantumChip),
+                    recitem!(1.0, ItemType::GravitonLens)
                 ),
-                (recitem!(2.0, "Gravity Matrix"))
+                (recitem!(2.0, ItemType::GravityMatrix))
             ))
         )
     );
     to_hash!(
         res_hash,
         universe_matrix,
-        "Universe Matrix",
+        ItemType::UniverseMatrix,
         item!(
-            "Universe Matrix",
+            ItemType::UniverseMatrix,
             (recipe!(
                 15.0,
                 ManFac::Lab,
                 (
-                    recitem!(1.0, "Electromagnetic Matrix"),
-                    recitem!(1.0, "Energy Matrix"),
-                    recitem!(1.0, "Structure Matrix"),
-                    recitem!(1.0, "Information Matrix"),
-                    recitem!(1.0, "Gravity Matrix"),
-                    recitem!(1.0, "Antimatter")
+                    recitem!(1.0, ItemType::ElectromagneticMatrix),
+                    recitem!(1.0, ItemType::EnergyMatrix),
+                    recitem!(1.0, ItemType::StructureMatrix),
+                    recitem!(1.0, ItemType::InformationMatrix),
+                    recitem!(1.0, ItemType::GravityMatrix),
+                    recitem!(1.0, ItemType::Antimatter)
                 ),
-                (recitem!(1.0, "Universe Matrix"))
+                (recitem!(1.0, ItemType::UniverseMatrix))
             ))
         )
     );
@@ -1616,266 +1676,266 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         magnum_ammo_box,
-        "Magnum Ammo Box",
+        ItemType::MagnumAmmoBox,
         item!(
-            "Magnum Ammo Box",
+            ItemType::MagnumAmmoBox,
             (recipe!(
                 1.0,
                 ManFac::Assembler,
-                (recitem!(3.0, "Copper Ingot")),
-                (recitem!(1.0, "Magnum Ammo Box"))
+                (recitem!(3.0, ItemType::CopperIngot)),
+                (recitem!(1.0, ItemType::MagnumAmmoBox))
             ))
         )
     );
     to_hash!(
         res_hash,
         titanium_ammo_box,
-        "Titanium Ammo Box",
+        ItemType::TitaniumAmmoBox,
         item!(
-            "Titanium Ammo Box",
+            ItemType::TitaniumAmmoBox,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Titanium Ingot"),
-                    recitem!(1.0, "Magnum Ammo Box")
+                    recitem!(2.0, ItemType::TitaniumIngot),
+                    recitem!(1.0, ItemType::MagnumAmmoBox)
                 ),
-                (recitem!(1.0, "Titanium Ammo Box"))
+                (recitem!(1.0, ItemType::TitaniumAmmoBox))
             ))
         )
     );
     to_hash!(
         res_hash,
         superalloy_ammo_box,
-        "Superalloy Ammo Box",
+        ItemType::SuperalloyAmmoBox,
         item!(
-            "Superalloy Ammo Box",
+            ItemType::SuperalloyAmmoBox,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Titanium Alloy"),
-                    recitem!(1.0, "Titanium Ammo Box")
+                    recitem!(1.0, ItemType::TitaniumAlloy),
+                    recitem!(1.0, ItemType::TitaniumAmmoBox)
                 ),
-                (recitem!(1.0, "Superalloy Ammo Box"))
+                (recitem!(1.0, ItemType::SuperalloyAmmoBox))
             ))
         )
     );
     to_hash!(
         res_hash,
         explosive_unit,
-        "Explosive Unit",
+        ItemType::ExplosiveUnit,
         item!(
-            "Explosive Unit",
+            ItemType::ExplosiveUnit,
             (recipe!(
                 6.0,
                 ManFac::ChemicalPlant,
                 (
-                    recitem!(1.0, "Sulfuric Acid"),
-                    recitem!(2.0, "Plastic"),
-                    recitem!(2.0, "Combustible Unit")
+                    recitem!(1.0, ItemType::SulfuricAcid),
+                    recitem!(2.0, ItemType::Plastic),
+                    recitem!(2.0, ItemType::CombustibleUnit)
                 ),
-                (recitem!(2.0, "Explosive Unit"))
+                (recitem!(2.0, ItemType::ExplosiveUnit))
             ))
         )
     );
     to_hash!(
         res_hash,
         crystal_explosive_unit,
-        "Crystal Explosive Unit",
+        ItemType::CrystalExplosiveUnit,
         item!(
-            "Crystal Explosive Unit",
+            ItemType::CrystalExplosiveUnit,
             (recipe!(
                 24.0,
                 ManFac::ChemicalPlant,
                 (
-                    recitem!(8.0, "Crystal Silicon"),
-                    recitem!(1.0, "Casimir Crystal"),
-                    recitem!(8.0, "Explosive Unit")
+                    recitem!(8.0, ItemType::CrystalSilicon),
+                    recitem!(1.0, ItemType::CasimirCrystal),
+                    recitem!(8.0, ItemType::ExplosiveUnit)
                 ),
-                (recitem!(8.0, "Crystal Explosive Unit"))
+                (recitem!(8.0, ItemType::CrystalExplosiveUnit))
             ))
         )
     );
     to_hash!(
         res_hash,
         missile_set,
-        "Missile Set",
+        ItemType::MissileSet,
         item!(
-            "Missile Set",
+            ItemType::MissileSet,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Engine"),
-                    recitem!(2.0, "Combustible Unit"),
-                    recitem!(3.0, "Circuit Board"),
-                    recitem!(6.0, "Copper Ingot")
+                    recitem!(1.0, ItemType::Engine),
+                    recitem!(2.0, ItemType::CombustibleUnit),
+                    recitem!(3.0, ItemType::CircuitBoard),
+                    recitem!(6.0, ItemType::CopperIngot)
                 ),
-                (recitem!(1.0, "Missile Set"))
+                (recitem!(1.0, ItemType::MissileSet))
             ))
         )
     );
     to_hash!(
         res_hash,
         supersonic_missile_set,
-        "Supersonic Missile Set",
+        ItemType::SupersonicMissileSet,
         item!(
-            "Supersonic Missile Set",
+            ItemType::SupersonicMissileSet,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Thruster"),
-                    recitem!(2.0, "Explosive Unit"),
-                    recitem!(4.0, "Processor"),
-                    recitem!(2.0, "Missile Set")
+                    recitem!(2.0, ItemType::Thruster),
+                    recitem!(2.0, ItemType::ExplosiveUnit),
+                    recitem!(4.0, ItemType::Processor),
+                    recitem!(2.0, ItemType::MissileSet)
                 ),
-                (recitem!(2.0, "Supersonic Missile Set"))
+                (recitem!(2.0, ItemType::SupersonicMissileSet))
             ))
         )
     );
     to_hash!(
         res_hash,
         gravity_missile_set,
-        "Gravity Missile Set",
+        ItemType::GravityMissileSet,
         item!(
-            "Gravity Missile Set",
+            ItemType::GravityMissileSet,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
                 (
-                    recitem!(3.0, "Strange Matter"),
-                    recitem!(6.0, "Crystal Explosive Unit"),
-                    recitem!(3.0, "Supersonic Missile Set")
+                    recitem!(3.0, ItemType::StrangeMatter),
+                    recitem!(6.0, ItemType::CrystalExplosiveUnit),
+                    recitem!(3.0, ItemType::SupersonicMissileSet)
                 ),
-                (recitem!(3.0, "Gravity Missile Set"))
+                (recitem!(3.0, ItemType::GravityMissileSet))
             ))
         )
     );
     to_hash!(
         res_hash,
         shell_set,
-        "Shell Set",
+        ItemType::ShellSet,
         item!(
-            "Shell Set",
+            ItemType::ShellSet,
             (recipe!(
                 1.5,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Explosive Unit"),
-                    recitem!(9.0, "Copper Ingot")
+                    recitem!(2.0, ItemType::ExplosiveUnit),
+                    recitem!(9.0, ItemType::CopperIngot)
                 ),
-                (recitem!(1.0, "Shell Set"))
+                (recitem!(1.0, ItemType::ShellSet))
             ))
         )
     );
     to_hash!(
         res_hash,
         high_explosive_shell_set,
-        "High-Explosive Shell Set",
+        ItemType::HighExplosiveShellSet,
         item!(
-            "High-Explosive Shell Set",
+            ItemType::HighExplosiveShellSet,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Explosive Unit"),
-                    recitem!(6.0, "Titanium Ingot"),
-                    recitem!(1.0, "Shell Set")
+                    recitem!(2.0, ItemType::ExplosiveUnit),
+                    recitem!(6.0, ItemType::TitaniumIngot),
+                    recitem!(1.0, ItemType::ShellSet)
                 ),
-                (recitem!(1.0, "High-Explosive Shell Set"))
+                (recitem!(1.0, ItemType::HighExplosiveShellSet))
             ))
         )
     );
     to_hash!(
         res_hash,
         crystal_shell_set,
-        "Crystal Shell Set",
+        ItemType::CrystalShellSet,
         item!(
-            "Crystal Shell Set",
+            ItemType::CrystalShellSet,
             (recipe!(
                 6.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Crystal Explosive Unit"),
-                    recitem!(3.0, "Titanium Ingot"),
-                    recitem!(1.0, "High-Explosive Shell Set")
+                    recitem!(2.0, ItemType::CrystalExplosiveUnit),
+                    recitem!(3.0, ItemType::TitaniumIngot),
+                    recitem!(1.0, ItemType::HighExplosiveShellSet)
                 ),
-                (recitem!(1.0, "Crystal Shell Set"))
+                (recitem!(1.0, ItemType::CrystalShellSet))
             ))
         )
     );
     to_hash!(
         res_hash,
         plasma_capsule,
-        "Plasma Capsule",
+        ItemType::PlasmaCapsule,
         item!(
-            "Plasma Capsule",
+            ItemType::PlasmaCapsule,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(10.0, "Deuterium"),
-                    recitem!(2.0, "Magnet"),
-                    recitem!(1.0, "Graphene")
+                    recitem!(10.0, ItemType::Deuterium),
+                    recitem!(2.0, ItemType::Magnet),
+                    recitem!(1.0, ItemType::Graphene)
                 ),
-                (recitem!(1.0, "Plasma Capsule"))
+                (recitem!(1.0, ItemType::PlasmaCapsule))
             ))
         )
     );
     to_hash!(
         res_hash,
         antimatter_capsule,
-        "Antimatter Capsule",
+        ItemType::AntimatterCapsule,
         item!(
-            "Antimatter Capsule",
+            ItemType::AntimatterCapsule,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(10.0, "Antimatter"),
-                    recitem!(10.0, "Hydrogen"),
-                    recitem!(1.0, "Particle Container"),
-                    recitem!(1.0, "Plasma Capsule")
+                    recitem!(10.0, ItemType::Antimatter),
+                    recitem!(10.0, ItemType::Hydrogen),
+                    recitem!(1.0, ItemType::ParticleContainer),
+                    recitem!(1.0, ItemType::PlasmaCapsule)
                 ),
-                (recitem!(1.0, "Antimatter Capsule"))
+                (recitem!(1.0, ItemType::AntimatterCapsule))
             ))
         )
     );
     to_hash!(
         res_hash,
         jamming_capsule,
-        "Jamming Capsule",
+        ItemType::JammingCapsule,
         item!(
-            "Jamming Capsule",
+            ItemType::JammingCapsule,
             (recipe!(
                 2.0,
                 ManFac::Assembler,
                 (
-                    recitem!(3.0, "Hydrogen"),
-                    recitem!(1.0, "Plasma Exciter"),
-                    recitem!(1.0, "Electromagnetic Turbine")
+                    recitem!(3.0, ItemType::Hydrogen),
+                    recitem!(1.0, ItemType::PlasmaExciter),
+                    recitem!(1.0, ItemType::ElectromagneticTurbine)
                 ),
-                (recitem!(1.0, "Jamming Capsule"))
+                (recitem!(1.0, ItemType::JammingCapsule))
             ))
         )
     );
     to_hash!(
         res_hash,
         suppressing_capsule,
-        "Suppressing Capsule",
+        ItemType::SuppressingCapsule,
         item!(
-            "Suppressing Capsule",
+            ItemType::SuppressingCapsule,
             (recipe!(
                 8.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Titanium Glass"),
-                    recitem!(1.0, "Super-magnetic Ring"),
-                    recitem!(2.0, "Jamming Capsule")
+                    recitem!(2.0, ItemType::TitaniumGlass),
+                    recitem!(1.0, ItemType::SuperMagneticRing),
+                    recitem!(2.0, ItemType::JammingCapsule)
                 ),
-                (recitem!(2.0, "Suppressing Capsule"))
+                (recitem!(2.0, ItemType::SuppressingCapsule))
             ))
         )
     );
@@ -1883,95 +1943,95 @@ pub fn get_items() -> HashMap<ItemType, Item> {
     to_hash!(
         res_hash,
         prototype,
-        "Prototype",
+        ItemType::Prototype,
         item!(
-            "Prototype",
+            ItemType::Prototype,
             (recipe!(
                 3.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Plasma Exciter"),
-                    recitem!(2.0, "Circuit Board"),
-                    recitem!(1.0, "Engine"),
-                    recitem!(3.0, "Iron Ingot")
+                    recitem!(1.0, ItemType::PlasmaExciter),
+                    recitem!(2.0, ItemType::CircuitBoard),
+                    recitem!(1.0, ItemType::Engine),
+                    recitem!(3.0, ItemType::IronIngot)
                 ),
-                (recitem!(1.0, "Prototype"))
+                (recitem!(1.0, ItemType::Prototype))
             ))
         )
     );
     to_hash!(
         res_hash,
         precision_drone,
-        "Precision Drone",
+        ItemType::PrecisionDrone,
         item!(
-            "Precision Drone",
+            ItemType::PrecisionDrone,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
                 (
-                    recitem!(2.0, "Photon Combiner"),
-                    recitem!(2.0, "Circuit Board"),
-                    recitem!(1.0, "Electromagnetic Turbine"),
-                    recitem!(1.0, "Prototype")
+                    recitem!(2.0, ItemType::PhotonCombiner),
+                    recitem!(2.0, ItemType::CircuitBoard),
+                    recitem!(1.0, ItemType::ElectromagneticTurbine),
+                    recitem!(1.0, ItemType::Prototype)
                 ),
-                (recitem!(1.0, "Precision Drone"))
+                (recitem!(1.0, ItemType::PrecisionDrone))
             ))
         )
     );
     to_hash!(
         res_hash,
         attack_drone,
-        "Attack Drone",
+        ItemType::AttackDrone,
         item!(
-            "Attack Drone",
+            ItemType::AttackDrone,
             (recipe!(
                 4.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Particle Container"),
-                    recitem!(1.0, "Processor"),
-                    recitem!(1.0, "Electromagnetic Turbine"),
-                    recitem!(1.0, "Prototype")
+                    recitem!(1.0, ItemType::ParticleContainer),
+                    recitem!(1.0, ItemType::Processor),
+                    recitem!(1.0, ItemType::ElectromagneticTurbine),
+                    recitem!(1.0, ItemType::Prototype)
                 ),
-                (recitem!(1.0, "Attack Drone"))
+                (recitem!(1.0, ItemType::AttackDrone))
             ))
         )
     );
     to_hash!(
         res_hash,
         corvette,
-        "Corvette",
+        ItemType::Corvette,
         item!(
-            "Corvette",
+            ItemType::Corvette,
             (recipe!(
                 5.0,
                 ManFac::Assembler,
                 (
-                    recitem!(3.0, "Particle Container"),
-                    recitem!(2.0, "Processor"),
-                    recitem!(1.0, "Reinforced Thruster"),
-                    recitem!(5.0, "Titanium Alloy")
+                    recitem!(3.0, ItemType::ParticleContainer),
+                    recitem!(2.0, ItemType::Processor),
+                    recitem!(1.0, ItemType::ReinforcedThruster),
+                    recitem!(5.0, ItemType::TitaniumAlloy)
                 ),
-                (recitem!(1.0, "Corvette"))
+                (recitem!(1.0, ItemType::Corvette))
             ))
         )
     );
     to_hash!(
         res_hash,
         destroyer,
-        "Destroyer",
+        ItemType::Destroyer,
         item!(
-            "Destroyer",
+            ItemType::Destroyer,
             (recipe!(
                 8.0,
                 ManFac::Assembler,
                 (
-                    recitem!(1.0, "Strange Matter"),
-                    recitem!(4.0, "Processor"),
-                    recitem!(4.0, "Reinforced Thruster"),
-                    recitem!(20.0, "Frame Material")
+                    recitem!(1.0, ItemType::StrangeMatter),
+                    recitem!(4.0, ItemType::Processor),
+                    recitem!(4.0, ItemType::ReinforcedThruster),
+                    recitem!(20.0, ItemType::FrameMaterial)
                 ),
-                (recitem!(1.0, "Destroyer"))
+                (recitem!(1.0, ItemType::Destroyer))
             ))
         )
     );

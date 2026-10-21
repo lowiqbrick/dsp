@@ -738,20 +738,20 @@ macro_rules! recipe {
 }
 #[macro_export]
 macro_rules! recitem {
-    ($amount: expr, $item_name: expr) => {
-        IsItem::new(ItemAmount::new($amount, $item_name))
+    ($amount: expr, $item_type: expr) => {
+        IsItem::new(ItemAmount::new($amount, $item_type))
     };
 }
 #[macro_export]
 macro_rules! item {
-    ($name: expr, ($($rec_vec: tt)*)) => {
-        Item::new($name, vec![$($rec_vec)*])
+    ($item_type: expr, ($($rec_vec: tt)*)) => {
+        Item::new($item_type, vec![$($rec_vec)*])
     };
 }
 #[macro_export]
 macro_rules! to_hash {
-    ($hashmap: ident, $item_name: ident, $item_str: expr, $item: expr) => {
+    ($hashmap: ident, $item_name: ident, $item_type: expr, $item: expr) => {
         let $item_name = $item;
-        $hashmap.insert($item_str.into(), $item_name);
+        $hashmap.insert($item_type, $item_name);
     };
 }
