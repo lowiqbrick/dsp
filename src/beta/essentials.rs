@@ -182,13 +182,12 @@ pub struct Item<'a> {
 
 /// an function to return the current proliferation factor based on current settings
 fn prolif_factor(settings: &ProgramInfo) -> f32 {
-    let factor: f32 = match settings.proliferators {
+    match settings.proliferators {
         Proliferator::MKone => 1.125,
         Proliferator::MKtwo => 1.2,
         Proliferator::MKthree => 1.25,
         Proliferator::None => 1.0,
-    };
-    factor
+    }
 }
 
 /// checks if the item is in a vector that dictates a specific crafting recipe
@@ -254,8 +253,8 @@ fn calculate_net_output(
     result_var: &ItemResult,
 ) -> f32 {
     // and calculate the production rate, with crafting speed, proliferation, etc.
-    let mut output_amount: f32 = 0.0;
-    let mut input_amount: f32 = 0.0;
+    let mut output_amount = 0.0;
+    let mut input_amount = 0.0;
     for item_amount in current_recipe.products.clone().iter() {
         match item_amount {
             IsItem::Item(item_match) => {
@@ -329,7 +328,7 @@ fn factor_in_proliferation(
     net_output_proliferated: &mut f32,
 ) {
     if bools.is_proliferated {
-        let mut no_proliferation_vector: bool = false;
+        let mut no_proliferation_vector = false;
         for item_prolif in settings.no_proliferation.clone().iter() {
             if item_prolif == &result_var.name {
                 no_proliferation_vector = true;
@@ -337,7 +336,7 @@ fn factor_in_proliferation(
             }
         }
         if !no_proliferation_vector {
-            let prolif_factor: f32 = prolif_factor(settings);
+            let prolif_factor = prolif_factor(settings);
             *net_output_proliferated *= prolif_factor;
         }
     }
@@ -360,23 +359,23 @@ impl<'a> Item<'a> {
     ) {
         // get rid of warning
         if !bools.is_first_item {
-            let _prev_path_warn: &str = &strings.prev_path[0..1];
+            let _prev_path_warn = &strings.prev_path[0..1];
         }
         // get all items
-        let items_map: HashMap<String, Item> = items_get::get_items();
-        let mut new_path: String = String::from(&strings.item_name);
+        let items_map = items_get::get_items();
+        let mut new_path = String::from(&strings.item_name);
         if !bools.is_first_item {
             new_path.extend([" -> "]);
         }
         new_path.extend([strings.prev_path.clone()]);
         strings.prev_path = new_path.clone();
         // create result variable
-        let mut result_var: ItemResult = ItemResult::initialize(settings, &strings, &new_path);
+        let mut result_var = ItemResult::initialize(settings, &strings, &new_path);
         // save desired target rate for item
         result_var.target_rate = item_per_sec;
         // write item information in result if the output
         // is supposed to be merged
-        let mut is_adding_new_item: bool = false;
+        let mut is_adding_new_item = false;
         create_or_amend_entry(
             settings,
             &strings,
@@ -388,7 +387,7 @@ impl<'a> Item<'a> {
         );
         // get a copy of the requested item from the item hashmap
         // after this match item_name can be assumed to be a valid key
-        let current_item: &Item = match items_map.get(&strings.item_name) {
+        let current_item = match items_map.get(&strings.item_name) {
             Some(item) => item,
             _ => {
                 panic!(
@@ -398,20 +397,19 @@ impl<'a> Item<'a> {
             }
         };
         // is the recipe not the recipe at index 0?
-        let current_recipe_index: usize = check_recipe_index(settings, &strings, current_item);
-        let current_recipe: Recipe = current_item.recipes[current_recipe_index].clone();
+        let current_recipe_index = check_recipe_index(settings, &strings, current_item);
+        let current_recipe = current_item.recipes[current_recipe_index].clone();
         // calculate the net output of the recipe, if the output is partially the input
         // of the recipe
-        let net_output: f32 =
-            calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
+        let net_output = calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
         if net_output <= 0.0 {
             panic!(
                 "recipe has net output of {} which doesn't make sense",
                 net_output
             );
         }
-        let net_output_per_second: f32 = net_output / current_recipe.crafting_time;
-        let mut net_output_proliferated: f32 = net_output_per_second;
+        let net_output_per_second = net_output / current_recipe.crafting_time;
+        let mut net_output_proliferated = net_output_per_second;
         // factor in proliferation
         factor_in_proliferation(
             settings,
@@ -420,21 +418,21 @@ impl<'a> Item<'a> {
             &mut net_output_proliferated,
         );
         // handle the different crafting stations
-        let net_output_machine: f32 =
+        let net_output_machine =
             apply_station_factor(net_output_proliferated, &current_recipe, settings);
         // calculate how many crafting machines are required for matching throughput
-        let manvac_count: f32 = item_per_sec / net_output_machine;
+        let manvac_count = item_per_sec / net_output_machine;
         // calculate the multiplier for the amount of ingredients required
-        let current_proliferator_factor: f32 = if bools.is_proliferated {
+        let current_proliferator_factor = if bools.is_proliferated {
             prolif_factor(settings)
         } else {
             1.0
         };
-        let ingredient_multiplicator: f32 = ((item_per_sec / current_recipe.crafting_time)
+        let ingredient_multiplicator = ((item_per_sec / current_recipe.crafting_time)
             / net_output_per_second)
             / current_proliferator_factor;
         // putting everything together
-        let mut output_machine_ingredients: Vec<ItemAmount> = vec![];
+        let mut output_machine_ingredients = vec![];
         // apply modifier
         for is_item in current_recipe.ingredients.clone().iter() {
             match is_item {
@@ -465,7 +463,7 @@ impl<'a> Item<'a> {
         }
         // sanity checks on result_var
         assert_ne!(result_var.num_station, -1.0);
-        let help_assert: String = String::from(current_item.name);
+        let help_assert = String::from(current_item.name);
         // only assert if the item doesn't have vec!(ManFac::Origin) naturally
         if !settings.basics.contains(&help_assert) {
             assert_ne!(
@@ -523,11 +521,11 @@ impl<'a> Item<'a> {
                 match ingredient {
                     IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item) {
                         Some(call_item) => {
-                            let twostrings_next: StringDuo = StringDuo {
+                            let twostrings_next = StringDuo {
                                 item_name: String::from(call_item.name),
                                 prev_path: strings.prev_path.clone(),
                             };
-                            let twobools_next: BoolDuo = BoolDuo {
+                            let twobools_next = BoolDuo {
                                 is_proliferated: bools.is_proliferated,
                                 is_first_item: false,
                             };
@@ -663,7 +661,7 @@ impl ProgramInfo {
         assume_basics: bool,
         produced_item: ItemAmount,
     ) -> ProgramInfo {
-        let basics: Vec<String> = vec![
+        let basics = vec![
             String::from("Iron Ore"),
             String::from("Copper Ore"),
             String::from("Stone"),
@@ -754,7 +752,7 @@ macro_rules! item {
 #[macro_export]
 macro_rules! to_hash {
     ($hashmap: ident, $item_name: ident, $item_str: literal, $item: expr) => {
-        let $item_name: Item = $item;
+        let $item_name = $item;
         $hashmap.insert($item_str.to_string(), $item_name);
     };
 }

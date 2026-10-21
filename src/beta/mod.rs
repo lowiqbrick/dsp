@@ -28,8 +28,8 @@ fn process_env_args(
     settings: &mut ProgramInfo,
     item_hashmap: &HashMap<String, Item>,
 ) {
-    let mut iterator: std::slice::Iter<'_, String> = args.iter();
-    let mut status: ArgState = ArgState::Default;
+    let mut iterator = args.iter();
+    let mut status = ArgState::Default;
     while let Some(argument) = iterator.next() {
         match argument.as_str() {
             // squash the output
@@ -135,8 +135,8 @@ fn process_env_args(
                     // needs next element in for loop
                     ArgState::AdditionalItems=> {
                         // save current and next arguments for processing later
-                        let item_name: String = argument.clone();
-                        let quantity: &String = match iterator.next() {
+                        let item_name = argument.clone();
+                        let quantity = match iterator.next() {
                             Some(success) => success,
                             None => {
                                 eprint!("no number specified after {}", item_name);
@@ -156,8 +156,8 @@ fn process_env_args(
                     // needs next element in for loop
                     ArgState::ItemRecipe=> {
                         // save current and next arguments for processing later
-                        let item_name: String = argument.clone();
-                        let quantity: &String = match iterator.next() {
+                        let item_name = argument.clone();
+                        let quantity = match iterator.next() {
                             Some(success) => success,
                             None => {
                                 eprint!("no number specified after {}", item_name);
@@ -166,13 +166,13 @@ fn process_env_args(
                         };
                         if item_hashmap.contains_key(&item_name) {
                             // check if recipe number given makes sense
-                            let recipe_num: u8 =
+                            let recipe_num =
                                 quantity.parse::<u8>().expect("provided invalid number");
-                            let item_rec_num_opt: Option<&Item> = item_hashmap.get(&item_name);
+                            let item_rec_num_opt = item_hashmap.get(&item_name);
                             match item_rec_num_opt {
                                 Some(t) => {
                                     // get item
-                                    let item_clone: Item = t.clone();
+                                    let item_clone = t.clone();
                                     let recipe_tot_num = item_clone.recipes.len();
                                     // add item to vector if recipe number is a valid index for the vector
                                     if recipe_tot_num  > recipe_num as usize {
@@ -200,11 +200,11 @@ fn process_env_args(
 /// the main function of the beta of the game
 pub fn beta(mut args: Vec<String>) {
     // declare the variables required for processing the inputs
-    let args_len: usize = args.len();
+    let args_len = args.len();
     // println!("args len: {}", args_len);
-    let item_hashmap: HashMap<String, Item> = items_get::get_items();
+    let item_hashmap = items_get::get_items();
     // Default settings of the program
-    let mut settings: ProgramInfo = ProgramInfo::new(
+    let mut settings = ProgramInfo::new(
         EnumCombiner {
             proliferator: Proliferator::None,
             chemlab: ChemLabMK::Lab,
@@ -247,10 +247,10 @@ pub fn beta(mut args: Vec<String>) {
     // Debugging only
     // println!("{:?}", settings);
     // call method on item
-    let mut result_order: Vec<String> = vec![];
-    let mut result: HashMap<String, ItemResult> = HashMap::new();
-    let prev_path: String = String::from("");
-    let mut is_proliferated: bool = true;
+    let mut result_order = vec![];
+    let mut result = HashMap::new();
+    let prev_path = String::from("");
+    let mut is_proliferated = true;
     if settings
         .no_proliferation
         .contains(&settings.produced_item.item)
@@ -260,11 +260,11 @@ pub fn beta(mut args: Vec<String>) {
     match item_hashmap.get(&settings.produced_item.item) {
         // set off creation of the crafting chain
         Some(item) => {
-            let twostrings: StringDuo = StringDuo {
+            let twostrings = StringDuo {
                 item_name: settings.produced_item.item.clone(),
                 prev_path,
             };
-            let twobools: BoolDuo = BoolDuo {
+            let twobools = BoolDuo {
                 is_proliferated,
                 is_first_item: true,
             };
@@ -284,7 +284,7 @@ pub fn beta(mut args: Vec<String>) {
     // Debugging only
     // println!("\nresult order vector: {:?}\n", result_order);
     // println!("result vector: {:?}\n", result);
-    let vector_len: usize = result_order.len();
+    let vector_len = result_order.len();
     for (index, result_string) in result_order.clone().iter().enumerate() {
         match result.get(result_string) {
             Some(result_match) => {

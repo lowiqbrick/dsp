@@ -9,7 +9,7 @@ use crate::{item, recipe, recitem, to_hash};
 
 /// creates a big HashMap with all the items and buildings in the game
 pub fn get_items() -> HashMap<String, Item<'static>> {
-    let mut res_hash: HashMap<String, Item<'_>> = HashMap::new();
+    let mut res_hash = HashMap::new();
     /*
     macro template explanation
     to_hash!(
@@ -196,10 +196,7 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
                     2.0,
                     ManFac::MiniatureParticleCollider,
                     (recitem!(2.0, "Critical Photon")),
-                    (
-                        recitem!(2.0, "Hydrogen"),
-                        recitem!(2.0, "Antimatter")
-                    )
+                    (recitem!(2.0, "Hydrogen"), recitem!(2.0, "Antimatter"))
                 )
             )
         )
@@ -875,7 +872,10 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
             (recipe!(
                 3.0,
                 ManFac::Assembler,
-                (recitem!(2.0, "Copper Ingot"), recitem!(1.0, "Magnetic Coil")),
+                (
+                    recitem!(2.0, "Copper Ingot"),
+                    recitem!(1.0, "Magnetic Coil")
+                ),
                 (recitem!(1.0, "Engine"))
             ))
         )
@@ -1982,12 +1982,11 @@ pub fn get_items() -> HashMap<String, Item<'static>> {
 mod test_items {
     // import HashMaps
     use crate::beta::essentials::*;
-    use std::collections::HashMap;
 
     #[test]
     fn test_hashmap() {
         // get list of all items
-        let item_map: HashMap<String, Item> = super::get_items();
+        let item_map = super::get_items();
         // get all keys
         let keys = item_map.keys();
         // access all items in HashMap
@@ -1997,14 +1996,14 @@ mod test_items {
                 Some(value_key) => value_key.1,
                 None => panic!(),
             };
-            let all_recipes: Vec<Recipe> = current_item.recipes.clone();
+            let all_recipes = current_item.recipes.clone();
             // go through all recipes
             for recipe in all_recipes.iter() {
                 // ingredients
-                let ingredients: Vec<IsItem> = recipe.ingredients.clone();
+                let ingredients = recipe.ingredients.clone();
                 for ingredient in ingredients {
-                    let is_item: IsItem = ingredient;
-                    let item: String = match is_item {
+                    let is_item = ingredient;
+                    let item = match is_item {
                         IsItem::Item(item_amount) => item_amount.item,
                         IsItem::Nai => continue,
                     };
@@ -2023,10 +2022,10 @@ mod test_items {
                     }
                 }
                 // results
-                let products: Vec<IsItem> = recipe.products.clone();
+                let products = recipe.products.clone();
                 for product in products {
-                    let is_item: IsItem = product;
-                    let item: String = match is_item {
+                    let is_item = product;
+                    let item = match is_item {
                         IsItem::Item(item_amount) => {
                             println!("{:?}", item_amount);
                             item_amount.item
