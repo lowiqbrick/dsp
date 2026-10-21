@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 use std::fmt::{self, Display};
 
+use crate::beta::items::ItemType;
 use crate::beta::items_get;
 
 /// enum for manufacturing facilities
@@ -21,12 +22,15 @@ pub enum ManFac {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ItemAmount {
     pub amount: f32,
-    pub item: String,
+    pub item: ItemType,
 }
 
 impl ItemAmount {
-    pub fn new(amount: f32, item: String) -> ItemAmount {
-        ItemAmount { amount, item }
+    pub fn new(amount: f32, item: impl Into<ItemType>) -> ItemAmount {
+        ItemAmount {
+            amount,
+            item: item.into(),
+        }
     }
 }
 
@@ -79,7 +83,7 @@ impl Recipe {
 #[derive(Debug, Clone)]
 pub struct ItemResult {
     pub describer: String,
-    pub name: String,
+    pub name: ItemType,
     pub target_rate: f32,
     pub num_station: f32,
     pub station: Vec<ManFac>,
@@ -89,7 +93,7 @@ pub struct ItemResult {
 impl ItemResult {
     fn new(
         describer: String,
-        name: String,
+        name: ItemType,
         target_rate: f32,
         num_station: f32,
         station: Vec<ManFac>,
@@ -110,8 +114,8 @@ impl ItemResult {
             ItemResult::new(
                 // if results ar to be merged no elaborate paths
                 // just the items name
-                strings.item_name.clone(),
-                strings.item_name.clone(),
+                strings.item_name.to_string(),
+                strings.item_name,
                 -1.0,
                 -1.0,
                 vec![ManFac::Origin],
@@ -120,7 +124,7 @@ impl ItemResult {
         } else {
             ItemResult::new(
                 new_path.to_string(),
-                strings.item_name.clone(),
+                strings.item_name,
                 -1.0,
                 -1.0,
                 vec![ManFac::Origin],
@@ -169,14 +173,14 @@ pub struct BoolDuo {
 
 /// combines two strings for a small function call
 pub struct StringDuo {
-    pub item_name: String,
+    pub item_name: ItemType,
     pub prev_path: String,
 }
 
 /// struct for representing an item
 #[derive(Debug, Clone)]
-pub struct Item<'a> {
-    pub name: &'a str,
+pub struct Item {
+    pub name: ItemType,
     pub recipes: Vec<Recipe>,
 }
 
@@ -298,9 +302,10 @@ fn create_or_amend_entry(
     if settings.merge {
         // if result item already exists copy all values
         // if not remember that a new one needs to be created
-        match result.get(&strings.item_name) {
+        let key = strings.item_name.to_string();
+        match result.get(&key) {
             Some(existing_result) => {
-                result_var.target_rate += result_var.target_rate;
+                result_var.target_rate = existing_result.target_rate;
                 result_var.num_station = existing_result.num_station;
                 result_var.station = existing_result.station.clone();
                 result_var.requirements = existing_result.requirements.clone();
@@ -310,11 +315,11 @@ fn create_or_amend_entry(
             }
         }
         // only add String if not yet present
-        if !result_order.contains(&strings.item_name) {
-            result_order.push(strings.item_name.clone());
+        if !result_order.contains(&key) {
+            result_order.push(key);
         }
     } else {
-        result_order.push(new_path.to_string().clone());
+        result_order.push(new_path.to_string());
         *is_adding_new_item = true;
     }
 }
@@ -329,7 +334,7 @@ fn factor_in_proliferation(
 ) {
     if bools.is_proliferated {
         let mut no_proliferation_vector = false;
-        for item_prolif in settings.no_proliferation.clone().iter() {
+        for item_prolif in settings.no_proliferation.iter() {
             if item_prolif == &result_var.name {
                 no_proliferation_vector = true;
                 bools.is_proliferated = false;
@@ -342,9 +347,12 @@ fn factor_in_proliferation(
     }
 }
 
-impl<'a> Item<'a> {
-    pub fn new(name: &'a str, recipes: Vec<Recipe>) -> Item<'a> {
-        Item { name, recipes }
+impl Item {
+    pub fn new(name: impl Into<ItemType>, recipes: Vec<Recipe>) -> Item {
+        Item {
+            name: name.into(),
+            recipes,
+        }
     }
 
     /// the central method on which everything in the program is build
@@ -363,7 +371,7 @@ impl<'a> Item<'a> {
         }
         // get all items
         let items_map = items_get::get_items();
-        let mut new_path = String::from(&strings.item_name);
+        let mut new_path = strings.item_name.to_string();
         if !bools.is_first_item {
             new_path.extend([" -> "]);
         }
@@ -439,7 +447,7 @@ impl<'a> Item<'a> {
                 IsItem::Item(ingredient) => {
                     output_machine_ingredients.push(ItemAmount::new(
                         ingredient.amount * ingredient_multiplicator,
-                        ingredient.item.clone(),
+                        ingredient.item,
                     ));
                 }
                 IsItem::Nai => {
@@ -463,9 +471,8 @@ impl<'a> Item<'a> {
         }
         // sanity checks on result_var
         assert_ne!(result_var.num_station, -1.0);
-        let help_assert = String::from(current_item.name);
         // only assert if the item doesn't have vec!(ManFac::Origin) naturally
-        if !settings.basics.contains(&help_assert) {
+        if !settings.basics.contains(&current_item.name) {
             assert_ne!(
                 result_var.station,
                 vec!(ManFac::Origin),
@@ -477,13 +484,13 @@ impl<'a> Item<'a> {
         // write results into hashmap
         if is_adding_new_item {
             if settings.merge {
-                result.insert(result_var.name.clone(), result_var.clone());
+                result.insert(result_var.name.to_string(), result_var.clone());
             } else {
                 result.insert(result_var.describer.clone(), result_var.clone());
             }
         } else if settings.merge {
             // increase the values already present
-            match result.get_mut(&result_var.name) {
+            match result.get_mut(&result_var.name.to_string()) {
                 Some(found_item) => {
                     // increase amount of required items per minute
                     found_item.target_rate += item_per_sec;
@@ -500,7 +507,7 @@ impl<'a> Item<'a> {
                 _ => {
                     panic!(
                         "tried to write into the key '{}', which wasn't found",
-                        result_var.name.clone()
+                        result_var.name
                     );
                 }
             }
@@ -522,7 +529,7 @@ impl<'a> Item<'a> {
                     IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item) {
                         Some(call_item) => {
                             let twostrings_next = StringDuo {
-                                item_name: String::from(call_item.name),
+                                item_name: call_item.name,
                                 prev_path: strings.prev_path.clone(),
                             };
                             let twobools_next = BoolDuo {
@@ -533,12 +540,7 @@ impl<'a> Item<'a> {
                             if settings.assume_basics {
                                 // check if this particular item is in the vector of items
                                 // that are to be ignored
-                                if !settings
-                                    .basics
-                                    .clone()
-                                    .iter_mut()
-                                    .any(|vec_element| vec_element == call_item.name)
-                                {
+                                if !settings.basics.contains(&call_item.name) {
                                     call_item.crafting_chain(
                                         twostrings_next,
                                         real_ingredient.amount * ingredient_multiplicator,
@@ -638,15 +640,12 @@ pub struct ProgramInfo {
     pub smelter: SmelterMK,
     pub assembler: AssemblerMK,
     pub lab: LabMK,
-    pub no_proliferation: Vec<String>,
+    pub no_proliferation: Vec<ItemType>,
     pub additional_items: Vec<ItemAmount>,
-    // ItemAmount here is treated differently than in the item hashmap
-    // ItemAmount.amount == Index of the to be used recipe
-    // ItemAbout.item == Name of the Item which is supposed to have its recipe changed
     pub item_recipe: Vec<ItemAmount>,
     pub merge: bool,
     pub assume_basics: bool,
-    pub basics: Vec<String>,
+    pub basics: Vec<ItemType>,
     pub produced_item: ItemAmount,
     /// only show the item requested and not the entire chain
     pub this_item_only: bool,
@@ -654,7 +653,7 @@ pub struct ProgramInfo {
 impl ProgramInfo {
     pub fn new(
         mks: EnumCombiner,
-        no_proliferation: Vec<String>,
+        no_proliferation: Vec<ItemType>,
         additional_items: Vec<ItemAmount>,
         item_recipe: Vec<ItemAmount>,
         merge: bool,
@@ -662,31 +661,31 @@ impl ProgramInfo {
         produced_item: ItemAmount,
     ) -> ProgramInfo {
         let basics = vec![
-            String::from("Iron Ore"),
-            String::from("Copper Ore"),
-            String::from("Stone"),
-            String::from("Coal"),
-            String::from("Silicon Ore"),
-            String::from("Titanium Ore"),
-            String::from("Water"),
-            String::from("Crude Oil"),
-            String::from("Core Element"),
-            String::from("Critical Photon"),
-            String::from("Kimberlite Ore"),
-            String::from("Fractal Silicon"),
-            String::from("Grating Crystal"),
-            String::from("Stalagmite Crystal"),
-            String::from("Unipolar Magnet"),
-            String::from("Fire Ice"),
-            String::from("Log"),
-            String::from("Plant Fuel"),
-            String::from("Dark Fog Matrix"),
-            String::from("Energy Shard"),
-            String::from("Silicon-based Neuron"),
-            String::from("Negentropy Singularity"),
-            String::from("Matter Recombinator"),
-            String::from("Hydrogen"),
-            String::from("Deuterium"),
+            ItemType::IronOre,
+            ItemType::CopperOre,
+            ItemType::Stone,
+            ItemType::Coal,
+            ItemType::SiliconOre,
+            ItemType::TitaniumOre,
+            ItemType::Water,
+            ItemType::CrudeOil,
+            ItemType::CoreElement,
+            ItemType::CriticalPhoton,
+            ItemType::KimberliteOre,
+            ItemType::FractalSilicon,
+            ItemType::GratingCrystal,
+            ItemType::StalagmiteCrystal,
+            ItemType::UnipolarMagnet,
+            ItemType::FireIce,
+            ItemType::Log,
+            ItemType::PlantFuel,
+            ItemType::DarkFogMatrix,
+            ItemType::EnergyShard,
+            ItemType::SiliconBasedNeuron,
+            ItemType::NegentropySingularity,
+            ItemType::MatterRecombinator,
+            ItemType::Hydrogen,
+            ItemType::Deuterium,
         ];
         ProgramInfo {
             proliferators: mks.proliferator,
@@ -699,7 +698,7 @@ impl ProgramInfo {
             item_recipe,
             merge,
             assume_basics,
-            basics: basics.clone(),
+            basics,
             produced_item,
             this_item_only: false,
         }
@@ -739,20 +738,20 @@ macro_rules! recipe {
 }
 #[macro_export]
 macro_rules! recitem {
-    ($amount: literal, $item_name: literal) => {
-        IsItem::new(ItemAmount::new($amount, $item_name.to_string()))
+    ($amount: expr, $item_name: expr) => {
+        IsItem::new(ItemAmount::new($amount, $item_name))
     };
 }
 #[macro_export]
 macro_rules! item {
-    ($name: literal,  ($($rec_vec: tt)*)) => {
+    ($name: expr, ($($rec_vec: tt)*)) => {
         Item::new($name, vec![$($rec_vec)*])
     };
 }
 #[macro_export]
 macro_rules! to_hash {
-    ($hashmap: ident, $item_name: ident, $item_str: literal, $item: expr) => {
+    ($hashmap: ident, $item_name: ident, $item_str: expr, $item: expr) => {
         let $item_name = $item;
-        $hashmap.insert($item_str.to_string(), $item_name);
+        $hashmap.insert($item_str.into(), $item_name);
     };
 }

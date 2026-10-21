@@ -2,9 +2,11 @@
 // import everything from essentials.rs
 mod doc;
 mod essentials;
+pub mod items;
 mod items_get;
 
 use crate::beta::essentials::*;
+use crate::beta::items::ItemType;
 use std::collections::HashMap;
 
 /// checks fo the environment key words that tell the function to display the
@@ -26,7 +28,7 @@ fn display_help(args: &mut [String]) -> bool {
 fn process_env_args(
     args: &mut [String],
     settings: &mut ProgramInfo,
-    item_hashmap: &HashMap<String, Item>,
+    item_hashmap: &HashMap<ItemType, Item>,
 ) {
     let mut iterator = args.iter();
     let mut status = ArgState::Default;
@@ -65,7 +67,7 @@ fn process_env_args(
             // additional items
             "-i" | "--items" => status = ArgState::AdditionalItems,
             // set the recipe
-            "-r" | "-recipe" => status = ArgState::ItemRecipe,
+            "-r" | "--recipe" | "-recipe" => status = ArgState::ItemRecipe,
             // display the documentation
             "-h" | "--help" => doc::print_help(),
             // only show the item requested and not the entire chain
@@ -125,8 +127,12 @@ fn process_env_args(
                     }
                     // disable proliferation for specific items and downward
                     ArgState::NoProliferation =>{
-                        if item_hashmap.contains_key(argument) {
-                            settings.no_proliferation.push(argument.clone());
+                        if let Ok(item) = argument.parse::<ItemType>() {
+                            if item_hashmap.contains_key(&item) {
+                                settings.no_proliferation.push(item);
+                            } else {
+                                eprintln!("{} isn't a valid item", argument);
+                            }
                         } else {
                             eprintln!("{} isn't a valid item", argument);
                         }
@@ -143,11 +149,15 @@ fn process_env_args(
                                 break;
                             }
                         };
-                        if item_hashmap.contains_key(&item_name) {
-                            settings.additional_items.push(ItemAmount::new(
-                                quantity.parse::<f32>().expect("provided invalid number"),
-                                argument.clone(),
-                            ));
+                        if let Ok(item) = item_name.parse::<ItemType>() {
+                            if item_hashmap.contains_key(&item) {
+                                settings.additional_items.push(ItemAmount::new(
+                                    quantity.parse::<f32>().expect("provided invalid number"),
+                                    item,
+                                ));
+                            } else {
+                                eprintln!("{} isn't a valid item", item_name);
+                            }
                         } else {
                             eprintln!("{} isn't a valid item", item_name);
                         }
@@ -160,29 +170,30 @@ fn process_env_args(
                         let quantity = match iterator.next() {
                             Some(success) => success,
                             None => {
-                                eprint!("no number specified after {}", item_name);
+                                eprintln!("no number specified after {}", item_name);
                                 break;
                             }
                         };
-                        if item_hashmap.contains_key(&item_name) {
-                            // check if recipe number given makes sense
-                            let recipe_num =
-                                quantity.parse::<u8>().expect("provided invalid number");
-                            let item_rec_num_opt = item_hashmap.get(&item_name);
-                            match item_rec_num_opt {
-                                Some(t) => {
-                                    // get item
-                                    let item_clone = t.clone();
-                                    let recipe_tot_num = item_clone.recipes.len();
-                                    // add item to vector if recipe number is a valid index for the vector
-                                    if recipe_tot_num  > recipe_num as usize {
-                                        settings.item_recipe.push(ItemAmount::new(
-                                            recipe_num as f32,
-                                            item_name.clone(),
-                                        ));
+                        if let Ok(item) = item_name.parse::<ItemType>() {
+                            if let Some(t) = item_hashmap.get(&item) {
+                                // check if recipe number given makes sense
+                                match quantity.parse::<u8>() {
+                                    Ok(recipe_num) => {
+                                        let recipe_tot_num = t.recipes.len();
+                                        // add item to vector if recipe number is a valid index for the vector
+                                        if recipe_tot_num > recipe_num as usize {
+                                            settings.item_recipe.push(ItemAmount::new(
+                                                recipe_num as f32,
+                                                item,
+                                            ));
+                                        } else {
+                                            eprintln!("recipe index {} out of range for {}", recipe_num, item_name);
+                                        }
                                     }
+                                    Err(_) => eprintln!("provided invalid number for recipe"),
                                 }
-                                _ => eprintln!("item not in hashmap"),
+                            } else {
+                                eprintln!("{} isn't a valid item", item_name);
                             }
                         } else {
                             eprintln!("{} isn't a valid item", item_name);
@@ -217,7 +228,7 @@ pub fn beta(mut args: Vec<String>) {
         vec![],
         false,
         false,
-        ItemAmount::new(0.0, String::from("Default")),
+        ItemAmount::new(0.0, ItemType::IronOre),
     );
     if display_help(&mut args) {
         return;
@@ -229,16 +240,18 @@ pub fn beta(mut args: Vec<String>) {
     }
     // loop for processing the arguments
     // get the item to be produced
-    if item_hashmap.contains_key(&args[0]) {
-        // println!("produced item set at index {}", index);
-        settings.produced_item = ItemAmount::new(
-            args[1].parse::<f32>().expect("provided invalid number"),
-            args[0].clone(),
-        );
-    } else {
-        eprintln!("given item name {} isn't valid", args[0]);
-        return;
-    }
+    let produced_item_type = match args[0].parse::<ItemType>() {
+        Ok(item) if item_hashmap.contains_key(&item) => item,
+        _ => {
+            eprintln!("given item name {} isn't valid", args[0]);
+            return;
+        }
+    };
+    settings.produced_item = ItemAmount::new(
+        args[1].parse::<f32>().expect("provided invalid number"),
+        produced_item_type,
+    );
+
     // remove the first two arguments
     args.remove(0);
     args.remove(0);
@@ -261,7 +274,7 @@ pub fn beta(mut args: Vec<String>) {
         // set off creation of the crafting chain
         Some(item) => {
             let twostrings = StringDuo {
-                item_name: settings.produced_item.item.clone(),
+                item_name: settings.produced_item.item,
                 prev_path,
             };
             let twobools = BoolDuo {

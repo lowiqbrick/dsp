@@ -4,11 +4,12 @@
 use std::collections::HashMap;
 // import the structs, emuns, etc.
 use crate::beta::essentials::{IsItem, Item, ItemAmount, ManFac, Recipe};
+use crate::beta::items::ItemType;
 // import all macros
 use crate::{item, recipe, recitem, to_hash};
 
 /// creates a big HashMap with all the items and buildings in the game
-pub fn get_items() -> HashMap<String, Item<'static>> {
+pub fn get_items() -> HashMap<ItemType, Item> {
     let mut res_hash = HashMap::new();
     /*
     macro template explanation
