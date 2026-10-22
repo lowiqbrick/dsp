@@ -755,3 +755,9 @@ macro_rules! to_hash {
         $hashmap.insert($item_type, $item_name);
     };
 }
+#[macro_export]
+macro_rules! new_item {
+    ($hashmap: ident, $item_type: expr, ($($rec_vec: tt)*)) => {
+        $hashmap.insert($item_type, Item::new($item_type, vec![$($rec_vec)*]));
+    };
+}
