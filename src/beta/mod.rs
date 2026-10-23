@@ -67,7 +67,7 @@ fn process_env_args(
             // additional items
             "-i" | "--items" => status = ArgState::AdditionalItems,
             // set the recipe
-            "-r" | "--recipe" | "-recipe" => status = ArgState::ItemRecipe,
+            "-r" | "--recipe" => status = ArgState::ItemRecipe,
             // display the documentation
             "-h" | "--help" => doc::print_help(),
             // only show the item requested and not the entire chain
