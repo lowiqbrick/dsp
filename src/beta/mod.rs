@@ -266,15 +266,15 @@ pub fn beta(mut args: Vec<String>) {
     let mut is_proliferated = true;
     if settings
         .no_proliferation
-        .contains(&settings.produced_item.item)
+        .contains(&settings.produced_item.item_type)
     {
         is_proliferated = false;
     }
-    match item_hashmap.get(&settings.produced_item.item) {
+    match item_hashmap.get(&settings.produced_item.item_type) {
         // set off creation of the crafting chain
         Some(item) => {
             let twostrings = StringDuo {
-                item_name: settings.produced_item.item,
+                item_type: settings.produced_item.item_type,
                 prev_path,
             };
             let twobools = BoolDuo {

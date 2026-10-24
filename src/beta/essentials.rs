@@ -22,14 +22,14 @@ pub enum ManFac {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ItemAmount {
     pub amount: f32,
-    pub item: ItemType,
+    pub item_type: ItemType,
 }
 
 impl ItemAmount {
-    pub fn new(amount: f32, item: impl Into<ItemType>) -> ItemAmount {
+    pub fn new(amount: f32, item_type: impl Into<ItemType>) -> ItemAmount {
         ItemAmount {
             amount,
-            item: item.into(),
+            item_type: item_type.into(),
         }
     }
 }
@@ -83,7 +83,7 @@ impl Recipe {
 #[derive(Debug, Clone)]
 pub struct ItemResult {
     pub describer: String,
-    pub name: ItemType,
+    pub item_type: ItemType,
     pub target_rate: f32,
     pub num_station: f32,
     pub station: Vec<ManFac>,
@@ -93,7 +93,7 @@ pub struct ItemResult {
 impl ItemResult {
     fn new(
         describer: String,
-        name: ItemType,
+        item_type: ItemType,
         target_rate: f32,
         num_station: f32,
         station: Vec<ManFac>,
@@ -101,7 +101,7 @@ impl ItemResult {
     ) -> ItemResult {
         ItemResult {
             describer,
-            name,
+            item_type,
             target_rate,
             num_station,
             station,
@@ -114,8 +114,8 @@ impl ItemResult {
             ItemResult::new(
                 // if results ar to be merged no elaborate paths
                 // just the items name
-                strings.item_name.to_string(),
-                strings.item_name,
+                strings.item_type.to_string(),
+                strings.item_type,
                 -1.0,
                 -1.0,
                 vec![ManFac::Origin],
@@ -124,7 +124,7 @@ impl ItemResult {
         } else {
             ItemResult::new(
                 new_path.to_string(),
-                strings.item_name,
+                strings.item_type,
                 -1.0,
                 -1.0,
                 vec![ManFac::Origin],
@@ -157,7 +157,7 @@ impl Display for ItemResult {
                 if index == 0 {
                     write!(f, "   ").expect("displaying ItemResult failed");
                 }
-                write!(f, "    {:.1} {}", amount.amount, amount.item)?;
+                write!(f, "    {:.1} {}", amount.amount, amount.item_type)?;
             }
         }
         // hand over the results
@@ -173,14 +173,14 @@ pub struct BoolDuo {
 
 /// combines two strings for a small function call
 pub struct StringDuo {
-    pub item_name: ItemType,
+    pub item_type: ItemType,
     pub prev_path: String,
 }
 
 /// struct for representing an item
 #[derive(Debug, Clone)]
 pub struct Item {
-    pub name: ItemType,
+    pub item_type: ItemType,
     pub recipes: Vec<Recipe>,
 }
 
@@ -201,13 +201,13 @@ fn check_recipe_index(settings: &ProgramInfo, strings: &StringDuo, current_item:
     // get amount of the item as output (and as an ingredient, if thats the case)
     for vec_element in settings.item_recipe.iter() {
         // if item is in vector, the recipe index needs to be changed
-        if strings.item_name == vec_element.item {
+        if strings.item_type == vec_element.item_type {
             current_recipe_index = vec_element.amount as usize;
             // sanity check; is the given recipe index valid?
             if current_recipe_index + 1 > current_item.recipes.len() {
                 panic!(
                         "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
-                        strings.item_name,
+                        strings.item_type,
                         current_recipe_index,
                         current_item.recipes.len()
                     );
@@ -262,7 +262,7 @@ fn calculate_net_output(
     for item_amount in current_recipe.products.clone().iter() {
         match item_amount {
             IsItem::Item(item_match) => {
-                if item_match.item == result_var.name {
+                if item_match.item_type == result_var.item_type {
                     output_amount = item_match.amount;
                 }
             }
@@ -272,13 +272,13 @@ fn calculate_net_output(
     if output_amount == 0.0 {
         panic!(
             "the output of recipe (index {}) from item '{}' doesn't contain the item",
-            current_recipe_index, result_var.name
+            current_recipe_index, result_var.item_type
         );
     }
     for item_amount in current_recipe.ingredients.clone().iter() {
         match item_amount {
             IsItem::Item(item_match) => {
-                if item_match.item == result_var.name {
+                if item_match.item_type == result_var.item_type {
                     input_amount = item_match.amount;
                 }
             }
@@ -302,7 +302,7 @@ fn create_or_amend_entry(
     if settings.merge {
         // if result item already exists copy all values
         // if not remember that a new one needs to be created
-        let key = strings.item_name.to_string();
+        let key = strings.item_type.to_string();
         match result.get(&key) {
             Some(existing_result) => {
                 result_var.target_rate = existing_result.target_rate;
@@ -335,7 +335,7 @@ fn factor_in_proliferation(
     if bools.is_proliferated {
         let mut no_proliferation_vector = false;
         for item_prolif in settings.no_proliferation.iter() {
-            if item_prolif == &result_var.name {
+            if item_prolif == &result_var.item_type {
                 no_proliferation_vector = true;
                 bools.is_proliferated = false;
             }
@@ -348,9 +348,9 @@ fn factor_in_proliferation(
 }
 
 impl Item {
-    pub fn new(name: impl Into<ItemType>, recipes: Vec<Recipe>) -> Item {
+    pub fn new(item_type: impl Into<ItemType>, recipes: Vec<Recipe>) -> Item {
         Item {
-            name: name.into(),
+            item_type: item_type.into(),
             recipes,
         }
     }
@@ -371,7 +371,7 @@ impl Item {
         }
         // get all items
         let items_map = items_get::get_items();
-        let mut new_path = strings.item_name.to_string();
+        let mut new_path = strings.item_type.to_string();
         if !bools.is_first_item {
             new_path.extend([" -> "]);
         }
@@ -395,12 +395,12 @@ impl Item {
         );
         // get a copy of the requested item from the item hashmap
         // after this match item_name can be assumed to be a valid key
-        let current_item = match items_map.get(&strings.item_name) {
+        let current_item = match items_map.get(&strings.item_type) {
             Some(item) => item,
             _ => {
                 panic!(
                     "requested item '{}' doesn't exist in hashmap",
-                    strings.item_name
+                    strings.item_type
                 )
             }
         };
@@ -447,7 +447,7 @@ impl Item {
                 IsItem::Item(ingredient) => {
                     output_machine_ingredients.push(ItemAmount::new(
                         ingredient.amount * ingredient_multiplicator,
-                        ingredient.item,
+                        ingredient.item_type,
                     ));
                 }
                 IsItem::Nai => {
@@ -472,25 +472,25 @@ impl Item {
         // sanity checks on result_var
         assert_ne!(result_var.num_station, -1.0);
         // only assert if the item doesn't have vec!(ManFac::Origin) naturally
-        if !settings.basics.contains(&current_item.name) {
+        if !settings.basics.contains(&current_item.item_type) {
             assert_ne!(
                 result_var.station,
                 vec!(ManFac::Origin),
                 "result of {} doesn't have a crafting station",
-                strings.item_name
+                strings.item_type
             );
             assert_ne!(result_var.requirements, vec![]);
         }
         // write results into hashmap
         if is_adding_new_item {
             if settings.merge {
-                result.insert(result_var.name.to_string(), result_var.clone());
+                result.insert(result_var.item_type.to_string(), result_var.clone());
             } else {
                 result.insert(result_var.describer.clone(), result_var.clone());
             }
         } else if settings.merge {
             // increase the values already present
-            match result.get_mut(&result_var.name.to_string()) {
+            match result.get_mut(&result_var.item_type.to_string()) {
                 Some(found_item) => {
                     // increase amount of required items per minute
                     found_item.target_rate += item_per_sec;
@@ -507,7 +507,7 @@ impl Item {
                 _ => {
                     panic!(
                         "tried to write into the key '{}', which wasn't found",
-                        result_var.name
+                        result_var.item_type
                     );
                 }
             }
@@ -526,21 +526,33 @@ impl Item {
                 .iter()
             {
                 match ingredient {
-                    IsItem::Item(real_ingredient) => match items_map.get(&real_ingredient.item) {
-                        Some(call_item) => {
-                            let twostrings_next = StringDuo {
-                                item_name: call_item.name,
-                                prev_path: strings.prev_path.clone(),
-                            };
-                            let twobools_next = BoolDuo {
-                                is_proliferated: bools.is_proliferated,
-                                is_first_item: false,
-                            };
-                            // are some items to be ignored?
-                            if settings.assume_basics {
-                                // check if this particular item is in the vector of items
-                                // that are to be ignored
-                                if !settings.basics.contains(&call_item.name) {
+                    IsItem::Item(real_ingredient) => {
+                        match items_map.get(&real_ingredient.item_type) {
+                            Some(call_item) => {
+                                let twostrings_next = StringDuo {
+                                    item_type: call_item.item_type,
+                                    prev_path: strings.prev_path.clone(),
+                                };
+                                let twobools_next = BoolDuo {
+                                    is_proliferated: bools.is_proliferated,
+                                    is_first_item: false,
+                                };
+                                // are some items to be ignored?
+                                if settings.assume_basics {
+                                    // check if this particular item is in the vector of items
+                                    // that are to be ignored
+                                    if !settings.basics.contains(&call_item.item_type) {
+                                        call_item.crafting_chain(
+                                            twostrings_next,
+                                            real_ingredient.amount * ingredient_multiplicator,
+                                            settings,
+                                            result_order,
+                                            result,
+                                            twobools_next,
+                                        );
+                                    }
+                                } else {
+                                    // of nothing is to be ignored call everything
                                     call_item.crafting_chain(
                                         twostrings_next,
                                         real_ingredient.amount * ingredient_multiplicator,
@@ -550,25 +562,15 @@ impl Item {
                                         twobools_next,
                                     );
                                 }
-                            } else {
-                                // of nothing is to be ignored call everything
-                                call_item.crafting_chain(
-                                    twostrings_next,
-                                    real_ingredient.amount * ingredient_multiplicator,
-                                    settings,
-                                    result_order,
-                                    result,
-                                    twobools_next,
+                            }
+                            None => {
+                                panic!(
+                                    "failed to call 'fn crafting_chain' on key {}",
+                                    real_ingredient.item_type
                                 );
                             }
                         }
-                        None => {
-                            panic!(
-                                "failed to call 'fn crafting_chain' on key {}",
-                                real_ingredient.item
-                            );
-                        }
-                    },
+                    }
                     IsItem::Nai => {
                         // if item is origin do nothing
                         print!("");

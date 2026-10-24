@@ -1613,7 +1613,7 @@ mod test_items {
                 for ingredient in ingredients {
                     let is_item = ingredient;
                     let item = match is_item {
-                        IsItem::Item(item_amount) => item_amount.item,
+                        IsItem::Item(item_amount) => item_amount.item_type,
                         IsItem::Nai => continue,
                     };
                     // check whether or not the string can be found as key in the
@@ -1637,7 +1637,7 @@ mod test_items {
                     let item = match is_item {
                         IsItem::Item(item_amount) => {
                             println!("{:?}", item_amount);
-                            item_amount.item
+                            item_amount.item_type
                         }
                         IsItem::Nai => continue,
                     };
