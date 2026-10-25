@@ -19,7 +19,7 @@ pub enum ManFac {
 }
 
 /// struct for combining an item and an amount of said item
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct ItemAmount {
     pub amount: f32,
     pub item_type: ItemType,
@@ -55,7 +55,7 @@ impl IsItem {
 }
 
 /// struct for recipes
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Recipe {
     // crafting time (in seconds)
     crafting_time: f32,
@@ -80,7 +80,7 @@ impl Recipe {
     }
 }
 /// Struct for storing the result of a part of the crafting chain
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ItemResult {
     pub describer: String,
     pub item_type: ItemType,
@@ -178,7 +178,7 @@ pub struct StringDuo {
 }
 
 /// struct for representing an item
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Item {
     pub item_type: ItemType,
     pub recipes: Vec<Recipe>,
@@ -583,8 +583,9 @@ impl Item {
 
 // enums and structs for the execution of the main function
 /// enum for saving the type of lab used
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum ChemLabMK {
+    #[default]
     // Chemical Plant
     Lab,
     // Quantum Chemical Plant
@@ -592,16 +593,18 @@ pub enum ChemLabMK {
 }
 
 /// enum for saving the type of assembler used
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum SmelterMK {
+    #[default]
     Arc,
     Plane,
     Negentropy,
 }
 
 /// enum for saving the type of assembler used
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum AssemblerMK {
+    #[default]
     One,
     Two,
     Three,
@@ -609,18 +612,20 @@ pub enum AssemblerMK {
 }
 
 /// enum for saving the type of assembler used
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum LabMK {
+    #[default]
     MatrixLab,
     SelfEvolutionLab,
 }
 
 /// enum for saving the type of assembler used
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum Proliferator {
     MKone,
     MKtwo,
     MKthree,
+    #[default]
     None,
 }
 
@@ -634,7 +639,7 @@ pub struct EnumCombiner {
 }
 
 /// struct for containing all information for the main function
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct ProgramInfo {
     // enums to save the facilities used
     pub proliferators: Proliferator,
@@ -653,16 +658,8 @@ pub struct ProgramInfo {
     pub this_item_only: bool,
 }
 impl ProgramInfo {
-    pub fn new(
-        mks: EnumCombiner,
-        no_proliferation: Vec<ItemType>,
-        additional_items: Vec<ItemAmount>,
-        item_recipe: Vec<ItemAmount>,
-        merge: bool,
-        assume_basics: bool,
-        produced_item: ItemAmount,
-    ) -> ProgramInfo {
-        let basics = vec![
+    pub fn basics() -> Vec<ItemType> {
+        vec![
             ItemType::IronOre,
             ItemType::CopperOre,
             ItemType::Stone,
@@ -688,7 +685,19 @@ impl ProgramInfo {
             ItemType::MatterRecombinator,
             ItemType::Hydrogen,
             ItemType::Deuterium,
-        ];
+        ]
+    }
+
+    pub fn new(
+        mks: EnumCombiner,
+        no_proliferation: Vec<ItemType>,
+        additional_items: Vec<ItemAmount>,
+        item_recipe: Vec<ItemAmount>,
+        merge: bool,
+        assume_basics: bool,
+        produced_item: ItemAmount,
+    ) -> ProgramInfo {
+        let basics = Self::basics();
         ProgramInfo {
             proliferators: mks.proliferator,
             chemlab: mks.chemlab,

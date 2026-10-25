@@ -2,7 +2,7 @@ use std::fmt;
 use std::str::FromStr;
 
 /// Enum representing every craftable and gatherable item in Dyson Sphere Program.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub enum ItemType {
     IronOre,
     CopperOre,
@@ -47,6 +47,7 @@ pub enum ItemType {
     TitaniumAlloy,
     CircuitBoard,
     Prism,
+    #[default]
     ElectricMotor,
     MicrocrystallineComponent,
     Gear,

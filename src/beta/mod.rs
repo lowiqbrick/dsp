@@ -312,3 +312,240 @@ pub fn beta(mut args: Vec<String>) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::beta::{
+        essentials::{BoolDuo, ItemAmount, ItemResult, ManFac, ProgramInfo, StringDuo},
+        items::ItemType,
+        items_get::get_items,
+    };
+
+    fn create_test_settings(amount: f32, item_type: ItemType) -> ProgramInfo {
+        ProgramInfo {
+            produced_item: ItemAmount { amount, item_type },
+            basics: ProgramInfo::basics(),
+            ..Default::default()
+        }
+    }
+
+    fn crate_test_variables(
+        amount: f32,
+        item_type: ItemType,
+        is_proliferated: bool,
+    ) -> (
+        StringDuo,
+        f32,
+        ProgramInfo,
+        HashMap<String, ItemResult>,
+        Vec<String>,
+        BoolDuo,
+    ) {
+        (
+            StringDuo {
+                item_type,
+                prev_path: "".to_string(),
+            },
+            amount,
+            create_test_settings(amount, item_type),
+            HashMap::new(),
+            vec![],
+            BoolDuo {
+                is_proliferated,
+                is_first_item: true,
+            },
+        )
+    }
+
+    /// the expected result for crating one electric motor every 2 seconds
+    fn results_electric_motor() -> HashMap<String, ItemResult> {
+        let mut correct_result = HashMap::new();
+        correct_result.insert(
+            "Electric Motor".to_string(),
+            ItemResult {
+                describer: "Electric Motor".to_string(),
+                item_type: ItemType::ElectricMotor,
+                target_rate: 0.5,
+                num_station: 1.3333334,
+                station: vec![ManFac::Assembler],
+                requirements: vec![
+                    ItemAmount {
+                        amount: 0.5,
+                        item_type: ItemType::MagneticCoil,
+                    },
+                    ItemAmount {
+                        amount: 0.5,
+                        item_type: ItemType::Gear,
+                    },
+                    ItemAmount {
+                        amount: 1.0,
+                        item_type: ItemType::IronIngot,
+                    },
+                ],
+            },
+        );
+        correct_result.insert(
+            "Iron Ingot -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Iron Ingot -> Electric Motor".to_string(),
+                item_type: ItemType::IronIngot,
+                target_rate: 1.0,
+                num_station: 1.0,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 1.0,
+                    item_type: ItemType::IronOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Iron Ore -> Iron Ingot -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Iron Ore -> Iron Ingot -> Electric Motor".to_string(),
+                item_type: ItemType::IronOre,
+                target_rate: 1.0,
+                num_station: 0.0,
+                station: vec![ManFac::Origin],
+                requirements: vec![],
+            },
+        );
+        correct_result.insert(
+            "Gear -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Gear -> Electric Motor".to_string(),
+                item_type: ItemType::Gear,
+                target_rate: 0.5,
+                num_station: 0.6666667,
+                station: vec![ManFac::Assembler],
+                requirements: vec![ItemAmount {
+                    amount: 0.5,
+                    item_type: ItemType::IronIngot,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Iron Ingot -> Gear -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Iron Ingot -> Gear -> Electric Motor".to_string(),
+                item_type: ItemType::IronIngot,
+                target_rate: 0.5,
+                num_station: 0.5,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 0.5,
+                    item_type: ItemType::IronOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Iron Ore -> Iron Ingot -> Gear -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Iron Ore -> Iron Ingot -> Gear -> Electric Motor".to_string(),
+                item_type: ItemType::IronOre,
+                target_rate: 0.5,
+                num_station: 0.0,
+                station: vec![ManFac::Origin],
+                requirements: vec![],
+            },
+        );
+        correct_result.insert(
+            "Magnetic Coil -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Magnetic Coil -> Electric Motor".to_string(),
+                item_type: ItemType::MagneticCoil,
+                target_rate: 0.5,
+                num_station: 0.33333334,
+                station: vec![ManFac::Assembler],
+                requirements: vec![
+                    ItemAmount {
+                        amount: 0.25,
+                        item_type: ItemType::CopperIngot,
+                    },
+                    ItemAmount {
+                        amount: 0.5,
+                        item_type: ItemType::Magnet,
+                    },
+                ],
+            },
+        );
+        correct_result.insert(
+            "Magnet -> Magnetic Coil -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Magnet -> Magnetic Coil -> Electric Motor".to_string(),
+                item_type: ItemType::Magnet,
+                target_rate: 0.5,
+                num_station: 0.75,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 0.5,
+                    item_type: ItemType::IronOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Iron Ore -> Magnet -> Magnetic Coil -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Iron Ore -> Magnet -> Magnetic Coil -> Electric Motor".to_string(),
+                item_type: ItemType::IronOre,
+                target_rate: 0.5,
+                num_station: 0.0,
+                station: vec![ManFac::Origin],
+                requirements: vec![],
+            },
+        );
+        correct_result.insert(
+            "Copper Ingot -> Magnetic Coil -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Copper Ingot -> Magnetic Coil -> Electric Motor".to_owned(),
+                item_type: ItemType::CopperIngot,
+                target_rate: 0.25,
+                num_station: 0.25,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 0.25,
+                    item_type: ItemType::CopperOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Copper Ore -> Copper Ingot -> Magnetic Coil -> Electric Motor".to_string(),
+            ItemResult {
+                describer: "Copper Ore -> Copper Ingot -> Magnetic Coil -> Electric Motor"
+                    .to_string(),
+                item_type: ItemType::CopperOre,
+                target_rate: 0.25,
+                num_station: 0.0,
+                station: vec![ManFac::Origin],
+                requirements: vec![],
+            },
+        );
+        correct_result
+    }
+
+    #[test]
+    fn test_electric_motor() {
+        let items = get_items();
+        let (strings, items_per_sec, settings, mut result, mut result_order, bools) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+            strings,
+            items_per_sec,
+            &settings,
+            &mut result_order,
+            &mut result,
+            bools,
+        );
+        let correct_result = results_electric_motor();
+        for result_value in &result {
+            eprintln!(
+                "result:         {:?}\ncorrect result: {:?}\n",
+                result_value.1,
+                correct_result.get(result_value.0).unwrap()
+            );
+            assert_eq!(result_value.1, correct_result.get(result_value.0).unwrap());
+        }
+        assert_eq!(result, correct_result);
+    }
+}
