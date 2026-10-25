@@ -138,12 +138,12 @@ impl Display for ItemResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // write all things with static values
         writeln!(f, "{}", self.describer).expect("displaying ItemResult failed");
-        writeln!(f, "item target rate: {:.1}", self.target_rate)
+        writeln!(f, "item target rate: {:.2}", self.target_rate)
             .expect("displaying ItemResult failed");
         if self.station != vec![ManFac::Origin] {
             write!(
                 f,
-                "buildings to build: {} {:?} ({:.1})",
+                "buildings to build: {} {:?} ({:.2})",
                 self.num_station.ceil(),
                 self.station,
                 self.num_station
@@ -157,7 +157,7 @@ impl Display for ItemResult {
                 if index == 0 {
                     write!(f, "   ").expect("displaying ItemResult failed");
                 }
-                write!(f, "    {:.1} {}", amount.amount, amount.item_type)?;
+                write!(f, "    {:.2} {}", amount.amount, amount.item_type)?;
             }
         }
         // hand over the results
