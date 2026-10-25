@@ -524,6 +524,145 @@ mod tests {
         correct_result
     }
 
+    fn results_electric_motor_double_rate() -> HashMap<String, ItemResult> {
+        let mut multiplied_correct_result = results_electric_motor();
+        for value in multiplied_correct_result.values_mut() {
+            value.target_rate *= 2.0;
+            value.num_station *= 2.0;
+            for ingredient in value.requirements.iter_mut() {
+                ingredient.amount *= 2.0;
+            }
+        }
+        multiplied_correct_result
+    }
+
+    fn results_electric_motor_merged() -> HashMap<String, ItemResult> {
+        let mut correct_result = HashMap::new();
+        correct_result.insert(
+            "Electric Motor".to_string(),
+            ItemResult {
+                describer: "Electric Motor".to_string(),
+                item_type: ItemType::ElectricMotor,
+                target_rate: 0.5,
+                num_station: 1.3333334,
+                station: vec![ManFac::Assembler],
+                requirements: vec![
+                    ItemAmount {
+                        amount: 0.5,
+                        item_type: ItemType::MagneticCoil,
+                    },
+                    ItemAmount {
+                        amount: 0.5,
+                        item_type: ItemType::Gear,
+                    },
+                    ItemAmount {
+                        amount: 1.0,
+                        item_type: ItemType::IronIngot,
+                    },
+                ],
+            },
+        );
+        correct_result.insert(
+            "Iron Ingot".to_string(),
+            ItemResult {
+                describer: "Iron Ingot".to_string(),
+                item_type: ItemType::IronIngot,
+                target_rate: 1.5,
+                num_station: 1.5,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 1.5,
+                    item_type: ItemType::IronOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Iron Ore".to_string(),
+            ItemResult {
+                describer: "Iron Ore".to_string(),
+                item_type: ItemType::IronOre,
+                target_rate: 2.0,
+                num_station: 0.0,
+                station: vec![ManFac::Origin],
+                requirements: vec![],
+            },
+        );
+        correct_result.insert(
+            "Gear".to_string(),
+            ItemResult {
+                describer: "Gear".to_string(),
+                item_type: ItemType::Gear,
+                target_rate: 0.5,
+                num_station: 0.6666667,
+                station: vec![ManFac::Assembler],
+                requirements: vec![ItemAmount {
+                    amount: 0.5,
+                    item_type: ItemType::IronIngot,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Magnetic Coil".to_string(),
+            ItemResult {
+                describer: "Magnetic Coil".to_string(),
+                item_type: ItemType::MagneticCoil,
+                target_rate: 0.5,
+                num_station: 0.33333334,
+                station: vec![ManFac::Assembler],
+                requirements: vec![
+                    ItemAmount {
+                        amount: 0.25,
+                        item_type: ItemType::CopperIngot,
+                    },
+                    ItemAmount {
+                        amount: 0.5,
+                        item_type: ItemType::Magnet,
+                    },
+                ],
+            },
+        );
+        correct_result.insert(
+            "Magnet".to_string(),
+            ItemResult {
+                describer: "Magnet".to_string(),
+                item_type: ItemType::Magnet,
+                target_rate: 0.5,
+                num_station: 0.75,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 0.5,
+                    item_type: ItemType::IronOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Copper Ingot".to_string(),
+            ItemResult {
+                describer: "Copper Ingot".to_owned(),
+                item_type: ItemType::CopperIngot,
+                target_rate: 0.25,
+                num_station: 0.25,
+                station: vec![ManFac::Furnace],
+                requirements: vec![ItemAmount {
+                    amount: 0.25,
+                    item_type: ItemType::CopperOre,
+                }],
+            },
+        );
+        correct_result.insert(
+            "Copper Ore".to_string(),
+            ItemResult {
+                describer: "Copper Ore".to_string(),
+                item_type: ItemType::CopperOre,
+                target_rate: 0.25,
+                num_station: 0.0,
+                station: vec![ManFac::Origin],
+                requirements: vec![],
+            },
+        );
+        correct_result
+    }
+
     #[test]
     fn test_electric_motor() {
         let items = get_items();
@@ -538,6 +677,124 @@ mod tests {
             bools,
         );
         let correct_result = results_electric_motor();
+        for result_value in &result {
+            eprintln!(
+                "result:         {:?}\ncorrect result: {:?}\n",
+                result_value.1,
+                correct_result.get(result_value.0).unwrap()
+            );
+            assert_eq!(result_value.1, correct_result.get(result_value.0).unwrap());
+        }
+        assert_eq!(result, correct_result);
+    }
+
+    #[test]
+    fn test_electric_motor_double_rate() {
+        let items = get_items();
+        let (strings, items_per_sec, settings, mut result, mut result_order, bools) =
+            crate_test_variables(1.0, ItemType::ElectricMotor, false);
+        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+            strings,
+            items_per_sec,
+            &settings,
+            &mut result_order,
+            &mut result,
+            bools,
+        );
+        let correct_result = results_electric_motor_double_rate();
+        for result_value in &result {
+            eprintln!(
+                "result:         {:?}\ncorrect result: {:?}\n",
+                result_value.1,
+                correct_result.get(result_value.0).unwrap()
+            );
+            assert_eq!(result_value.1, correct_result.get(result_value.0).unwrap());
+        }
+        assert_eq!(result, correct_result);
+    }
+
+    #[test]
+    fn test_electric_motor_merge_output() {
+        let items = get_items();
+        let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        settings.merge = true;
+        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+            strings,
+            items_per_sec,
+            &settings,
+            &mut result_order,
+            &mut result,
+            bools,
+        );
+        let correct_result = results_electric_motor_merged();
+        for result_value in &result {
+            eprintln!(
+                "result:         {:?}\ncorrect result: {:?}\n",
+                result_value.1,
+                correct_result.get(result_value.0).unwrap()
+            );
+            assert_eq!(result_value.1, correct_result.get(result_value.0).unwrap());
+        }
+        assert_eq!(result, correct_result);
+    }
+
+    #[test]
+    fn test_electric_motor_assume_basics() {
+        let items = get_items();
+        let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        settings.assume_basics = true;
+        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+            strings,
+            items_per_sec,
+            &settings,
+            &mut result_order,
+            &mut result,
+            bools,
+        );
+        let mut correct_result = results_electric_motor();
+        correct_result
+            .remove("Iron Ore -> Iron Ingot -> Electric Motor")
+            .unwrap();
+        correct_result
+            .remove("Iron Ore -> Iron Ingot -> Gear -> Electric Motor")
+            .unwrap();
+        correct_result
+            .remove("Iron Ore -> Magnet -> Magnetic Coil -> Electric Motor")
+            .unwrap();
+        correct_result
+            .remove("Copper Ore -> Copper Ingot -> Magnetic Coil -> Electric Motor")
+            .unwrap();
+        for result_value in &result {
+            eprintln!(
+                "result:         {:?}\ncorrect result: {:?}\n",
+                result_value.1,
+                correct_result.get(result_value.0).unwrap()
+            );
+            assert_eq!(result_value.1, correct_result.get(result_value.0).unwrap());
+        }
+        assert_eq!(result, correct_result);
+    }
+
+    #[test]
+    fn test_electric_motor_merge_output_assume_basics() {
+        let items = get_items();
+        let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        settings.merge = true;
+        settings.assume_basics = true;
+        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+            strings,
+            items_per_sec,
+            &settings,
+            &mut result_order,
+            &mut result,
+            bools,
+        );
+        let mut correct_result = results_electric_motor_merged();
+        correct_result.remove("Iron Ore").unwrap();
+        correct_result.remove("Copper Ore").unwrap();
         for result_value in &result {
             eprintln!(
                 "result:         {:?}\ncorrect result: {:?}\n",
