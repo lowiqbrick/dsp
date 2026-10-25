@@ -1,8 +1,10 @@
 use std::fmt;
 use std::str::FromStr;
 
+use enumiter::EnumIter;
+
 /// Enum representing every craftable and gatherable item in Dyson Sphere Program.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default, EnumIter)]
 pub enum ItemType {
     IronOre,
     CopperOre,
@@ -378,5 +380,33 @@ impl From<&String> for ItemType {
 impl From<String> for ItemType {
     fn from(s: String) -> Self {
         s.as_str().into()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::beta::items::ItemType;
+    use enumiter::EnumIter;
+
+    #[derive(EnumIter, Clone, Debug, PartialEq)]
+    enum TestEnum {
+        TestField,
+        SecondField,
+    }
+
+    #[test]
+    fn test_variants() {
+        assert_eq!(
+            vec![TestEnum::TestField, TestEnum::SecondField],
+            TestEnum::variants()
+        );
+    }
+
+    #[test]
+    fn test_item_type_str_round_trip() {
+        for item_type in ItemType::variants() {
+            let round_trip_result = ItemType::from(item_type.as_str());
+            assert_eq!(item_type, round_trip_result);
+        }
     }
 }

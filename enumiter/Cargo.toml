@@ -1,0 +1,11 @@
+[package]
+name = "enumiter"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "3" , features = ["extra-traits"] }
+quote = "1"
