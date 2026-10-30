@@ -77,7 +77,7 @@ fn process_env_args(
                 // process the options demanding more elaborate processing
                 match status {
                     // proliferation
-                    ArgState::ProlifLevel=> {
+                    ArgState::ProlifLevel => {
                         match argument.as_str() {
                             "1" => settings.proliferators = Proliferator::MKone,
                             "2" => settings.proliferators = Proliferator::MKtwo,
@@ -85,18 +85,20 @@ fn process_env_args(
                             _ => eprintln!(
                                 "invalid proliferation level was supplied (\"1\", \"2\" and \"3\" are valid; \"{}\" was supplied)", argument),
                         }
+                        status = ArgState::Default;
                     }
                     // chemlab level
-                    ArgState::ChemLabLevel=> {
+                    ArgState::ChemLabLevel => {
                         match argument.as_str() {
                             "1" => settings.chemlab = ChemLabMK::Lab,
                             "2" => settings.chemlab = ChemLabMK::QuantumLab,
                             _ => eprintln!(
                                 "invalid chemlab level was supplied (\"1\", \"2\" are valid; \"{}\" was supplied)", argument),
                         }
+                        status = ArgState::Default;
                     }
                     // smelter level
-                    ArgState::FurnaceLevel =>{
+                    ArgState::FurnaceLevel => {
                         match argument.as_str() {
                             "1" => settings.smelter = SmelterMK::Arc,
                             "2" => settings.smelter = SmelterMK::Plane,
@@ -104,9 +106,10 @@ fn process_env_args(
                             _ => eprintln!(
                                 "invalid smelter level was supplied (\"1\", \"2\" and \"3\" are valid; \"{}\" was supplied)", argument),
                         }
+                        status = ArgState::Default;
                     }
                     // assembler level
-                    ArgState::AssemblerLevel=> {
+                    ArgState::AssemblerLevel => {
                         match argument.as_str() {
                             "1" => settings.assembler = AssemblerMK::One,
                             "2" => settings.assembler = AssemblerMK::Two,
@@ -115,18 +118,20 @@ fn process_env_args(
                             _ => eprintln!(
                                 "invalid assembler level was supplied (\"1\", \"2\", \"3\" and \"4\"are valid; \"{}\" was supplied)", argument),
                         }
+                        status = ArgState::Default;
                     }
                     // research lab level
-                    ArgState::LabLevel=> {
+                    ArgState::LabLevel => {
                         match argument.as_str() {
                             "1" => settings.lab = LabMK::MatrixLab,
                             "2" => settings.lab = LabMK::SelfEvolutionLab,
                             _ => eprintln!(
                                 "invalid lab level was supplied (\"1\", \"2\" are valid; \"{}\" was supplied)", argument),
                         }
+                        status = ArgState::Default;
                     }
                     // disable proliferation for specific items and downward
-                    ArgState::NoProliferation =>{
+                    ArgState::NoProliferation => {
                         if let Ok(item) = argument.parse::<ItemType>() {
                             if item_hashmap.contains_key(&item) {
                                 settings.no_proliferation.push(item);
@@ -136,10 +141,11 @@ fn process_env_args(
                         } else {
                             eprintln!("{} isn't a valid item", argument);
                         }
+                        status = ArgState::Default;
                     }
                     // add additional production for specific items in a crafting chain
                     // needs next element in for loop
-                    ArgState::AdditionalItems=> {
+                    ArgState::AdditionalItems => {
                         // save current and next arguments for processing later
                         let item_name = argument.clone();
                         let quantity = match iterator.next() {
@@ -150,7 +156,7 @@ fn process_env_args(
                             }
                         };
                         if let Ok(item) = item_name.parse::<ItemType>() {
-                            if item_hashmap.contains_key(&item) {
+                            if item_hashmap.contains_key(&item) && quantity.parse::<f32>().is_ok() {
                                 settings.additional_items.push(ItemAmount::new(
                                     quantity.parse::<f32>().expect("provided invalid number"),
                                     item,
@@ -161,10 +167,11 @@ fn process_env_args(
                         } else {
                             eprintln!("{} isn't a valid item", item_name);
                         }
+                        status = ArgState::Default;
                     }
                     // set the recipe for a given item
                     // needs next element in for loop
-                    ArgState::ItemRecipe=> {
+                    ArgState::ItemRecipe => {
                         // save current and next arguments for processing later
                         let item_name = argument.clone();
                         let quantity = match iterator.next() {
@@ -182,12 +189,14 @@ fn process_env_args(
                                         let recipe_tot_num = t.recipes.len();
                                         // add item to vector if recipe number is a valid index for the vector
                                         if recipe_tot_num > recipe_num as usize {
-                                            settings.item_recipe.push(ItemAmount::new(
-                                                recipe_num as f32,
-                                                item,
-                                            ));
+                                            settings
+                                                .item_recipe
+                                                .push(ItemAmount::new(recipe_num as f32, item));
                                         } else {
-                                            eprintln!("recipe index {} out of range for {}", recipe_num, item_name);
+                                            eprintln!(
+                                                "recipe index {} out of range for {}",
+                                                recipe_num, item_name
+                                            );
                                         }
                                     }
                                     Err(_) => eprintln!("provided invalid number for recipe"),
@@ -198,8 +207,9 @@ fn process_env_args(
                         } else {
                             eprintln!("{} isn't a valid item", item_name);
                         }
+                        status = ArgState::Default;
                     }
-                    ArgState::Default=> {
+                    ArgState::Default => {
                         eprintln!("invalid argument {} won't be used", argument);
                     }
                 }
