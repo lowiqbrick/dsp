@@ -291,12 +291,12 @@ pub fn beta(mut args: Vec<String>) {
                 is_proliferated,
                 is_first_item: true,
             };
+            let mut ctx =
+                CraftingContext::new(&item_hashmap, &settings, &mut result_order, &mut result);
             item.crafting_chain(
+                &mut ctx,
                 twostrings,
                 settings.produced_item.amount,
-                &settings,
-                &mut result_order,
-                &mut result,
                 twobools,
             )
         }
@@ -308,7 +308,7 @@ pub fn beta(mut args: Vec<String>) {
     // println!("\nresult order vector: {:?}\n", result_order);
     // println!("result vector: {:?}\n", result);
     let vector_len = result_order.len();
-    for (index, result_string) in result_order.clone().iter().enumerate() {
+    for (index, result_string) in result_order.iter().enumerate() {
         match result.get(result_string) {
             Some(result_match) => {
                 println!("{}", result_match);
@@ -328,7 +328,9 @@ mod tests {
     use std::collections::HashMap;
 
     use crate::beta::{
-        essentials::{BoolDuo, ItemAmount, ItemResult, ManFac, ProgramInfo, StringDuo},
+        essentials::{
+            BoolDuo, CraftingContext, ItemAmount, ItemResult, ManFac, ProgramInfo, StringDuo,
+        },
         items::ItemType,
         items_get::get_items,
     };
@@ -678,12 +680,11 @@ mod tests {
         let items = get_items();
         let (strings, items_per_sec, settings, mut result, mut result_order, bools) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
-        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
             strings,
             items_per_sec,
-            &settings,
-            &mut result_order,
-            &mut result,
             bools,
         );
         let correct_result = results_electric_motor();
@@ -703,12 +704,11 @@ mod tests {
         let items = get_items();
         let (strings, items_per_sec, settings, mut result, mut result_order, bools) =
             crate_test_variables(1.0, ItemType::ElectricMotor, false);
-        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
             strings,
             items_per_sec,
-            &settings,
-            &mut result_order,
-            &mut result,
             bools,
         );
         let correct_result = results_electric_motor_double_rate();
@@ -729,12 +729,11 @@ mod tests {
         let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.merge = true;
-        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
             strings,
             items_per_sec,
-            &settings,
-            &mut result_order,
-            &mut result,
             bools,
         );
         let correct_result = results_electric_motor_merged();
@@ -755,12 +754,11 @@ mod tests {
         let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.assume_basics = true;
-        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
             strings,
             items_per_sec,
-            &settings,
-            &mut result_order,
-            &mut result,
             bools,
         );
         let mut correct_result = results_electric_motor();
@@ -794,12 +792,11 @@ mod tests {
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.merge = true;
         settings.assume_basics = true;
-        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
             strings,
             items_per_sec,
-            &settings,
-            &mut result_order,
-            &mut result,
             bools,
         );
         let mut correct_result = results_electric_motor_merged();

@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::fmt::{self, Display};
 
 use crate::beta::items::ItemType;
-use crate::beta::items_get;
 
 /// enum for manufacturing facilities
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -135,33 +134,29 @@ impl ItemResult {
 }
 
 impl Display for ItemResult {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // write all things with static values
-        writeln!(f, "{}", self.describer).expect("displaying ItemResult failed");
-        writeln!(f, "item target rate: {:.2}", self.target_rate)
-            .expect("displaying ItemResult failed");
-        if self.station != vec![ManFac::Origin] {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "{}", self.describer)?;
+        writeln!(f, "item target rate: {:.2}", self.target_rate)?;
+        if self.station != [ManFac::Origin] {
             write!(
                 f,
                 "buildings to build: {} {:?} ({:.2})",
                 self.num_station.ceil(),
                 self.station,
                 self.num_station
-            )
-            .expect("displaying ItemResult failed");
-            writeln!(f, "\nthis requires the following (per second):")
-                .expect("displaying ItemResult failed");
+            )?;
+            writeln!(f, "\nthis requires the following (per second):")?;
             // write vector
-            for (index, amount) in self.requirements.clone().iter().enumerate() {
+            for (index, amount) in self.requirements.iter().enumerate() {
                 // tab
                 if index == 0 {
-                    write!(f, "   ").expect("displaying ItemResult failed");
+                    write!(f, "   ")?;
                 }
                 write!(f, "    {:.2} {}", amount.amount, amount.item_type)?;
             }
         }
         // hand over the results
-        write!(f, "")
+        Ok(())
     }
 }
 
@@ -169,6 +164,30 @@ impl Display for ItemResult {
 pub struct BoolDuo {
     pub is_proliferated: bool,
     pub is_first_item: bool,
+}
+
+/// Context holding read-only data and output accumulators for crafting chain calculations
+pub struct CraftingContext<'a> {
+    pub items_map: &'a HashMap<ItemType, Item>,
+    pub settings: &'a ProgramInfo,
+    pub result_order: &'a mut Vec<String>,
+    pub result: &'a mut HashMap<String, ItemResult>,
+}
+
+impl<'a> CraftingContext<'a> {
+    pub fn new(
+        items_map: &'a HashMap<ItemType, Item>,
+        settings: &'a ProgramInfo,
+        result_order: &'a mut Vec<String>,
+        result: &'a mut HashMap<String, ItemResult>,
+    ) -> Self {
+        Self {
+            items_map,
+            settings,
+            result_order,
+            result,
+        }
+    }
 }
 
 /// combines two strings for a small function call
@@ -253,20 +272,16 @@ fn apply_station_factor(
 /// the input needs to be subtracted from the output
 fn calculate_net_output(
     current_recipe: &Recipe,
-    current_recipe_index: &usize,
+    current_recipe_index: usize,
     result_var: &ItemResult,
 ) -> f32 {
-    // and calculate the production rate, with crafting speed, proliferation, etc.
     let mut output_amount = 0.0;
     let mut input_amount = 0.0;
-    for item_amount in current_recipe.products.clone().iter() {
-        match item_amount {
-            IsItem::Item(item_match) => {
-                if item_match.item_type == result_var.item_type {
-                    output_amount = item_match.amount;
-                }
+    for item_amount in &current_recipe.products {
+        if let IsItem::Item(item_match) = item_amount {
+            if item_match.item_type == result_var.item_type {
+                output_amount = item_match.amount;
             }
-            IsItem::Nai => (),
         }
     }
     if output_amount == 0.0 {
@@ -275,14 +290,11 @@ fn calculate_net_output(
             current_recipe_index, result_var.item_type
         );
     }
-    for item_amount in current_recipe.ingredients.clone().iter() {
-        match item_amount {
-            IsItem::Item(item_match) => {
-                if item_match.item_type == result_var.item_type {
-                    input_amount = item_match.amount;
-                }
+    for item_amount in &current_recipe.ingredients {
+        if let IsItem::Item(item_match) = item_amount {
+            if item_match.item_type == result_var.item_type {
+                input_amount = item_match.amount;
             }
-            IsItem::Nai => (),
         }
     }
     output_amount - input_amount
@@ -293,7 +305,7 @@ fn calculate_net_output(
 fn create_or_amend_entry(
     settings: &ProgramInfo,
     strings: &StringDuo,
-    result: &mut HashMap<String, ItemResult>,
+    result: &HashMap<String, ItemResult>,
     result_var: &mut ItemResult,
     result_order: &mut Vec<String>,
     new_path: &str,
@@ -333,14 +345,9 @@ fn factor_in_proliferation(
     net_output_proliferated: &mut f32,
 ) {
     if bools.is_proliferated {
-        let mut no_proliferation_vector = false;
-        for item_prolif in settings.no_proliferation.iter() {
-            if item_prolif == &result_var.item_type {
-                no_proliferation_vector = true;
-                bools.is_proliferated = false;
-            }
-        }
-        if !no_proliferation_vector {
+        if settings.no_proliferation.contains(&result_var.item_type) {
+            bools.is_proliferated = false;
+        } else {
             let prolif_factor = prolif_factor(settings);
             *net_output_proliferated *= prolif_factor;
         }
@@ -358,24 +365,18 @@ impl Item {
     /// the central method on which everything in the program is build
     pub fn crafting_chain(
         &self,
+        ctx: &mut CraftingContext,
         mut strings: StringDuo,
         item_per_sec: f32,
-        settings: &ProgramInfo,
-        result_order: &mut Vec<String>,
-        result: &mut HashMap<String, ItemResult>,
         mut bools: BoolDuo,
     ) {
-        // get rid of warning
-        if !bools.is_first_item {
-            let _prev_path_warn = &strings.prev_path[0..1];
-        }
-        // get all items
-        let items_map = items_get::get_items();
-        let mut new_path = strings.item_type.to_string();
-        if !bools.is_first_item {
-            new_path.extend([" -> "]);
-        }
-        new_path.extend([strings.prev_path.clone()]);
+        let settings = ctx.settings;
+        let items_map = ctx.items_map;
+        let new_path = if bools.is_first_item {
+            self.item_type.to_string()
+        } else {
+            format!("{} -> {}", self.item_type, strings.prev_path)
+        };
         strings.prev_path = new_path.clone();
         // create result variable
         let mut result_var = ItemResult::initialize(settings, &strings, &new_path);
@@ -387,29 +388,18 @@ impl Item {
         create_or_amend_entry(
             settings,
             &strings,
-            result,
+            ctx.result,
             &mut result_var,
-            result_order,
+            ctx.result_order,
             &new_path,
             &mut is_adding_new_item,
         );
-        // get a copy of the requested item from the item hashmap
-        // after this match item_name can be assumed to be a valid key
-        let current_item = match items_map.get(&strings.item_type) {
-            Some(item) => item,
-            _ => {
-                panic!(
-                    "requested item '{}' doesn't exist in hashmap",
-                    strings.item_type
-                )
-            }
-        };
         // is the recipe not the recipe at index 0?
-        let current_recipe_index = check_recipe_index(settings, &strings, current_item);
-        let current_recipe = current_item.recipes[current_recipe_index].clone();
+        let current_recipe_index = check_recipe_index(settings, &strings, self);
+        let current_recipe = &self.recipes[current_recipe_index];
         // calculate the net output of the recipe, if the output is partially the input
         // of the recipe
-        let net_output = calculate_net_output(&current_recipe, &current_recipe_index, &result_var);
+        let net_output = calculate_net_output(current_recipe, current_recipe_index, &result_var);
         if net_output <= 0.0 {
             panic!(
                 "recipe has net output of {} which doesn't make sense",
@@ -427,7 +417,7 @@ impl Item {
         );
         // handle the different crafting stations
         let net_output_machine =
-            apply_station_factor(net_output_proliferated, &current_recipe, settings);
+            apply_station_factor(net_output_proliferated, current_recipe, settings);
         // calculate how many crafting machines are required for matching throughput
         let manvac_count = item_per_sec / net_output_machine;
         // calculate the multiplier for the amount of ingredients required
@@ -441,19 +431,12 @@ impl Item {
             / current_proliferator_factor;
         // putting everything together
         let mut output_machine_ingredients = vec![];
-        // apply modifier
-        for is_item in current_recipe.ingredients.clone().iter() {
-            match is_item {
-                IsItem::Item(ingredient) => {
-                    output_machine_ingredients.push(ItemAmount::new(
-                        ingredient.amount * ingredient_multiplicator,
-                        ingredient.item_type,
-                    ));
-                }
-                IsItem::Nai => {
-                    // do nothing
-                    print!("");
-                }
+        for is_item in &current_recipe.ingredients {
+            if let IsItem::Item(ingredient) = is_item {
+                output_machine_ingredients.push(ItemAmount::new(
+                    ingredient.amount * ingredient_multiplicator,
+                    ingredient.item_type,
+                ));
             }
         }
         if settings.merge {
@@ -466,42 +449,45 @@ impl Item {
             result_var.num_station = manvac_count;
         }
         result_var.requirements = output_machine_ingredients;
-        if result_var.station == vec![ManFac::Origin] {
+        if result_var.station == [ManFac::Origin] {
             result_var.station = vec![current_recipe.crafting_station];
         }
         // sanity checks on result_var
         assert_ne!(result_var.num_station, -1.0);
         // only assert if the item doesn't have vec!(ManFac::Origin) naturally
-        if !settings.basics.contains(&current_item.item_type) {
+        if !settings.basics.contains(&self.item_type) {
             assert_ne!(
                 result_var.station,
-                vec!(ManFac::Origin),
+                [ManFac::Origin],
                 "result of {} doesn't have a crafting station",
-                strings.item_type
+                self.item_type
             );
-            assert_ne!(result_var.requirements, vec![]);
+            assert!(!result_var.requirements.is_empty());
         }
         // write results into hashmap
         if is_adding_new_item {
             if settings.merge {
-                result.insert(result_var.item_type.to_string(), result_var.clone());
+                ctx.result
+                    .insert(result_var.item_type.to_string(), result_var.clone());
             } else {
-                result.insert(result_var.describer.clone(), result_var.clone());
+                ctx.result
+                    .insert(result_var.describer.clone(), result_var.clone());
             }
         } else if settings.merge {
             // increase the values already present
-            match result.get_mut(&result_var.item_type.to_string()) {
+            match ctx.result.get_mut(&result_var.item_type.to_string()) {
                 Some(found_item) => {
                     // increase amount of required items per minute
                     found_item.target_rate += item_per_sec;
                     // increase required production buildings
                     found_item.num_station = result_var.num_station;
                     // increase the required ingredients
-                    for (index, _found_ingredient) in
-                        found_item.requirements.clone().iter().enumerate()
+                    for (found_req, new_req) in found_item
+                        .requirements
+                        .iter_mut()
+                        .zip(&result_var.requirements)
                     {
-                        found_item.requirements[index].amount +=
-                            result_var.requirements[index].amount;
+                        found_req.amount += new_req.amount;
                     }
                 }
                 _ => {
@@ -513,18 +499,14 @@ impl Item {
             }
         } else {
             panic!(
-                        "even though nothing should me merged the given path '{}' for the hashmap already exists",
-                        result_var.describer);
+                "even though nothing should me merged the given path '{}' for the hashmap already exists",
+                result_var.describer
+            );
         }
 
         // finally make the function recursive by calling the function on the
-        // ingredient items
-        // only make the function recursive if the program isn't restrained to the "main item"
         if !settings.this_item_only {
-            for ingredient in current_item.recipes[current_recipe_index]
-                .ingredients
-                .iter()
-            {
+            for ingredient in &current_recipe.ingredients {
                 match ingredient {
                     IsItem::Item(real_ingredient) => {
                         match items_map.get(&real_ingredient.item_type) {
@@ -537,28 +519,13 @@ impl Item {
                                     is_proliferated: bools.is_proliferated,
                                     is_first_item: false,
                                 };
-                                // are some items to be ignored?
-                                if settings.assume_basics {
-                                    // check if this particular item is in the vector of items
-                                    // that are to be ignored
-                                    if !settings.basics.contains(&call_item.item_type) {
-                                        call_item.crafting_chain(
-                                            twostrings_next,
-                                            real_ingredient.amount * ingredient_multiplicator,
-                                            settings,
-                                            result_order,
-                                            result,
-                                            twobools_next,
-                                        );
-                                    }
-                                } else {
-                                    // of nothing is to be ignored call everything
+                                if !settings.assume_basics
+                                    || !settings.basics.contains(&call_item.item_type)
+                                {
                                     call_item.crafting_chain(
+                                        ctx,
                                         twostrings_next,
                                         real_ingredient.amount * ingredient_multiplicator,
-                                        settings,
-                                        result_order,
-                                        result,
                                         twobools_next,
                                     );
                                 }
@@ -571,10 +538,7 @@ impl Item {
                             }
                         }
                     }
-                    IsItem::Nai => {
-                        // if item is origin do nothing
-                        print!("");
-                    }
+                    IsItem::Nai => {}
                 }
             }
         }
