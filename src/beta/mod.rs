@@ -272,7 +272,6 @@ pub fn beta(mut args: Vec<String>) {
     // call method on item
     let mut result_order = vec![];
     let mut result = HashMap::new();
-    let prev_path = String::from("");
     let mut is_proliferated = true;
     if settings
         .no_proliferation
@@ -283,22 +282,9 @@ pub fn beta(mut args: Vec<String>) {
     match item_hashmap.get(&settings.produced_item.item_type) {
         // set off creation of the crafting chain
         Some(item) => {
-            let twostrings = StringDuo {
-                item_type: settings.produced_item.item_type,
-                prev_path,
-            };
-            let twobools = BoolDuo {
-                is_proliferated,
-                is_first_item: true,
-            };
             let mut ctx =
                 CraftingContext::new(&item_hashmap, &settings, &mut result_order, &mut result);
-            item.crafting_chain(
-                &mut ctx,
-                twostrings,
-                settings.produced_item.amount,
-                twobools,
-            )
+            item.crafting_chain(&mut ctx, "", settings.produced_item.amount, is_proliferated)
         }
         _ => {
             panic!("requested item not in crafting recipes");
@@ -328,9 +314,7 @@ mod tests {
     use std::collections::HashMap;
 
     use crate::beta::{
-        essentials::{
-            BoolDuo, CraftingContext, ItemAmount, ItemResult, ManFac, ProgramInfo, StringDuo,
-        },
+        essentials::{CraftingContext, ItemAmount, ItemResult, ManFac, ProgramInfo},
         items::ItemType,
         items_get::get_items,
     };
@@ -348,26 +332,18 @@ mod tests {
         item_type: ItemType,
         is_proliferated: bool,
     ) -> (
-        StringDuo,
         f32,
         ProgramInfo,
         HashMap<String, ItemResult>,
         Vec<String>,
-        BoolDuo,
+        bool,
     ) {
         (
-            StringDuo {
-                item_type,
-                prev_path: "".to_string(),
-            },
             amount,
             create_test_settings(amount, item_type),
             HashMap::new(),
             vec![],
-            BoolDuo {
-                is_proliferated,
-                is_first_item: true,
-            },
+            is_proliferated,
         )
     }
 
@@ -678,14 +654,14 @@ mod tests {
     #[test]
     fn test_electric_motor() {
         let items = get_items();
-        let (strings, items_per_sec, settings, mut result, mut result_order, bools) =
+        let (items_per_sec, settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
-            strings,
+            "",
             items_per_sec,
-            bools,
+            is_proliferated,
         );
         let correct_result = results_electric_motor();
         for result_value in &result {
@@ -702,14 +678,14 @@ mod tests {
     #[test]
     fn test_electric_motor_double_rate() {
         let items = get_items();
-        let (strings, items_per_sec, settings, mut result, mut result_order, bools) =
+        let (items_per_sec, settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(1.0, ItemType::ElectricMotor, false);
         let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
-            strings,
+            "",
             items_per_sec,
-            bools,
+            is_proliferated,
         );
         let correct_result = results_electric_motor_double_rate();
         for result_value in &result {
@@ -726,15 +702,15 @@ mod tests {
     #[test]
     fn test_electric_motor_merge_output() {
         let items = get_items();
-        let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.merge = true;
         let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
-            strings,
+            "",
             items_per_sec,
-            bools,
+            is_proliferated,
         );
         let correct_result = results_electric_motor_merged();
         for result_value in &result {
@@ -751,15 +727,15 @@ mod tests {
     #[test]
     fn test_electric_motor_assume_basics() {
         let items = get_items();
-        let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.assume_basics = true;
         let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
-            strings,
+            "",
             items_per_sec,
-            bools,
+            is_proliferated,
         );
         let mut correct_result = results_electric_motor();
         correct_result
@@ -788,16 +764,16 @@ mod tests {
     #[test]
     fn test_electric_motor_merge_output_assume_basics() {
         let items = get_items();
-        let (strings, items_per_sec, mut settings, mut result, mut result_order, bools) =
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.merge = true;
         settings.assume_basics = true;
         let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
-            strings,
+            "",
             items_per_sec,
-            bools,
+            is_proliferated,
         );
         let mut correct_result = results_electric_motor_merged();
         correct_result.remove("Iron Ore").unwrap();

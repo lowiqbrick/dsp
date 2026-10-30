@@ -107,14 +107,14 @@ impl ItemResult {
             requirements,
         }
     }
-    fn initialize(settings: &ProgramInfo, strings: &StringDuo, new_path: &str) -> Self {
+    fn initialize(settings: &ProgramInfo, item_type: ItemType, new_path: &str) -> Self {
         // initialize result with default values
         if settings.merge {
             ItemResult::new(
                 // if results ar to be merged no elaborate paths
                 // just the items name
-                strings.item_type.to_string(),
-                strings.item_type,
+                item_type.to_string(),
+                item_type,
                 -1.0,
                 -1.0,
                 vec![ManFac::Origin],
@@ -123,7 +123,7 @@ impl ItemResult {
         } else {
             ItemResult::new(
                 new_path.to_string(),
-                strings.item_type,
+                item_type,
                 -1.0,
                 -1.0,
                 vec![ManFac::Origin],
@@ -160,12 +160,6 @@ impl Display for ItemResult {
     }
 }
 
-/// combines two bools for a small function call
-pub struct BoolDuo {
-    pub is_proliferated: bool,
-    pub is_first_item: bool,
-}
-
 /// Context holding read-only data and output accumulators for crafting chain calculations
 pub struct CraftingContext<'a> {
     pub items_map: &'a HashMap<ItemType, Item>,
@@ -190,12 +184,6 @@ impl<'a> CraftingContext<'a> {
     }
 }
 
-/// combines two strings for a small function call
-pub struct StringDuo {
-    pub item_type: ItemType,
-    pub prev_path: String,
-}
-
 /// struct for representing an item
 #[derive(Debug, Clone, PartialEq)]
 pub struct Item {
@@ -214,19 +202,19 @@ fn prolif_factor(settings: &ProgramInfo) -> f32 {
 }
 
 /// checks if the item is in a vector that dictates a specific crafting recipe
-fn check_recipe_index(settings: &ProgramInfo, strings: &StringDuo, current_item: &Item) -> usize {
+fn check_recipe_index(settings: &ProgramInfo, current_item: &Item) -> usize {
     let mut current_recipe_index = 0;
     // find out if current item is in the list to have a different recipe
     // get amount of the item as output (and as an ingredient, if thats the case)
     for vec_element in settings.item_recipe.iter() {
         // if item is in vector, the recipe index needs to be changed
-        if strings.item_type == vec_element.item_type {
+        if current_item.item_type == vec_element.item_type {
             current_recipe_index = vec_element.amount as usize;
             // sanity check; is the given recipe index valid?
             if current_recipe_index + 1 > current_item.recipes.len() {
                 panic!(
                         "recipe index given for item {} was {} but item only has {} recipes\nmaybe you forgot to subtract 1?",
-                        strings.item_type,
+                        current_item.item_type,
                         current_recipe_index,
                         current_item.recipes.len()
                     );
@@ -304,7 +292,7 @@ fn calculate_net_output(
 /// created since the value needs to be added to an existing one
 fn create_or_amend_entry(
     settings: &ProgramInfo,
-    strings: &StringDuo,
+    item_type: ItemType,
     result: &HashMap<String, ItemResult>,
     result_var: &mut ItemResult,
     result_order: &mut Vec<String>,
@@ -314,7 +302,7 @@ fn create_or_amend_entry(
     if settings.merge {
         // if result item already exists copy all values
         // if not remember that a new one needs to be created
-        let key = strings.item_type.to_string();
+        let key = item_type.to_string();
         match result.get(&key) {
             Some(existing_result) => {
                 result_var.target_rate = existing_result.target_rate;
@@ -341,12 +329,12 @@ fn create_or_amend_entry(
 fn factor_in_proliferation(
     settings: &ProgramInfo,
     result_var: &mut ItemResult,
-    bools: &mut BoolDuo,
+    is_proliferated: &mut bool,
     net_output_proliferated: &mut f32,
 ) {
-    if bools.is_proliferated {
+    if *is_proliferated {
         if settings.no_proliferation.contains(&result_var.item_type) {
-            bools.is_proliferated = false;
+            *is_proliferated = false;
         } else {
             let prolif_factor = prolif_factor(settings);
             *net_output_proliferated *= prolif_factor;
@@ -366,20 +354,19 @@ impl Item {
     pub fn crafting_chain(
         &self,
         ctx: &mut CraftingContext,
-        mut strings: StringDuo,
+        prev_path: &str,
         item_per_sec: f32,
-        mut bools: BoolDuo,
+        mut is_proliferated: bool,
     ) {
         let settings = ctx.settings;
         let items_map = ctx.items_map;
-        let new_path = if bools.is_first_item {
+        let new_path = if prev_path.is_empty() {
             self.item_type.to_string()
         } else {
-            format!("{} -> {}", self.item_type, strings.prev_path)
+            format!("{} -> {}", self.item_type, prev_path)
         };
-        strings.prev_path = new_path.clone();
         // create result variable
-        let mut result_var = ItemResult::initialize(settings, &strings, &new_path);
+        let mut result_var = ItemResult::initialize(settings, self.item_type, &new_path);
         // save desired target rate for item
         result_var.target_rate = item_per_sec;
         // write item information in result if the output
@@ -387,7 +374,7 @@ impl Item {
         let mut is_adding_new_item = false;
         create_or_amend_entry(
             settings,
-            &strings,
+            self.item_type,
             ctx.result,
             &mut result_var,
             ctx.result_order,
@@ -395,7 +382,7 @@ impl Item {
             &mut is_adding_new_item,
         );
         // is the recipe not the recipe at index 0?
-        let current_recipe_index = check_recipe_index(settings, &strings, self);
+        let current_recipe_index = check_recipe_index(settings, self);
         let current_recipe = &self.recipes[current_recipe_index];
         // calculate the net output of the recipe, if the output is partially the input
         // of the recipe
@@ -412,7 +399,7 @@ impl Item {
         factor_in_proliferation(
             settings,
             &mut result_var,
-            &mut bools,
+            &mut is_proliferated,
             &mut net_output_proliferated,
         );
         // handle the different crafting stations
@@ -421,7 +408,7 @@ impl Item {
         // calculate how many crafting machines are required for matching throughput
         let manvac_count = item_per_sec / net_output_machine;
         // calculate the multiplier for the amount of ingredients required
-        let current_proliferator_factor = if bools.is_proliferated {
+        let current_proliferator_factor = if is_proliferated {
             prolif_factor(settings)
         } else {
             1.0
@@ -511,22 +498,14 @@ impl Item {
                     IsItem::Item(real_ingredient) => {
                         match items_map.get(&real_ingredient.item_type) {
                             Some(call_item) => {
-                                let twostrings_next = StringDuo {
-                                    item_type: call_item.item_type,
-                                    prev_path: strings.prev_path.clone(),
-                                };
-                                let twobools_next = BoolDuo {
-                                    is_proliferated: bools.is_proliferated,
-                                    is_first_item: false,
-                                };
                                 if !settings.assume_basics
                                     || !settings.basics.contains(&call_item.item_type)
                                 {
                                     call_item.crafting_chain(
                                         ctx,
-                                        twostrings_next,
+                                        &new_path,
                                         real_ingredient.amount * ingredient_multiplicator,
-                                        twobools_next,
+                                        is_proliferated,
                                     );
                                 }
                             }
