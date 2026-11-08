@@ -356,7 +356,7 @@ mod tests {
                 describer: "Electric Motor".to_string(),
                 item_type: ItemType::ElectricMotor,
                 target_rate: 0.5,
-                num_station: 1.3333334,
+                num_station: 4.0 / 3.0,
                 station: vec![ManFac::Assembler],
                 requirements: vec![
                     ItemAmount {
@@ -405,7 +405,7 @@ mod tests {
                 describer: "Gear -> Electric Motor".to_string(),
                 item_type: ItemType::Gear,
                 target_rate: 0.5,
-                num_station: 0.6666667,
+                num_station: 2.0 / 3.0,
                 station: vec![ManFac::Assembler],
                 requirements: vec![ItemAmount {
                     amount: 0.5,
@@ -444,7 +444,7 @@ mod tests {
                 describer: "Magnetic Coil -> Electric Motor".to_string(),
                 item_type: ItemType::MagneticCoil,
                 target_rate: 0.5,
-                num_station: 0.33333334,
+                num_station: 1.0 / 3.0,
                 station: vec![ManFac::Assembler],
                 requirements: vec![
                     ItemAmount {
@@ -532,7 +532,7 @@ mod tests {
                 describer: "Electric Motor".to_string(),
                 item_type: ItemType::ElectricMotor,
                 target_rate: 0.5,
-                num_station: 1.3333334,
+                num_station: 4.0 / 3.0,
                 station: vec![ManFac::Assembler],
                 requirements: vec![
                     ItemAmount {
@@ -581,7 +581,7 @@ mod tests {
                 describer: "Gear".to_string(),
                 item_type: ItemType::Gear,
                 target_rate: 0.5,
-                num_station: 0.6666667,
+                num_station: 2.0 / 3.0,
                 station: vec![ManFac::Assembler],
                 requirements: vec![ItemAmount {
                     amount: 0.5,
@@ -595,7 +595,7 @@ mod tests {
                 describer: "Magnetic Coil".to_string(),
                 item_type: ItemType::MagneticCoil,
                 target_rate: 0.5,
-                num_station: 0.33333334,
+                num_station: 1.0 / 3.0,
                 station: vec![ManFac::Assembler],
                 requirements: vec![
                     ItemAmount {
