@@ -20,12 +20,12 @@ pub enum ManFac {
 /// struct for combining an item and an amount of said item
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct ItemAmount {
-    pub amount: f32,
+    pub amount: f64,
     pub item_type: ItemType,
 }
 
 impl ItemAmount {
-    pub fn new(amount: f32, item_type: impl Into<ItemType>) -> ItemAmount {
+    pub fn new(amount: f64, item_type: impl Into<ItemType>) -> ItemAmount {
         ItemAmount {
             amount,
             item_type: item_type.into(),
@@ -57,7 +57,7 @@ impl IsItem {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Recipe {
     // crafting time (in seconds)
-    crafting_time: f32,
+    crafting_time: f64,
     pub crafting_station: ManFac,
     pub ingredients: Vec<IsItem>,
     pub products: Vec<IsItem>,
@@ -65,7 +65,7 @@ pub struct Recipe {
 
 impl Recipe {
     pub fn new(
-        crafting_time: f32,
+        crafting_time: f64,
         crafting_station: ManFac,
         ingredients: Vec<IsItem>,
         products: Vec<IsItem>,
@@ -83,8 +83,8 @@ impl Recipe {
 pub struct ItemResult {
     pub describer: String,
     pub item_type: ItemType,
-    pub target_rate: f32,
-    pub num_station: f32,
+    pub target_rate: f64,
+    pub num_station: f64,
     pub station: Vec<ManFac>,
     pub requirements: Vec<ItemAmount>,
 }
@@ -93,8 +93,8 @@ impl ItemResult {
     fn new(
         describer: String,
         item_type: ItemType,
-        target_rate: f32,
-        num_station: f32,
+        target_rate: f64,
+        num_station: f64,
         station: Vec<ManFac>,
         requirements: Vec<ItemAmount>,
     ) -> ItemResult {
@@ -138,10 +138,12 @@ impl Display for ItemResult {
         writeln!(f, "{}", self.describer)?;
         writeln!(f, "item target rate: {:.2}", self.target_rate)?;
         if self.station != [ManFac::Origin] {
+            // Guard against floating point precision noise (e.g. 5.000000000000001 ceiled to 6)
+            let ceil_buildings = (self.num_station - 1e-6).max(0.0).ceil();
             write!(
                 f,
                 "buildings to build: {} {:?} ({:.2})",
-                self.num_station.ceil(),
+                ceil_buildings,
                 self.station,
                 self.num_station
             )?;
@@ -192,7 +194,7 @@ pub struct Item {
 }
 
 /// an function to return the current proliferation factor based on current settings
-fn prolif_factor(settings: &ProgramInfo) -> f32 {
+fn prolif_factor(settings: &ProgramInfo) -> f64 {
     match settings.proliferators {
         Proliferator::MKone => 1.125,
         Proliferator::MKtwo => 1.2,
@@ -226,10 +228,10 @@ fn check_recipe_index(settings: &ProgramInfo, current_item: &Item) -> usize {
 
 /// apply the factor of the currently responsible crafting station
 fn apply_station_factor(
-    net_output_proliferated: f32,
+    net_output_proliferated: f64,
     current_recipe: &Recipe,
     settings: &ProgramInfo,
-) -> f32 {
+) -> f64 {
     match current_recipe.crafting_station {
         ManFac::Assembler => match settings.assembler {
             AssemblerMK::One => net_output_proliferated * 0.75,
@@ -262,7 +264,7 @@ fn calculate_net_output(
     current_recipe: &Recipe,
     current_recipe_index: usize,
     result_var: &ItemResult,
-) -> f32 {
+) -> f64 {
     let mut output_amount = 0.0;
     let mut input_amount = 0.0;
     for item_amount in &current_recipe.products {
@@ -330,7 +332,7 @@ fn factor_in_proliferation(
     settings: &ProgramInfo,
     result_var: &mut ItemResult,
     is_proliferated: &mut bool,
-    net_output_proliferated: &mut f32,
+    net_output_proliferated: &mut f64,
 ) {
     if *is_proliferated {
         if settings.no_proliferation.contains(&result_var.item_type) {
@@ -355,7 +357,7 @@ impl Item {
         &self,
         ctx: &mut CraftingContext,
         prev_path: &str,
-        item_per_sec: f32,
+        item_per_sec: f64,
         mut is_proliferated: bool,
     ) {
         let settings = ctx.settings;

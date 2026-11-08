@@ -156,9 +156,9 @@ fn process_env_args(
                             }
                         };
                         if let Ok(item) = item_name.parse::<ItemType>() {
-                            if item_hashmap.contains_key(&item) && quantity.parse::<f32>().is_ok() {
+                            if item_hashmap.contains_key(&item) && quantity.parse::<f64>().is_ok() {
                                 settings.additional_items.push(ItemAmount::new(
-                                    quantity.parse::<f32>().expect("provided invalid number"),
+                                    quantity.parse::<f64>().expect("provided invalid number"),
                                     item,
                                 ));
                             } else {
@@ -191,7 +191,7 @@ fn process_env_args(
                                         if recipe_tot_num > recipe_num as usize {
                                             settings
                                                 .item_recipe
-                                                .push(ItemAmount::new(recipe_num as f32, item));
+                                                .push(ItemAmount::new(recipe_num as f64, item));
                                         } else {
                                             eprintln!(
                                                 "recipe index {} out of range for {}",
@@ -258,7 +258,7 @@ pub fn beta(mut args: Vec<String>) {
         }
     };
     settings.produced_item = ItemAmount::new(
-        args[1].parse::<f32>().expect("provided invalid number"),
+        args[1].parse::<f64>().expect("provided invalid number"),
         produced_item_type,
     );
 
@@ -319,7 +319,7 @@ mod tests {
         items_get::get_items,
     };
 
-    fn create_test_settings(amount: f32, item_type: ItemType) -> ProgramInfo {
+    fn create_test_settings(amount: f64, item_type: ItemType) -> ProgramInfo {
         ProgramInfo {
             produced_item: ItemAmount { amount, item_type },
             basics: ProgramInfo::basics(),
@@ -328,11 +328,11 @@ mod tests {
     }
 
     fn crate_test_variables(
-        amount: f32,
+        amount: f64,
         item_type: ItemType,
         is_proliferated: bool,
     ) -> (
-        f32,
+        f64,
         ProgramInfo,
         HashMap<String, ItemResult>,
         Vec<String>,
