@@ -812,4 +812,61 @@ mod tests {
         assert_eq!(result.len(), 1);
         assert!(result.contains_key("Electric Motor"));
     }
+
+    #[test]
+    fn test_electric_motor_additional_items_added_once() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        // Iron Ingot is needed directly by Electric Motor (1.0/s) and indirectly via Gear (0.5/s).
+        // We add an extra 1.0 to Iron Ingot.
+        settings
+            .additional_items
+            .push(ItemAmount::new(1.0, ItemType::IronIngot));
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            is_proliferated,
+        );
+
+        // The first Iron Ingot encountered is via Gear (Electric Motor ingredients are Magnetic Coil, Gear, Iron Ingot)
+        // Gear branch gets the extra 1.0 (0.5 + 1.0 = 1.5)
+        let gear_iron = result.get("Iron Ingot -> Gear -> Electric Motor").unwrap();
+        assert_eq!(gear_iron.target_rate, 1.5);
+        // The second Iron Ingot encountered (direct branch) should NOT receive the bonus (remains 1.0)
+        let direct_iron = result.get("Iron Ingot -> Electric Motor").unwrap();
+        assert_eq!(direct_iron.target_rate, 1.0);
+        // The item is removed from additional_items
+        assert!(settings.additional_items.is_empty());
+    }
+
+    #[test]
+    fn test_electric_motor_additional_items_main_item() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        settings
+            .additional_items
+            .push(ItemAmount::new(0.5, ItemType::ElectricMotor));
+
+        let mut produced_amount = items_per_sec;
+        if let Some(extra) = settings.take_additional_amount(settings.produced_item.item_type) {
+            produced_amount += extra;
+        }
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            produced_amount,
+            is_proliferated,
+        );
+
+        let correct_result = results_electric_motor_double_rate();
+        assert_eq!(result, correct_result);
+        assert!(settings.additional_items.is_empty());
+    }
 }
