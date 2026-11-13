@@ -788,4 +788,24 @@ mod tests {
         }
         assert_eq!(result, correct_result);
     }
+
+    #[test]
+    fn test_electric_motor_this_item_only() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        settings.this_item_only = true;
+
+        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            is_proliferated,
+        );
+
+        // Only the electric motor itself should be present in the results
+        assert_eq!(result.len(), 1);
+        assert!(result.contains_key("Electric Motor"));
+    }
 }
