@@ -318,9 +318,11 @@ mod tests {
     use std::collections::HashMap;
 
     use crate::beta::{
+        essentials::{AssemblerMK, Proliferator, SmelterMK},
         essentials::{CraftingContext, ItemAmount, ItemResult, ManFac, ProgramInfo},
         items::ItemType,
         items_get::get_items,
+        process_env_args,
     };
 
     fn create_test_settings(amount: f64, item_type: ItemType) -> ProgramInfo {
@@ -868,5 +870,184 @@ mod tests {
         let correct_result = results_electric_motor_double_rate();
         assert_eq!(result, correct_result);
         assert!(settings.additional_items.is_empty());
+    }
+
+    #[test]
+    fn test_furnace_tier() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
+            crate_test_variables(1.0, ItemType::IronIngot, false);
+        settings.smelter = SmelterMK::Plane;
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::IronIngot).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            is_proliferated,
+        );
+
+        // Base Arc Smelter (1.0x): 1.0 item/s requires 1.0 machine.
+        // Plane Smelter (2.0x): 1.0 item/s requires 0.5 machines.
+        let iron_result = result.get("Iron Ingot").unwrap();
+        assert_eq!(iron_result.station, vec![ManFac::Furnace]);
+        assert_eq!(iron_result.num_station, 0.5);
+    }
+
+    #[test]
+    fn test_electric_motor_assembler_tier() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, false);
+        // Upgrade assembler from Mk.I (0.75x) to Mk.II (1.0x)
+        settings.assembler = AssemblerMK::Two;
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            is_proliferated,
+        );
+
+        // At Mk.I (0.75x speed), num_station was 4/3 (~1.33).
+        // At Mk.II (1.0x speed), 0.5 items/sec / (0.5 items/sec * 1.0) = 1.0 machine.
+        let motor_result = result.get("Electric Motor").unwrap();
+        assert_eq!(motor_result.num_station, 1.0);
+    }
+
+    #[test]
+    fn test_electric_motor_proliferation() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, _) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, true);
+        settings.proliferators = Proliferator::MKthree; // 1.25x extra products factor
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            true,
+        );
+
+        // Electric motor target: 0.5/s.
+        // Base net output = 0.5/s * 1.25 (prolif) * 0.75 (Mk1 assembler) = 0.46875 items/s/machine.
+        // num_station = 0.5 / 0.46875 = 16.0 / 15.0 (~1.0667).
+        let motor_result = result.get("Electric Motor").unwrap();
+        assert!((motor_result.num_station - (16.0 / 15.0)).abs() < 1e-6);
+
+        // Ingredient multiplier = (0.5 / 1.25) = 0.4
+        // Gear requirement = 1.0 * 0.4 = 0.4 (instead of 0.5 without proliferation)
+        let gear_req = motor_result
+            .requirements
+            .iter()
+            .find(|r| r.item_type == ItemType::Gear)
+            .unwrap();
+        assert!((gear_req.amount - 0.4).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_no_proliferation_setting() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, _) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, true);
+        settings.proliferators = Proliferator::MKthree;
+        // Disable proliferation specifically on Electric Motor
+        settings.no_proliferation.push(ItemType::ElectricMotor);
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            true,
+        );
+
+        // Electric Motor should not be proliferated (falls back to 4/3 assemblers)
+        let motor_result = result.get("Electric Motor").unwrap();
+        assert!((motor_result.num_station - (4.0 / 3.0)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_no_proliferation_sub_item() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, _) =
+            crate_test_variables(0.5, ItemType::ElectricMotor, true);
+        settings.proliferators = Proliferator::MKthree;
+        // Disable proliferation specifically on an intermediate ingredient (Gear)
+        settings.no_proliferation.push(ItemType::Gear);
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            true,
+        );
+
+        // 1. Electric Motor itself should still be proliferated:
+        // Base net output = 0.5/s * 1.25 * 0.75 = 0.46875 -> 0.5 / 0.46875 = 16.0 / 15.0
+        let motor_result = result.get("Electric Motor").unwrap();
+        assert!((motor_result.num_station - (16.0 / 15.0)).abs() < 1e-6);
+
+        // 2. Gear must NOT be proliferated:
+        // Target rate is 0.4/s (scaled by motor prolif factor).
+        // Net output without prolif = 1.0/s * 0.75 = 0.75 -> 0.4 / 0.75 = 8.0 / 15.0 (~0.5333)
+        let gear_result = result.get("Gear -> Electric Motor").unwrap();
+        assert!((gear_result.num_station - (8.0 / 15.0)).abs() < 1e-6);
+
+        // 3. Downstream of Gear (Iron Ingot) also inherits unproliferated state:
+        // 0.4 items/sec / 1.0 smelter rate = 0.4 furnaces
+        let gear_iron = result.get("Iron Ingot -> Gear -> Electric Motor").unwrap();
+        assert!((gear_iron.num_station - 0.4).abs() < 1e-6);
+
+        // 4. Sibling branch (Magnetic Coil) should still be proliferated:
+        // Net output = 2.0/s * 1.25 * 0.75 = 1.875 -> 0.4 / 1.875 = 3.2 / 15.0 (~0.2133)
+        let coil_result = result.get("Magnetic Coil -> Electric Motor").unwrap();
+        assert!((coil_result.num_station - (3.2 / 15.0)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_alternate_recipe_selection() {
+        let items = get_items();
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
+            crate_test_variables(1.0, ItemType::SiliconOre, false);
+        // Recipe 0: Origin (mining)
+        // Recipe 1: 10 Stone -> 1 Silicon Ore in Furnace
+        settings
+            .item_recipe
+            .push(ItemAmount::new(1.0, ItemType::SiliconOre));
+
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
+        items.get(&ItemType::SiliconOre).unwrap().crafting_chain(
+            &mut ctx,
+            "",
+            items_per_sec,
+            is_proliferated,
+        );
+
+        let silicon = result.get("Silicon Ore").unwrap();
+        assert_eq!(silicon.station, vec![ManFac::Furnace]);
+        assert_eq!(silicon.requirements[0].item_type, ItemType::Stone);
+        assert_eq!(silicon.requirements[0].amount, 10.0);
+    }
+
+    #[test]
+    fn test_process_env_args_flags() {
+        let items = get_items();
+        let mut settings = ProgramInfo::default();
+        let mut args = vec![
+            "-m".to_string(),
+            "-b".to_string(),
+            "proliferator=3".to_string(),
+            "assembler=2".to_string(),
+        ];
+        process_env_args(&mut args, &mut settings, &items);
+
+        assert!(settings.merge);
+        assert!(settings.assume_basics);
+        assert!(matches!(settings.proliferators, Proliferator::MKthree));
+        assert!(matches!(settings.assembler, AssemblerMK::Two));
     }
 }
