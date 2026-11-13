@@ -279,12 +279,16 @@ pub fn beta(mut args: Vec<String>) {
     {
         is_proliferated = false;
     }
+    let mut produced_amount = settings.produced_item.amount;
+    if let Some(extra) = settings.take_additional_amount(settings.produced_item.item_type) {
+        produced_amount += extra;
+    }
     match item_hashmap.get(&settings.produced_item.item_type) {
         // set off creation of the crafting chain
         Some(item) => {
             let mut ctx =
-                CraftingContext::new(&item_hashmap, &settings, &mut result_order, &mut result);
-            item.crafting_chain(&mut ctx, "", settings.produced_item.amount, is_proliferated)
+                CraftingContext::new(&item_hashmap, &mut settings, &mut result_order, &mut result);
+            item.crafting_chain(&mut ctx, "", produced_amount, is_proliferated)
         }
         _ => {
             panic!("requested item not in crafting recipes");
@@ -654,9 +658,9 @@ mod tests {
     #[test]
     fn test_electric_motor() {
         let items = get_items();
-        let (items_per_sec, settings, mut result, mut result_order, is_proliferated) =
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
-        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
             "",
@@ -678,9 +682,9 @@ mod tests {
     #[test]
     fn test_electric_motor_double_rate() {
         let items = get_items();
-        let (items_per_sec, settings, mut result, mut result_order, is_proliferated) =
+        let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(1.0, ItemType::ElectricMotor, false);
-        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
             "",
@@ -705,7 +709,7 @@ mod tests {
         let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.merge = true;
-        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
             "",
@@ -730,7 +734,7 @@ mod tests {
         let (items_per_sec, mut settings, mut result, mut result_order, is_proliferated) =
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.assume_basics = true;
-        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
             "",
@@ -768,7 +772,7 @@ mod tests {
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.merge = true;
         settings.assume_basics = true;
-        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
             "",
@@ -796,7 +800,7 @@ mod tests {
             crate_test_variables(0.5, ItemType::ElectricMotor, false);
         settings.this_item_only = true;
 
-        let mut ctx = CraftingContext::new(&items, &settings, &mut result_order, &mut result);
+        let mut ctx = CraftingContext::new(&items, &mut settings, &mut result_order, &mut result);
         items.get(&ItemType::ElectricMotor).unwrap().crafting_chain(
             &mut ctx,
             "",

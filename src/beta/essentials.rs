@@ -143,9 +143,7 @@ impl Display for ItemResult {
             write!(
                 f,
                 "buildings to build: {} {:?} ({:.2})",
-                ceil_buildings,
-                self.station,
-                self.num_station
+                ceil_buildings, self.station, self.num_station
             )?;
             writeln!(f, "\nthis requires the following (per second):")?;
             // write vector
@@ -162,10 +160,10 @@ impl Display for ItemResult {
     }
 }
 
-/// Context holding read-only data and output accumulators for crafting chain calculations
+/// Context holding data and output accumulators for crafting chain calculations
 pub struct CraftingContext<'a> {
     pub items_map: &'a HashMap<ItemType, Item>,
-    pub settings: &'a ProgramInfo,
+    pub settings: &'a mut ProgramInfo,
     pub result_order: &'a mut Vec<String>,
     pub result: &'a mut HashMap<String, ItemResult>,
 }
@@ -173,7 +171,7 @@ pub struct CraftingContext<'a> {
 impl<'a> CraftingContext<'a> {
     pub fn new(
         items_map: &'a HashMap<ItemType, Item>,
-        settings: &'a ProgramInfo,
+        settings: &'a mut ProgramInfo,
         result_order: &'a mut Vec<String>,
         result: &'a mut HashMap<String, ItemResult>,
     ) -> Self {
@@ -360,7 +358,6 @@ impl Item {
         item_per_sec: f64,
         mut is_proliferated: bool,
     ) {
-        let settings = ctx.settings;
         let items_map = ctx.items_map;
         let new_path = if prev_path.is_empty() {
             self.item_type.to_string()
@@ -368,14 +365,14 @@ impl Item {
             format!("{} -> {}", self.item_type, prev_path)
         };
         // create result variable
-        let mut result_var = ItemResult::initialize(settings, self.item_type, &new_path);
+        let mut result_var = ItemResult::initialize(ctx.settings, self.item_type, &new_path);
         // save desired target rate for item
         result_var.target_rate = item_per_sec;
         // write item information in result if the output
         // is supposed to be merged
         let mut is_adding_new_item = false;
         create_or_amend_entry(
-            settings,
+            ctx.settings,
             self.item_type,
             ctx.result,
             &mut result_var,
@@ -384,7 +381,7 @@ impl Item {
             &mut is_adding_new_item,
         );
         // is the recipe not the recipe at index 0?
-        let current_recipe_index = check_recipe_index(settings, self);
+        let current_recipe_index = check_recipe_index(ctx.settings, self);
         let current_recipe = &self.recipes[current_recipe_index];
         // calculate the net output of the recipe, if the output is partially the input
         // of the recipe
@@ -399,19 +396,19 @@ impl Item {
         let mut net_output_proliferated = net_output_per_second;
         // factor in proliferation
         factor_in_proliferation(
-            settings,
+            ctx.settings,
             &mut result_var,
             &mut is_proliferated,
             &mut net_output_proliferated,
         );
         // handle the different crafting stations
         let net_output_machine =
-            apply_station_factor(net_output_proliferated, current_recipe, settings);
+            apply_station_factor(net_output_proliferated, current_recipe, ctx.settings);
         // calculate how many crafting machines are required for matching throughput
         let manvac_count = item_per_sec / net_output_machine;
         // calculate the multiplier for the amount of ingredients required
         let current_proliferator_factor = if is_proliferated {
-            prolif_factor(settings)
+            prolif_factor(ctx.settings)
         } else {
             1.0
         };
@@ -428,7 +425,7 @@ impl Item {
                 ));
             }
         }
-        if settings.merge {
+        if ctx.settings.merge {
             if is_adding_new_item {
                 result_var.num_station = manvac_count;
             } else {
@@ -444,7 +441,7 @@ impl Item {
         // sanity checks on result_var
         assert_ne!(result_var.num_station, -1.0);
         // only assert if the item doesn't have vec!(ManFac::Origin) naturally
-        if !settings.basics.contains(&self.item_type) {
+        if !ctx.settings.basics.contains(&self.item_type) {
             assert_ne!(
                 result_var.station,
                 [ManFac::Origin],
@@ -455,14 +452,14 @@ impl Item {
         }
         // write results into hashmap
         if is_adding_new_item {
-            if settings.merge {
+            if ctx.settings.merge {
                 ctx.result
                     .insert(result_var.item_type.to_string(), result_var.clone());
             } else {
                 ctx.result
                     .insert(result_var.describer.clone(), result_var.clone());
             }
-        } else if settings.merge {
+        } else if ctx.settings.merge {
             // increase the values already present
             match ctx.result.get_mut(&result_var.item_type.to_string()) {
                 Some(found_item) => {
@@ -494,19 +491,26 @@ impl Item {
         }
 
         // finally make the function recursive by calling the function on the
-        if !settings.this_item_only {
+        if !ctx.settings.this_item_only {
             for ingredient in &current_recipe.ingredients {
                 match ingredient {
                     IsItem::Item(real_ingredient) => {
                         match items_map.get(&real_ingredient.item_type) {
                             Some(call_item) => {
-                                if !settings.assume_basics
-                                    || !settings.basics.contains(&call_item.item_type)
+                                if !ctx.settings.assume_basics
+                                    || !ctx.settings.basics.contains(&call_item.item_type)
                                 {
+                                    let mut next_amount =
+                                        real_ingredient.amount * ingredient_multiplicator;
+                                    if let Some(extra) =
+                                        ctx.settings.take_additional_amount(call_item.item_type)
+                                    {
+                                        next_amount += extra;
+                                    }
                                     call_item.crafting_chain(
                                         ctx,
                                         &new_path,
-                                        real_ingredient.amount * ingredient_multiplicator,
+                                        next_amount,
                                         is_proliferated,
                                     );
                                 }
@@ -658,6 +662,16 @@ impl ProgramInfo {
             produced_item,
             this_item_only: false,
         }
+    }
+
+    /// Checks whether an item type has an additional amount specified.
+    /// If found, removes it from `additional_items` and returns the extra amount.
+    pub fn take_additional_amount(&mut self, item_type: ItemType) -> Option<f64> {
+        let pos = self
+            .additional_items
+            .iter()
+            .position(|x| x.item_type == item_type)?;
+        Some(self.additional_items.remove(pos).amount)
     }
 }
 
